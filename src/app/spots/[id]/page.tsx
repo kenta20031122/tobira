@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -31,6 +32,28 @@ export async function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const spot = getSpotById(id);
+  if (!spot) return {};
+  return {
+    title: spot.name,
+    description: spot.description,
+    openGraph: {
+      title: spot.name,
+      description: spot.description,
+      images: [{ url: spot.image_url, width: 1200, height: 630, alt: spot.name }],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: spot.name,
+      description: spot.description,
+      images: [spot.image_url],
+    },
+  };
+}
 
 export default async function SpotDetailPage({ params }: Props) {
   const { id } = await params;

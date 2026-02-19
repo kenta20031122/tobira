@@ -9,14 +9,30 @@ const geist = Geist({
   subsets: ['latin'],
 });
 
+const OG_IMAGE =
+  'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_91488261_M%20(1).jpg';
+
 export const metadata: Metadata = {
-  title: 'Tobira — Discover Hidden Kyushu',
+  metadataBase: new URL('https://tobira.vercel.app'),
+  title: {
+    default: 'Tobira — Discover Hidden Kyushu',
+    template: '%s | Tobira',
+  },
   description:
     "Go beyond Tokyo. Tobira guides you to Japan's most authentic, lesser-known experiences in Kyushu — curated by locals, powered by AI.",
   openGraph: {
     title: 'Tobira — Discover Hidden Kyushu',
     description: "Japan's authentic travel guide, beyond the tourist trail.",
     type: 'website',
+    url: 'https://tobira.vercel.app',
+    siteName: 'Tobira',
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Mt. Aso Caldera, Kyushu Japan' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tobira — Discover Hidden Kyushu',
+    description: "Japan's authentic travel guide, beyond the tourist trail.",
+    images: [OG_IMAGE],
   },
 };
 
