@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { spots } from '@/data/spots';
 
+export const maxDuration = 60;
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '');
 
 export async function POST(req: NextRequest) {
@@ -14,17 +16,15 @@ export async function POST(req: NextRequest) {
 
   const { days, interests, pace, prefecture } = await req.json();
 
-  // Filter relevant spots for context
+  // Filter relevant spots for context — keep payload small to stay within timeout
   const relevantSpots = spots
     .filter((s) => prefecture === 'all' || s.prefecture === prefecture)
     .map((s) => ({
       name: s.name,
       prefecture: s.prefecture,
-      categories: s.categories,
-      description: s.description,
+      categories: s.categories.join('/'),
+      desc: s.description.slice(0, 80),
       duration: s.duration,
-      best_season: s.best_season,
-      highlights: s.highlights,
     }));
 
   const prompt = `You are a local Kyushu travel expert helping a foreign tourist plan an authentic trip.
