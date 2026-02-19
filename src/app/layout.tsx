@@ -9,8 +9,7 @@ const geist = Geist({
   subsets: ['latin'],
 });
 
-const OG_IMAGE =
-  'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_91488261_M%20(1).jpg';
+const OG_IMAGE = 'https://tobira.vercel.app/og.jpg';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tobira.vercel.app'),
