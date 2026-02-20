@@ -8,6 +8,7 @@ export const metadata: Metadata = {
     title: 'Explore Kyushu Spots',
     description:
       'Browse hidden gems across Kyushu — active volcanoes, sacred shrines, secret onsen towns, and more.',
+    images: [{ url: 'https://tobira.vercel.app/og.jpg', width: 1200, height: 630 }],
   },
 };
 
