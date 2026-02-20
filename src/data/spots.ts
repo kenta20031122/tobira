@@ -14,7 +14,7 @@ export const spots: Spot[] = [
     lat: 32.8843,
     lng: 131.0994,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_91488261_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto/aso-caldera.jpg',
     tags: ['volcano', 'hiking', 'crater', 'views'],
     is_premium: false,
     highlights: [
@@ -40,7 +40,7 @@ export const spots: Spot[] = [
     lat: 33.0533,
     lng: 131.1678,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_49763536_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto/kurokawa-onsen.jpg',
     tags: ['onsen', 'ryokan', 'nature', 'romantic'],
     is_premium: false,
     highlights: [
@@ -66,7 +66,7 @@ export const spots: Spot[] = [
     lat: 32.2133,
     lng: 130.7503,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_37301729_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto/hitoyoshi-castle.jpg',
     tags: ['castle', 'history', 'river', 'rafting'],
     is_premium: false,
     highlights: [
@@ -92,7 +92,7 @@ export const spots: Spot[] = [
     lat: 32.7816,
     lng: 130.7361,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_21853177_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto/suizenji-garden.jpg',
     tags: ['garden', 'history', 'zen', 'photography'],
     is_premium: false,
     highlights: [
@@ -198,7 +198,7 @@ export const spots: Spot[] = [
     lat: 33.5306,
     lng: 131.3511,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_61615606_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/oita/usa-shrine.jpg',
     tags: ['shrine', 'history', 'spiritual', 'UNESCO-class'],
     is_premium: true,
     highlights: [
@@ -224,7 +224,7 @@ export const spots: Spot[] = [
     lat: 33.2066,
     lng: 131.6432,
     image_url:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/pixta_60351951_M%20(1).jpg',
+      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/oita/takasakiyama-monkeys.jpg',
     tags: ['wildlife', 'monkeys', 'nature', 'family'],
     is_premium: false,
     highlights: [
