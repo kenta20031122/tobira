@@ -37,24 +37,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const spot = getSpotById(id);
   if (!spot) return {};
-  // URLs with %20 or parentheses confuse OGP crawlers — use the safe fallback
-  const ogImage = spot.image_url.includes('%20')
-    ? 'https://tobira.vercel.app/og.jpg'
-    : spot.image_url;
   return {
     title: spot.name,
     description: spot.description,
     openGraph: {
       title: spot.name,
       description: spot.description,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: spot.name }],
+      images: [{ url: spot.image_url, width: 1200, height: 630, alt: spot.name }],
       type: 'article',
     },
     twitter: {
       card: 'summary_large_image',
       title: spot.name,
       description: spot.description,
-      images: [ogImage],
+      images: [spot.image_url],
     },
   };
 }
