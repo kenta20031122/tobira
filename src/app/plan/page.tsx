@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp } from 'lucide-react';
-import { spots } from '@/data/spots';
+import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock } from 'lucide-react';
+import { spots, getSpotById } from '@/data/spots';
 
 function findSpot(name: string) {
   const lower = name.toLowerCase();
@@ -50,13 +51,20 @@ const PACE_OPTIONS = [
 ];
 
 export default function PlanPage() {
+  const searchParams = useSearchParams();
+  const pinnedSpot = useMemo(() => {
+    const id = searchParams.get('spot');
+    return id ? getSpotById(id) : null;
+  }, [searchParams]);
+
   const [days, setDays] = useState(3);
   const [interests, setInterests] = useState<string[]>([]);
   const [pace, setPace] = useState('moderate');
-  const [prefecture, setPrefecture] = useState('all');
+  const [prefecture, setPrefecture] = useState(() => pinnedSpot?.prefecture ?? 'all');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ItineraryResult | null>(null);
   const [error, setError] = useState('');
+  const [errorCode, setErrorCode] = useState('');
   const [expandedDay, setExpandedDay] = useState<number | null>(0);
 
   const toggleInterest = (interest: string) => {
@@ -73,6 +81,7 @@ export default function PlanPage() {
       return;
     }
     setError('');
+    setErrorCode('');
     setLoading(true);
     setResult(null);
 
@@ -80,11 +89,12 @@ export default function PlanPage() {
       const res = await fetch('/api/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days, interests, pace, prefecture }),
+        body: JSON.stringify({ days, interests, pace, prefecture, spotId: pinnedSpot?.id }),
       });
 
       if (!res.ok) {
         const data = await res.json();
+        if (data.code) setErrorCode(data.code);
         throw new Error(data.error ?? 'Failed to generate itinerary');
       }
 
@@ -113,6 +123,35 @@ export default function PlanPage() {
           Tell us what you love. Get a day-by-day plan built around you.
         </p>
       </div>
+
+      {/* Pinned Spot Banner */}
+      {pinnedSpot && (
+        <div className="flex items-center gap-4 bg-white border border-stone-200 rounded-2xl p-4 mb-8">
+          <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0">
+            <Image
+              src={pinnedSpot.image_url}
+              alt={pinnedSpot.name}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-red-500 mb-0.5 flex items-center gap-1">
+              <MapPin size={11} />
+              Planning around this spot
+            </p>
+            <p className="font-semibold text-stone-900 truncate">{pinnedSpot.name}</p>
+            <p className="text-xs text-stone-400 truncate">{pinnedSpot.prefecture}, Kyushu</p>
+          </div>
+          <Link
+            href={`/spots/${pinnedSpot.id}`}
+            className="text-xs text-stone-400 hover:text-stone-600 transition-colors shrink-0"
+          >
+            View spot
+          </Link>
+        </div>
+      )}
 
       {/* Form */}
       <div className="bg-white rounded-2xl border border-stone-200 p-8 space-y-8 mb-8">
@@ -218,10 +257,42 @@ export default function PlanPage() {
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm bg-red-50 px-4 py-2 rounded-lg">
-            {error}
-          </p>
+          errorCode === 'upgrade_required' ? (
+            <div className="bg-stone-900 text-white rounded-xl p-5 text-center">
+              <Lock size={20} className="mx-auto mb-2 text-red-400" />
+              <p className="text-sm mb-4">{error}</p>
+              <Link
+                href="/pricing"
+                className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+              >
+                Upgrade to Pro — $4.99/mo
+              </Link>
+            </div>
+          ) : errorCode === 'auth_required' ? (
+            <div className="bg-stone-50 border border-stone-200 rounded-xl p-5 text-center">
+              <p className="text-stone-600 text-sm mb-4">{error}</p>
+              <Link
+                href="/login?next=/plan"
+                className="inline-block bg-stone-900 hover:bg-stone-800 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+              >
+                Sign in
+              </Link>
+            </div>
+          ) : (
+            <p className="text-red-500 text-sm bg-red-50 px-4 py-2 rounded-lg">
+              {error}
+            </p>
+          )
         )}
+
+        {/* Free plan notice */}
+        <p className="text-stone-400 text-xs text-center">
+          Free accounts include 1 AI plan.{' '}
+          <Link href="/pricing" className="underline hover:text-stone-600 transition-colors">
+            Upgrade to Pro
+          </Link>{' '}
+          for unlimited.
+        </p>
 
         {/* Submit */}
         <button

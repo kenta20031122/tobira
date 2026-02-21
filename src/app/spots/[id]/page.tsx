@@ -17,6 +17,9 @@ import { spots, getSpotById } from '@/data/spots';
 import SpotCard from '@/components/SpotCard';
 import SpotMapWrapper from '@/components/maps/SpotMapWrapper';
 import { CATEGORY_LABELS, cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/server';
+
+export const dynamic = 'force-dynamic';
 
 const CATEGORY_COLORS: Record<string, string> = {
   nature: 'bg-emerald-100 text-emerald-700',
@@ -61,6 +64,19 @@ export default async function SpotDetailPage({ params }: Props) {
 
   if (!spot) notFound();
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let isPro = false;
+  if (user) {
+    const { data: sub } = await supabase
+      .from('subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .single();
+    isPro = sub?.status === 'active';
+  }
+
   const related = spots
     .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
     .slice(0, 3);
@@ -86,7 +102,7 @@ export default async function SpotDetailPage({ params }: Props) {
           priority
           unoptimized
         />
-        {spot.is_premium && (
+        {spot.is_premium && !isPro && (
           <div className="absolute top-4 right-4 bg-stone-900/80 text-white text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
             <Lock size={13} />
             Pro Spot
@@ -122,39 +138,55 @@ export default async function SpotDetailPage({ params }: Props) {
       </div>
 
       {/* Info Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        {spot.duration && (
+      <div className="relative mb-10">
+        <div className={cn(
+          'grid grid-cols-2 sm:grid-cols-4 gap-4',
+          spot.is_premium && !isPro && 'blur-sm select-none pointer-events-none'
+        )}>
+          {spot.duration && (
+            <div className="bg-white rounded-xl p-4 border border-stone-200">
+              <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                <Clock size={13} />
+                Duration
+              </div>
+              <p className="text-stone-800 text-sm font-medium">{spot.duration}</p>
+            </div>
+          )}
+          {spot.admission && (
+            <div className="bg-white rounded-xl p-4 border border-stone-200">
+              <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                <Ticket size={13} />
+                Admission
+              </div>
+              <p className="text-stone-800 text-sm font-medium">{spot.admission}</p>
+            </div>
+          )}
           <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-              <Clock size={13} />
-              Duration
+              <Calendar size={13} />
+              Best Season
             </div>
-            <p className="text-stone-800 text-sm font-medium">{spot.duration}</p>
+            <p className="text-stone-800 text-sm font-medium">{spot.best_season}</p>
           </div>
-        )}
-        {spot.admission && (
           <div className="bg-white rounded-xl p-4 border border-stone-200">
             <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-              <Ticket size={13} />
-              Admission
+              <Train size={13} />
+              Access
             </div>
-            <p className="text-stone-800 text-sm font-medium">{spot.admission}</p>
+            <p className="text-stone-800 text-sm font-medium">{spot.access}</p>
+          </div>
+        </div>
+        {spot.is_premium && !isPro && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Link
+              href={`/login?next=/spots/${spot.id}`}
+              className="bg-white/90 border border-stone-200 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-sm hover:bg-white transition-colors"
+            >
+              <Lock size={13} className="text-stone-500" />
+              <span className="text-xs font-medium text-stone-600">Sign in to view details</span>
+            </Link>
           </div>
         )}
-        <div className="bg-white rounded-xl p-4 border border-stone-200">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-            <Calendar size={13} />
-            Best Season
-          </div>
-          <p className="text-stone-800 text-sm font-medium">{spot.best_season}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-stone-200">
-          <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-            <Train size={13} />
-            Access
-          </div>
-          <p className="text-stone-800 text-sm font-medium">{spot.access}</p>
-        </div>
       </div>
 
       {/* Map */}
@@ -163,8 +195,20 @@ export default async function SpotDetailPage({ params }: Props) {
           <MapPin size={16} className="text-red-500" />
           Location
         </h2>
-        <div className="h-64 sm:h-80 rounded-xl overflow-hidden border border-stone-200">
+        <div className="relative isolate h-64 sm:h-80 rounded-xl overflow-hidden border border-stone-200">
           <SpotMapWrapper spot={spot} />
+          {spot.is_premium && !isPro && (
+            <div className="absolute inset-0 z-[1000] bg-stone-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+              <Lock size={22} className="text-white" />
+              <p className="text-white text-sm font-medium">Sign in to view location</p>
+              <Link
+                href={`/login?next=/spots/${spot.id}`}
+                className="bg-white text-stone-900 text-xs font-semibold px-4 py-2 rounded-full hover:bg-stone-100 transition-colors"
+              >
+                Sign in
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
@@ -184,21 +228,20 @@ export default async function SpotDetailPage({ params }: Props) {
       )}
 
       {/* Premium gate */}
-      {spot.is_premium ? (
+      {spot.is_premium && !isPro ? (
         <div className="bg-stone-900 rounded-2xl p-8 mb-10 text-center">
           <Lock className="mx-auto text-stone-400 mb-3" size={28} />
           <h2 className="text-white text-xl font-semibold mb-2">
             Pro Spot
           </h2>
           <p className="text-stone-400 mb-6 max-w-sm mx-auto">
-            Upgrade to Pro for full local tips, secret timing advice, and
-            insider highlights for this spot.
+            Upgrade to Pro to access local tips, secret timing, and insider highlights for this spot.
           </p>
           <Link
-            href="#pricing"
+            href="/pricing"
             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full transition-colors"
           >
-            Unlock with Pro — $4.99/mo
+            Upgrade to Pro — $4.99/mo
           </Link>
         </div>
       ) : (

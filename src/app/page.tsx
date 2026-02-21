@@ -226,9 +226,9 @@ export default function HomePage() {
               <p className="text-stone-400 text-sm font-medium mb-1">Free</p>
               <p className="text-3xl font-bold mb-4">$0</p>
               <ul className="text-stone-400 text-sm space-y-2 mb-8">
-                <li>✓ Browse all spot previews</li>
-                <li>✓ 3 full spot details per month</li>
-                <li>✓ Basic region overview</li>
+                <li>✓ All 3 regions — full spot browsing</li>
+                <li>✓ More regions & spots added regularly</li>
+                <li>✓ 1 AI itinerary plan</li>
               </ul>
               <Link
                 href="/spots"
@@ -248,13 +248,13 @@ export default function HomePage() {
                 <span className="text-red-200 text-base font-normal">/mo</span>
               </p>
               <ul className="text-red-100 text-sm space-y-2 mb-8">
-                <li>✓ Unlimited spot access</li>
-                <li>✓ AI trip planner (3+ day itineraries)</li>
-                <li>✓ Save & export your itineraries</li>
-                <li>✓ New spots added monthly</li>
+                <li>✓ All 18+ premium spots unlocked</li>
+                <li>✓ Insider tips & hidden highlights</li>
+                <li>✓ Unlimited AI trip plans</li>
+                <li>✓ New premium spots added monthly</li>
               </ul>
               <Link
-                href="/plan"
+                href="/pricing"
                 className="block text-center bg-white text-red-600 py-2.5 rounded-full text-sm font-semibold hover:bg-red-50 transition-colors"
               >
                 Get Pro — $4.99/mo

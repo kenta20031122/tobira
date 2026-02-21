@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { spots } from '@/data/spots';
+import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const maxDuration = 60;
 
@@ -14,7 +16,51 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { days, interests, pace, prefecture } = await req.json();
+  // Auth check
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Sign in to use the AI planner.', code: 'auth_required' },
+      { status: 401 }
+    );
+  }
+
+  // Check subscription
+  const { data: sub } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', user.id)
+    .single();
+
+  const isPro = sub?.status === 'active';
+  const adminClient = createAdminClient();
+
+  if (!isPro) {
+    const { data: usageRow } = await adminClient
+      .from('plan_uses')
+      .select('count')
+      .eq('user_id', user.id)
+      .single();
+
+    const currentCount = usageRow?.count ?? 0;
+
+    if (currentCount >= 1) {
+      return NextResponse.json(
+        {
+          error: "You've used your 1 free AI plan. Upgrade to Pro for unlimited itineraries.",
+          code: 'upgrade_required',
+        },
+        { status: 403 }
+      );
+    }
+  }
+
+  const { days, interests, pace, prefecture, spotId } = await req.json();
+
+  // If a specific spot was requested, find it
+  const anchorSpot = spotId ? spots.find((s) => s.id === spotId) : null;
 
   // Filter relevant spots for context — keep payload small to stay within timeout
   const relevantSpots = spots
@@ -27,8 +73,14 @@ export async function POST(req: NextRequest) {
       duration: s.duration,
     }));
 
-  const prompt = `You are a local Kyushu travel expert helping a foreign tourist plan an authentic trip.
+  const anchorSection = anchorSpot
+    ? `
+IMPORTANT: The traveler specifically wants to visit "${anchorSpot.name}" (${anchorSpot.prefecture}). You MUST include this spot in the itinerary. Brief info: ${anchorSpot.description.slice(0, 120)}
+`
+    : '';
 
+  const prompt = `You are a local Kyushu travel expert helping a foreign tourist plan an authentic trip.
+${anchorSection}
 Available spots in our curated database:
 ${JSON.stringify(relevantSpots, null, 2)}
 
@@ -73,6 +125,14 @@ Rules:
     const result = await model.generateContent(prompt);
     const text = result.response.text();
     const parsed = JSON.parse(text);
+
+    // Track usage for free users
+    if (!isPro) {
+      await adminClient
+        .from('plan_uses')
+        .upsert({ user_id: user.id, count: 1 }, { onConflict: 'user_id' });
+    }
+
     return NextResponse.json(parsed);
   } catch (err) {
     console.error('AI plan error:', err);
