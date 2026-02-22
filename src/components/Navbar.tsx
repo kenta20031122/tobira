@@ -48,11 +48,12 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
+          <img src="/icon.svg" alt="tobira" className="w-9 h-9 -mt-2" />
           <span className="text-2xl font-bold tracking-tight text-stone-900">
             tobira
           </span>
           <span className="text-xs text-stone-400 font-medium hidden sm:block">
-            扉 · beyond tokyo
+            · beyond tokyo
           </span>
         </Link>
 
