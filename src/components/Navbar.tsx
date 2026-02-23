@@ -1,16 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Menu, X, LogIn, LogOut, User, Settings } from 'lucide-react';
+import { Menu, X, LogIn, LogOut, User, Settings, ChevronDown } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function Navbar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   async function handleManageBilling() {
     try {
@@ -38,12 +40,26 @@ export default function Navbar() {
       setUserEmail(data.user?.email ?? null);
       if (data.user) fetchProStatus(data.user.id);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUserEmail(session?.user?.email ?? null);
-      if (session?.user) fetchProStatus(session.user.id);
-      else setIsPro(false);
+      if (session?.user) {
+        fetchProStatus(session.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setIsPro(false);
+      }
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  // ドロップダウン外クリックで閉じる
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   async function handleSignOut() {
@@ -76,34 +92,41 @@ export default function Navbar() {
             Plan a Trip
           </Link>
           {userEmail ? (
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-stone-500 text-xs">
-                <User size={14} />
-                {userEmail}
-              </span>
-              {isPro && (
-                <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                  Pro
-                </span>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-1.5 text-stone-600 hover:text-stone-900 transition-colors"
+              >
+                <User size={14} className="text-stone-400" />
+                <span className="text-xs text-stone-500 max-w-[160px] truncate">{userEmail}</span>
+                {isPro && (
+                  <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                    Pro
+                  </span>
+                )}
+                <ChevronDown size={13} className={`text-stone-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg py-1 z-50">
+                  {isPro && (
+                    <button
+                      onClick={() => { setDropdownOpen(false); handleManageBilling(); }}
+                      className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                    >
+                      <Settings size={14} className="text-stone-400" />
+                      Manage Plan
+                    </button>
+                  )}
+                  <button
+                    onClick={() => { setDropdownOpen(false); handleSignOut(); }}
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                  >
+                    <LogOut size={14} className="text-stone-400" />
+                    Log out
+                  </button>
+                </div>
               )}
-              {isPro && (
-                <button
-                  onClick={handleManageBilling}
-                  className="flex items-center gap-1 text-stone-400 hover:text-stone-700 transition-colors"
-                  title="Manage subscription"
-                >
-                  <Settings size={14} />
-                </button>
-              )}
-              <form onSubmit={(e) => { e.preventDefault(); handleSignOut(); }}>
-                <button
-                  type="submit"
-                  className="flex items-center gap-1.5 text-stone-600 hover:text-stone-900 transition-colors"
-                >
-                  <LogOut size={15} />
-                  Log out
-                </button>
-              </form>
             </div>
           ) : (
             <Link
@@ -145,6 +168,15 @@ export default function Navbar() {
                   </span>
                 )}
               </div>
+              {isPro && (
+                <button
+                  onClick={() => { setOpen(false); handleManageBilling(); }}
+                  className="flex items-center gap-1.5 text-stone-700"
+                >
+                  <Settings size={15} />
+                  Manage Plan
+                </button>
+              )}
               <form onSubmit={(e) => { e.preventDefault(); handleSignOut(); }}>
                 <button type="submit" className="flex items-center gap-1.5 text-stone-700">
                   <LogOut size={15} />

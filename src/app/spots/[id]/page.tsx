@@ -13,7 +13,7 @@ import {
   Sparkles,
   ExternalLink,
 } from 'lucide-react';
-import { spots, getSpotById } from '@/data/spots';
+import { getAllSpots, getSpotById } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
 import SpotMapWrapper from '@/components/maps/SpotMapWrapper';
 import { CATEGORY_LABELS, cn } from '@/lib/utils';
@@ -31,14 +31,15 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export async function generateStaticParams() {
-  return spots.map((s) => ({ id: s.id }));
+  const allSpots = await getAllSpots();
+  return allSpots.map((s) => ({ id: s.id }));
 }
 
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const spot = getSpotById(id);
+  const spot = await getSpotById(id);
   if (!spot) return {};
   return {
     title: spot.name,
@@ -60,7 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SpotDetailPage({ params }: Props) {
   const { id } = await params;
-  const spot = getSpotById(id);
+  const spot = await getSpotById(id);
 
   if (!spot) notFound();
 
@@ -77,7 +78,8 @@ export default async function SpotDetailPage({ params }: Props) {
     isPro = sub?.status === 'active';
   }
 
-  const related = spots
+  const allSpots = await getAllSpots();
+  const related = allSpots
     .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
     .slice(0, 3);
 
@@ -139,52 +141,63 @@ export default async function SpotDetailPage({ params }: Props) {
 
       {/* Info Grid */}
       <div className="relative mb-10">
-        <div className={cn(
-          'grid grid-cols-2 sm:grid-cols-4 gap-4',
-          spot.is_premium && !isPro && 'blur-sm select-none pointer-events-none'
-        )}>
-          {spot.duration && (
+        {spot.is_premium && !isPro ? (
+          <div className="relative">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="bg-stone-100 rounded-xl p-4 border border-stone-200 h-[72px]">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="w-3 h-3 rounded bg-stone-300" />
+                    <div className="w-12 h-2.5 rounded bg-stone-300" />
+                  </div>
+                  <div className="w-20 h-3 rounded bg-stone-300" />
+                </div>
+              ))}
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Link
+                href={`/pricing`}
+                className="bg-white/90 border border-stone-200 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-sm hover:bg-white transition-colors"
+              >
+                <Lock size={13} className="text-stone-500" />
+                <span className="text-xs font-medium text-stone-600">Upgrade to Pro to view details</span>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {spot.duration && (
+              <div className="bg-white rounded-xl p-4 border border-stone-200">
+                <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                  <Clock size={13} />
+                  Duration
+                </div>
+                <p className="text-stone-800 text-sm font-medium">{spot.duration}</p>
+              </div>
+            )}
+            {spot.admission && (
+              <div className="bg-white rounded-xl p-4 border border-stone-200">
+                <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                  <Ticket size={13} />
+                  Admission
+                </div>
+                <p className="text-stone-800 text-sm font-medium">{spot.admission}</p>
+              </div>
+            )}
             <div className="bg-white rounded-xl p-4 border border-stone-200">
               <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-                <Clock size={13} />
-                Duration
+                <Calendar size={13} />
+                Best Season
               </div>
-              <p className="text-stone-800 text-sm font-medium">{spot.duration}</p>
+              <p className="text-stone-800 text-sm font-medium">{spot.best_season}</p>
             </div>
-          )}
-          {spot.admission && (
             <div className="bg-white rounded-xl p-4 border border-stone-200">
               <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-                <Ticket size={13} />
-                Admission
+                <Train size={13} />
+                Access
               </div>
-              <p className="text-stone-800 text-sm font-medium">{spot.admission}</p>
+              <p className="text-stone-800 text-sm font-medium">{spot.access}</p>
             </div>
-          )}
-          <div className="bg-white rounded-xl p-4 border border-stone-200">
-            <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-              <Calendar size={13} />
-              Best Season
-            </div>
-            <p className="text-stone-800 text-sm font-medium">{spot.best_season}</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 border border-stone-200">
-            <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
-              <Train size={13} />
-              Access
-            </div>
-            <p className="text-stone-800 text-sm font-medium">{spot.access}</p>
-          </div>
-        </div>
-        {spot.is_premium && !isPro && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Link
-              href={`/login?next=/spots/${spot.id}`}
-              className="bg-white/90 border border-stone-200 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-sm hover:bg-white transition-colors"
-            >
-              <Lock size={13} className="text-stone-500" />
-              <span className="text-xs font-medium text-stone-600">Sign in to view details</span>
-            </Link>
           </div>
         )}
       </div>
@@ -195,21 +208,22 @@ export default async function SpotDetailPage({ params }: Props) {
           <MapPin size={16} className="text-red-500" />
           Location
         </h2>
-        <div className="relative isolate h-64 sm:h-80 rounded-xl overflow-hidden border border-stone-200">
-          <SpotMapWrapper spot={spot} />
-          {spot.is_premium && !isPro && (
-            <div className="absolute inset-0 z-[1000] bg-stone-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
-              <Lock size={22} className="text-white" />
-              <p className="text-white text-sm font-medium">Sign in to view location</p>
-              <Link
-                href={`/login?next=/spots/${spot.id}`}
-                className="bg-white text-stone-900 text-xs font-semibold px-4 py-2 rounded-full hover:bg-stone-100 transition-colors"
-              >
-                Sign in
-              </Link>
-            </div>
-          )}
-        </div>
+        {spot.is_premium && !isPro ? (
+          <div className="h-64 sm:h-80 rounded-xl border border-stone-200 bg-stone-100 flex flex-col items-center justify-center gap-3">
+            <Lock size={22} className="text-stone-400" />
+            <p className="text-stone-500 text-sm font-medium">Location available to Pro members</p>
+            <Link
+              href="/pricing"
+              className="bg-stone-900 text-white text-xs font-semibold px-4 py-2 rounded-full hover:bg-stone-700 transition-colors"
+            >
+              Upgrade to Pro
+            </Link>
+          </div>
+        ) : (
+          <div className="relative isolate h-64 sm:h-80 rounded-xl overflow-hidden border border-stone-200">
+            <SpotMapWrapper spot={spot} />
+          </div>
+        )}
       </div>
 
       {/* Official Website */}

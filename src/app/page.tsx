@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sparkles, MapPin, Compass } from 'lucide-react';
-import { spots } from '@/data/spots';
+import { getAllSpots } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
 
 const FEATURES = [
@@ -25,33 +25,35 @@ const FEATURES = [
   },
 ];
 
-const PREFECTURES = [
-  {
-    name: 'Kumamoto',
-    tagline: 'Volcanoes & Onsen',
-    image:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto.jpg',
-    count: spots.filter((s) => s.prefecture === 'Kumamoto').length,
-  },
-  {
-    name: 'Oita',
-    tagline: 'Hot Springs & Highlands',
-    image:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/oita.jpg',
-    count: spots.filter((s) => s.prefecture === 'Oita').length,
-  },
-  {
-    name: 'Miyazaki',
-    tagline: 'Myth & Pacific Coast',
-    image:
-      'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/miyazaki.jpg',
-    count: spots.filter((s) => s.prefecture === 'Miyazaki').length,
-  },
-];
+export default async function HomePage() {
+  const spots = await getAllSpots();
 
-export default function HomePage() {
   const FEATURED_IDS = ['aso-caldera', 'beppu-hells', 'takachiho-gorge'];
   const featuredSpots = FEATURED_IDS.map((id) => spots.find((s) => s.id === id)!).filter(Boolean);
+
+  const PREFECTURES = [
+    {
+      name: 'Kumamoto',
+      tagline: 'Volcanoes & Onsen',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto.jpg',
+      count: spots.filter((s) => s.prefecture === 'Kumamoto').length,
+    },
+    {
+      name: 'Oita',
+      tagline: 'Hot Springs & Highlands',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/oita.jpg',
+      count: spots.filter((s) => s.prefecture === 'Oita').length,
+    },
+    {
+      name: 'Miyazaki',
+      tagline: 'Myth & Pacific Coast',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/miyazaki.jpg',
+      count: spots.filter((s) => s.prefecture === 'Miyazaki').length,
+    },
+  ];
 
   return (
     <div>

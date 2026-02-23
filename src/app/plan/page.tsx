@@ -1,20 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock } from 'lucide-react';
-import { spots, getSpotById } from '@/data/spots';
-
-function findSpot(name: string) {
-  const lower = name.toLowerCase();
-  return spots.find(
-    (s) =>
-      s.name.toLowerCase().includes(lower) ||
-      lower.includes(s.name.toLowerCase())
-  );
-}
+import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, Copy, Link2 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import type { Spot } from '@/types';
 
 type DayPlan = {
   day: number;
@@ -52,10 +44,26 @@ const PACE_OPTIONS = [
 
 export default function PlanPage() {
   const searchParams = useSearchParams();
+
+  const [allSpots, setAllSpots] = useState<Spot[]>([]);
+
+  useEffect(() => {
+    fetch('/api/spots').then((r) => r.json()).then(setAllSpots).catch(() => {});
+  }, []);
+
   const pinnedSpot = useMemo(() => {
     const id = searchParams.get('spot');
-    return id ? getSpotById(id) : null;
-  }, [searchParams]);
+    return id ? allSpots.find((s) => s.id === id) ?? null : null;
+  }, [searchParams, allSpots]);
+
+  function findSpot(name: string) {
+    const lower = name.toLowerCase();
+    return allSpots.find(
+      (s) =>
+        s.name.toLowerCase().includes(lower) ||
+        lower.includes(s.name.toLowerCase())
+    );
+  }
 
   const [days, setDays] = useState(3);
   const [interests, setInterests] = useState<string[]>([]);
@@ -66,6 +74,19 @@ export default function PlanPage() {
   const [error, setError] = useState('');
   const [errorCode, setErrorCode] = useState('');
   const [expandedDay, setExpandedDay] = useState<number | null>(0);
+
+  // Save state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [savedShareToken, setSavedShareToken] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
+  }, []);
 
   const toggleInterest = (interest: string) => {
     setInterests((prev) =>
@@ -84,6 +105,7 @@ export default function PlanPage() {
     setErrorCode('');
     setLoading(true);
     setResult(null);
+    setSavedShareToken('');
 
     try {
       const res = await fetch('/api/plan', {
@@ -106,6 +128,32 @@ export default function PlanPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSave = async () => {
+    if (!result) return;
+    setSaveLoading(true);
+    try {
+      const res = await fetch('/api/user/trips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: result.title, overview: result.overview, days: result.days }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Failed to save');
+      setSavedShareToken(data.shareToken);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save itinerary.');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    const url = `${window.location.origin}/trip/${savedShareToken}`;
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -287,7 +335,7 @@ export default function PlanPage() {
 
         {/* Free plan notice */}
         <p className="text-stone-400 text-xs text-center">
-          Free accounts include 1 AI plan.{' '}
+          Free accounts include 1 AI plan per month.{' '}
           <Link href="/pricing" className="underline hover:text-stone-600 transition-colors">
             Upgrade to Pro
           </Link>{' '}
@@ -318,10 +366,46 @@ export default function PlanPage() {
       {result && (
         <div className="space-y-4">
           <div className="bg-red-50 border border-red-100 rounded-2xl p-6 mb-6">
-            <h2 className="text-xl font-bold text-stone-900 mb-2">
-              {result.title}
-            </h2>
-            <p className="text-stone-600 leading-relaxed">{result.overview}</p>
+            <h2 className="text-xl font-bold text-stone-900 mb-2">{result.title}</h2>
+            <p className="text-stone-600 leading-relaxed mb-5">{result.overview}</p>
+
+            {/* Share section */}
+            {savedShareToken ? (
+              <div className="bg-white rounded-xl border border-red-100 p-4">
+                <p className="text-xs font-medium text-stone-500 mb-2">
+                  Share this trip with your travel companions
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-600 truncate font-mono">
+                    {`${window.location.origin}/trip/${savedShareToken}`}
+                  </div>
+                  <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors shrink-0"
+                  >
+                    {copied ? <Check size={13} /> : <Copy size={13} />}
+                    {copied ? 'Copied!' : 'Copy link'}
+                  </button>
+                </div>
+              </div>
+            ) : isLoggedIn ? (
+              <button
+                onClick={handleSave}
+                disabled={saveLoading}
+                className="w-full flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+              >
+                {saveLoading ? <Loader2 size={16} className="animate-spin" /> : <Link2 size={16} />}
+                {saveLoading ? 'Saving...' : 'Share with travel companions'}
+              </button>
+            ) : (
+              <Link
+                href="/login?next=/plan"
+                className="w-full flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+              >
+                <Link2 size={16} />
+                Sign in to share this trip
+              </Link>
+            )}
           </div>
 
           {result.days.map((day, i) => (

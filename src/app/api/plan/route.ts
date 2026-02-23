@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { spots } from '@/data/spots';
+import { getAllSpots } from '@/lib/spots';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
@@ -36,20 +36,23 @@ export async function POST(req: NextRequest) {
 
   const isPro = sub?.status === 'active';
   const adminClient = createAdminClient();
+  const period = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
 
+  let currentCount = 0;
   if (!isPro) {
     const { data: usageRow } = await adminClient
       .from('plan_uses')
       .select('count')
       .eq('user_id', user.id)
+      .eq('period', period)
       .single();
 
-    const currentCount = usageRow?.count ?? 0;
+    currentCount = usageRow?.count ?? 0;
 
     if (currentCount >= 1) {
       return NextResponse.json(
         {
-          error: "You've used your 1 free AI plan. Upgrade to Pro for unlimited itineraries.",
+          error: "You've used your free AI plan for this month. Upgrade to Pro for unlimited itineraries.",
           code: 'upgrade_required',
         },
         { status: 403 }
@@ -58,6 +61,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { days, interests, pace, prefecture, spotId } = await req.json();
+
+  const spots = await getAllSpots();
 
   // If a specific spot was requested, find it
   const anchorSpot = spotId ? spots.find((s) => s.id === spotId) : null;
@@ -130,7 +135,7 @@ Rules:
     if (!isPro) {
       await adminClient
         .from('plan_uses')
-        .upsert({ user_id: user.id, count: 1 }, { onConflict: 'user_id' });
+        .upsert({ user_id: user.id, period, count: currentCount + 1 }, { onConflict: 'user_id,period' });
     }
 
     return NextResponse.json(parsed);
