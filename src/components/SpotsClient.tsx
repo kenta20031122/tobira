@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { Search, LayoutGrid, Map } from 'lucide-react';
@@ -24,12 +24,20 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
 
+  const [favIds, setFavIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [selectedPrefecture, setSelectedPrefecture] = useState<Prefecture | 'All'>(
     initialPrefecture ?? 'All'
   );
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+
+  useEffect(() => {
+    fetch('/api/user/favorites')
+      .then((r) => r.json())
+      .then((ids: string[]) => setFavIds(ids))
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
     return spots.filter((s) => {
@@ -156,7 +164,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} />
+              <SpotCard key={spot.id} spot={spot} isFavorited={favIds.includes(spot.id)} />
             ))}
           </div>
         </>

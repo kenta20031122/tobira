@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { MapPin, Clock, Lock } from 'lucide-react';
 import type { Spot } from '@/types';
 import { cn, CATEGORY_LABELS } from '@/lib/utils';
+import FavoriteButton from '@/components/FavoriteButton';
 
 const CATEGORY_COLORS: Record<string, string> = {
   nature: 'bg-emerald-100 text-emerald-700',
@@ -15,9 +16,10 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 type Props = {
   spot: Spot;
+  isFavorited?: boolean;
 };
 
-export default function SpotCard({ spot }: Props) {
+export default function SpotCard({ spot, isFavorited = false }: Props) {
   return (
     <Link href={`/spots/${spot.id}`} className="group block">
       <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
@@ -38,6 +40,9 @@ export default function SpotCard({ spot }: Props) {
               Pro
             </div>
           )}
+          {/* Favorite button */}
+          <FavoriteButton spotId={spot.id} initialFavorited={isFavorited} />
+
           {/* Category badge(s) */}
           <div className="absolute top-3 left-3 flex gap-1 flex-wrap max-w-[70%]">
             {spot.categories.map((cat) => (

@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import { getAllSpots, getSpotById } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
+import FavoriteButton from '@/components/FavoriteButton';
 import SpotMapWrapper from '@/components/maps/SpotMapWrapper';
 import { CATEGORY_LABELS, cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,15 +73,22 @@ export default async function SpotDetailPage({ params }: Props) {
 
   if (!spot) notFound();
 
-  // Subscription check + related spots in parallel (user may be null)
-  const [subResult, allSpots] = await Promise.all([
+  const adminClient = createAdminClient();
+
+  // Subscription check + related spots + favorites in parallel
+  const [subResult, allSpots, favResult] = await Promise.all([
     user
       ? supabase.from('subscriptions').select('status').eq('user_id', user.id).single()
       : Promise.resolve({ data: null }),
     getAllSpots(),
+    user
+      ? adminClient.from('favorites').select('spot_id').eq('user_id', user.id)
+      : Promise.resolve({ data: [] }),
   ]);
 
   const isPro = subResult.data?.status === 'active';
+  const favIds = new Set((favResult.data ?? []).map((r) => r.spot_id));
+  const isFavorited = favIds.has(spot.id);
   const related = allSpots
     .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
     .slice(0, 3);
@@ -132,9 +141,12 @@ export default async function SpotDetailPage({ params }: Props) {
           <MapPin size={14} />
           <span>{spot.prefecture}, Kyushu</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 mb-4">
-          {spot.name}
-        </h1>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-stone-900">
+            {spot.name}
+          </h1>
+          <FavoriteButton spotId={spot.id} initialFavorited={isFavorited} className="shrink-0 mt-1" />
+        </div>
         <p className="text-stone-600 text-lg leading-relaxed">
           {spot.description}
         </p>
@@ -319,7 +331,7 @@ export default async function SpotDetailPage({ params }: Props) {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {related.map((s) => (
-              <SpotCard key={s.id} spot={s} />
+              <SpotCard key={s.id} spot={s} isFavorited={favIds.has(s.id)} />
             ))}
           </div>
         </div>

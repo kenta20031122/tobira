@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Menu, X, LogIn, LogOut, User, Settings, ChevronDown } from 'lucide-react';
+import { Menu, X, LogIn, LogOut, User, Settings, ChevronDown, Heart, Map } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function Navbar() {
@@ -84,7 +84,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-stone-600">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-stone-600">
           <Link href="/spots" className="hover:text-stone-900 transition-colors">
             Explore
           </Link>
@@ -92,42 +92,64 @@ export default function Navbar() {
             Plan a Trip
           </Link>
           {userEmail ? (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-1.5 text-stone-600 hover:text-stone-900 transition-colors"
-              >
-                <User size={14} className="text-stone-400" />
-                <span className="text-xs text-stone-500 max-w-[160px] truncate">{userEmail}</span>
-                {isPro && (
-                  <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                    Pro
-                  </span>
-                )}
-                <ChevronDown size={13} className={`text-stone-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+            <>
+              {/* Quick-access links */}
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/favorites"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-stone-500 hover:text-red-500 hover:bg-red-50 transition-colors text-xs font-medium"
+                >
+                  <Heart size={14} />
+                  Saved
+                </Link>
+                <Link
+                  href="/trips"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-stone-500 hover:text-stone-800 hover:bg-stone-100 transition-colors text-xs font-medium"
+                >
+                  <Map size={14} />
+                  Trips
+                </Link>
+              </div>
 
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg py-1 z-50">
+              {/* User dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-1.5 text-stone-600 hover:text-stone-900 transition-colors"
+                >
+                  <div className="w-7 h-7 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center">
+                    <User size={14} className="text-stone-500" />
+                  </div>
                   {isPro && (
+                    <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      Pro
+                    </span>
+                  )}
+                  <ChevronDown size={13} className={`text-stone-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-xl shadow-lg py-1 z-50">
+                    {isPro && (
+                      <button
+                        onClick={() => { setDropdownOpen(false); handleManageBilling(); }}
+                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                      >
+                        <Settings size={14} className="text-stone-400" />
+                        Manage Plan
+                      </button>
+                    )}
                     <button
-                      onClick={() => { setDropdownOpen(false); handleManageBilling(); }}
+                      onClick={() => { setDropdownOpen(false); handleSignOut(); }}
                       className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
                     >
-                      <Settings size={14} className="text-stone-400" />
-                      Manage Plan
+                      <LogOut size={14} className="text-stone-400" />
+                      Log out
                     </button>
-                  )}
-                  <button
-                    onClick={() => { setDropdownOpen(false); handleSignOut(); }}
-                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
-                  >
-                    <LogOut size={14} className="text-stone-400" />
-                    Log out
-                  </button>
-                </div>
-              )}
-            </div>
+                  </div>
+                )}
+              </div>
+            </>
           ) : (
             <Link
               href="/login"
@@ -160,14 +182,19 @@ export default function Navbar() {
           </Link>
           {userEmail ? (
             <>
-              <div className="flex items-center gap-2">
-                <span className="text-stone-400 text-xs">{userEmail}</span>
-                {isPro && (
-                  <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
-                    Pro
-                  </span>
-                )}
-              </div>
+              {isPro && (
+                <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full self-start">
+                  Pro
+                </span>
+              )}
+              <Link href="/trips" onClick={() => setOpen(false)} className="flex items-center gap-1.5 text-stone-700">
+                <Map size={15} />
+                My Trips
+              </Link>
+              <Link href="/favorites" onClick={() => setOpen(false)} className="flex items-center gap-1.5 text-stone-700">
+                <Heart size={15} />
+                Saved Spots
+              </Link>
               {isPro && (
                 <button
                   onClick={() => { setOpen(false); handleManageBilling(); }}
