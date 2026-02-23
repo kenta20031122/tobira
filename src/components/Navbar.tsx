@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Menu, X, LogIn, LogOut, User } from 'lucide-react';
+import { Menu, X, LogIn, LogOut, User, Settings } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function Navbar() {
@@ -11,6 +11,12 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isPro, setIsPro] = useState(false);
+
+  async function handleManageBilling() {
+    const res = await fetch('/api/customer-portal', { method: 'POST' });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }
 
   async function fetchProStatus(userId: string) {
     const supabase = createClient();
@@ -75,6 +81,15 @@ export default function Navbar() {
                 <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
                   Pro
                 </span>
+              )}
+              {isPro && (
+                <button
+                  onClick={handleManageBilling}
+                  className="flex items-center gap-1 text-stone-400 hover:text-stone-700 transition-colors"
+                  title="Manage subscription"
+                >
+                  <Settings size={14} />
+                </button>
               )}
               <form onSubmit={(e) => { e.preventDefault(); handleSignOut(); }}>
                 <button
