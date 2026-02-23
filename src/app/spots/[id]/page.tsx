@@ -61,24 +61,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SpotDetailPage({ params }: Props) {
   const { id } = await params;
-  const spot = await getSpotById(id);
+
+  // Fetch spot and auth in parallel
+  const supabase = await createClient();
+  const [spot, { data: { user } }] = await Promise.all([
+    getSpotById(id),
+    supabase.auth.getUser(),
+  ]);
 
   if (!spot) notFound();
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Subscription check + related spots in parallel (user may be null)
+  const [subResult, allSpots] = await Promise.all([
+    user
+      ? supabase.from('subscriptions').select('status').eq('user_id', user.id).single()
+      : Promise.resolve({ data: null }),
+    getAllSpots(),
+  ]);
 
-  let isPro = false;
-  if (user) {
-    const { data: sub } = await supabase
-      .from('subscriptions')
-      .select('status')
-      .eq('user_id', user.id)
-      .single();
-    isPro = sub?.status === 'active';
-  }
-
-  const allSpots = await getAllSpots();
+  const isPro = subResult.data?.status === 'active';
   const related = allSpots
     .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
     .slice(0, 3);

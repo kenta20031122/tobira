@@ -1,7 +1,9 @@
+import { cache } from 'react';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { Spot } from '@/types';
 
-export async function getAllSpots(): Promise<Spot[]> {
+// cache() deduplicates DB calls within a single server request
+export const getAllSpots = cache(async (): Promise<Spot[]> => {
   const adminClient = createAdminClient();
   const { data, error } = await adminClient
     .from('spots')
@@ -9,9 +11,9 @@ export async function getAllSpots(): Promise<Spot[]> {
     .order('name');
   if (error) throw new Error(error.message);
   return (data ?? []) as Spot[];
-}
+});
 
-export async function getSpotById(id: string): Promise<Spot | undefined> {
+export const getSpotById = cache(async (id: string): Promise<Spot | undefined> => {
   const adminClient = createAdminClient();
   const { data } = await adminClient
     .from('spots')
@@ -19,4 +21,4 @@ export async function getSpotById(id: string): Promise<Spot | undefined> {
     .eq('id', id)
     .single();
   return data ? (data as Spot) : undefined;
-}
+});
