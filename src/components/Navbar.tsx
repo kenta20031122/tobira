@@ -13,9 +13,13 @@ export default function Navbar() {
   const [isPro, setIsPro] = useState(false);
 
   async function handleManageBilling() {
-    const res = await fetch('/api/customer-portal', { method: 'POST' });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
+    try {
+      const res = await fetch('/api/customer-portal', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch {
+      // no-op
+    }
   }
 
   async function fetchProStatus(userId: string) {

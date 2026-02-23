@@ -18,16 +18,20 @@ export async function POST() {
     .eq('user_id', user.id)
     .single();
 
-  if (!sub?.stripe_customer_id) {
-    return NextResponse.json({ error: 'No subscription found' }, { status: 404 });
+  if (!sub?.stripe_customer_id || sub.stripe_customer_id === 'manual') {
+    return NextResponse.json({ error: 'No Stripe subscription found' }, { status: 404 });
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: sub.stripe_customer_id,
-    return_url: siteUrl,
-  });
-
-  return NextResponse.json({ url: session.url });
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: sub.stripe_customer_id,
+      return_url: siteUrl,
+    });
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error('Stripe portal error:', err);
+    return NextResponse.json({ error: 'Failed to create portal session' }, { status: 500 });
+  }
 }
