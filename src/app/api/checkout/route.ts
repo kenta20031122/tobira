@@ -21,7 +21,7 @@ export async function POST() {
 
   let customerId = existingSub?.stripe_customer_id;
 
-  if (!customerId) {
+  if (!customerId || customerId === 'manual') {
     const customer = await stripe.customers.create({
       email: user.email,
       metadata: { supabase_user_id: user.id },
