@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -96,6 +96,39 @@ export default function PlanPage() {
     supabase.auth.getUser().then(({ data }) => {
       setIsLoggedIn(!!data.user);
     });
+  }, []);
+
+  // Persist itinerary to sessionStorage so navigating to a spot and back restores it.
+  // IMPORTANT: save effect must be defined BEFORE restore effect — React runs effects
+  // in definition order on mount, ensuring we skip the save on the very first render
+  // (before restore has run) by checking restoredRef.
+  const restoredRef = useRef(false);
+
+  useEffect(() => {
+    if (!restoredRef.current) return;
+    try {
+      if (result) {
+        sessionStorage.setItem(
+          'tobira_plan_result',
+          JSON.stringify({ result, shareToken: savedShareToken, expandedDay })
+        );
+      } else {
+        sessionStorage.removeItem('tobira_plan_result');
+      }
+    } catch {}
+  }, [result, savedShareToken, expandedDay]);
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('tobira_plan_result');
+      if (saved) {
+        const { result: r, shareToken, expandedDay: ed } = JSON.parse(saved);
+        if (r) setResult(r);
+        if (shareToken) setSavedShareToken(shareToken);
+        if (ed !== undefined) setExpandedDay(ed);
+      }
+    } catch {}
+    restoredRef.current = true;
   }, []);
 
   const toggleInterest = (interest: string) => {
