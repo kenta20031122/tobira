@@ -33,6 +33,27 @@ export default async function HomePage() {
 
   const PREFECTURES = [
     {
+      name: 'Fukuoka',
+      tagline: 'Ramen, Shrines & City Life',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/fukuoka.jpg',
+      count: spots.filter((s) => s.prefecture === 'Fukuoka').length,
+    },
+    {
+      name: 'Saga',
+      tagline: 'Pottery & Ancient Ruins',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/saga.jpg',
+      count: spots.filter((s) => s.prefecture === 'Saga').length,
+    },
+    {
+      name: 'Nagasaki',
+      tagline: 'History, Islands & Peace',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/nagasaki.jpg',
+      count: spots.filter((s) => s.prefecture === 'Nagasaki').length,
+    },
+    {
       name: 'Kumamoto',
       tagline: 'Volcanoes & Onsen',
       image:
@@ -52,6 +73,20 @@ export default async function HomePage() {
       image:
         'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/miyazaki.jpg',
       count: spots.filter((s) => s.prefecture === 'Miyazaki').length,
+    },
+    {
+      name: 'Kagoshima',
+      tagline: 'Sakurajima & Wild South',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kagoshima.jpg',
+      count: spots.filter((s) => s.prefecture === 'Kagoshima').length,
+    },
+    {
+      name: 'Okinawa',
+      tagline: 'Coral Reefs & Ryukyu Culture',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/okinawa.jpg',
+      count: spots.filter((s) => s.prefecture === 'Okinawa').length,
     },
   ];
 
@@ -102,7 +137,7 @@ export default async function HomePage() {
           </div>
 
           <p className="text-stone-500 text-sm mt-8">
-            {spots.length} hand-picked spots · Kumamoto · Oita · Miyazaki
+            {spots.length} hand-picked spots · Kyushu & Okinawa
           </p>
         </div>
       </section>
@@ -111,20 +146,20 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
-            Three Prefectures. Endless Discovery.
+            Kyushu & Okinawa. Endless Discovery.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Each region of Kyushu has its own soul. Pick one, or let the AI
-            planner weave them together.
+            Eight prefectures, each with its own soul. Pick one, or let the AI
+            planner weave them into one perfect journey.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {PREFECTURES.map((p) => (
             <Link
               key={p.name}
               href={`/spots?prefecture=${p.name}`}
-              className="group relative rounded-2xl overflow-hidden h-72 block"
+              className="group relative rounded-2xl overflow-hidden h-52 sm:h-64 block"
             >
               <Image
                 src={p.image}

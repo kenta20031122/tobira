@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { days, interests, pace, prefecture, spotId } = await req.json();
+  const { days, interests, pace, groupType, prefecture, spotId } = await req.json();
 
   const spots = await getAllSpots();
 
@@ -73,6 +73,9 @@ export async function POST(req: NextRequest) {
     .map((s) => ({
       name: s.name,
       prefecture: s.prefecture,
+      area: s.address.split(',').slice(-2).join(',').trim(), // city/region hint
+      lat: s.lat,
+      lng: s.lng,
       categories: s.categories.join('/'),
       desc: s.description.slice(0, 80),
       duration: s.duration,
@@ -92,7 +95,8 @@ ${JSON.stringify(relevantSpots, null, 2)}
 Create a ${days}-day itinerary for a traveler with these preferences:
 - Interests: ${interests.join(', ')}
 - Travel pace: ${pace}
-- Focus area: ${prefecture === 'all' ? 'All of Kyushu (Kumamoto, Oita, Miyazaki)' : prefecture}
+- Group type: ${groupType ?? 'solo'}
+- Focus area: ${prefecture === 'all' ? 'All of Kyushu & Okinawa (Fukuoka, Saga, Nagasaki, Kumamoto, Oita, Miyazaki, Kagoshima, Okinawa)' : prefecture}
 
 Return ONLY valid JSON matching this exact structure (no markdown, no explanation):
 {
@@ -107,7 +111,8 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
           "name": "Spot name",
           "description": "Why visit and what to do (2 sentences)",
           "time": "Suggested time (e.g. '9:00 AM - 12:00 PM')",
-          "tip": "Insider tip locals know but tourists miss"
+          "tip": "Insider tip locals know but tourists miss",
+          "travel_from_previous": "How to get here from the previous spot (e.g. '20 min by bus', '45 min by local train', 'Walk 10 min'). Use null for the first spot of the day."
         }
       ]
     }
@@ -115,10 +120,15 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 }
 
 Rules:
-- Use spots from the database when possible, but you may add real Kyushu spots not in the list
+- Use spots from the database when possible, but you may add real Kyushu/Okinawa spots not in the list
+- CRITICAL: Group geographically close spots on the same day — use the lat/lng coordinates to avoid inefficient backtracking
+- Order spots within each day to minimize total travel time (nearest-neighbor routing)
 - Match the pace: relaxed=1-2 spots/day, moderate=3-4, packed=5+
+- travel_from_previous must be realistic (include transport mode: walk/bus/train/car, and estimated time)
+- If spots are far apart, note the express train or highway bus option
+- Tailor recommendations to the group type (solo=freedom/solo-friendly cafes, couple=romantic/scenic, family=kid-friendly/accessible, friends=social/nightlife/adventures)
 - Start with the most iconic spot of the trip on day 1
-- Include at least one meal recommendation per day
+- Include at least one meal recommendation per day (as a spot entry)
 - Tips should be genuinely useful and specific (best time to arrive, what to order, hidden details)`;
 
   try {

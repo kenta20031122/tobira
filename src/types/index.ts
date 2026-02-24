@@ -1,4 +1,4 @@
-export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki';
+export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki' | 'Fukuoka' | 'Saga' | 'Nagasaki' | 'Kagoshima' | 'Okinawa';
 
 export type Category =
   | 'nature'

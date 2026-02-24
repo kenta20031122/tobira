@@ -15,7 +15,12 @@ export const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const PREFECTURE_LABELS: Record<string, string> = {
+  Fukuoka: 'Fukuoka',
+  Saga: 'Saga',
+  Nagasaki: 'Nagasaki',
   Kumamoto: 'Kumamoto',
   Oita: 'Oita',
   Miyazaki: 'Miyazaki',
+  Kagoshima: 'Kagoshima',
+  Okinawa: 'Okinawa',
 };

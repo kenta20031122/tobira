@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, Copy, Link2 } from 'lucide-react';
+import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, Copy, Link2, Navigation } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { Spot } from '@/types';
 
@@ -16,6 +16,7 @@ type DayPlan = {
     description: string;
     time: string;
     tip: string;
+    travel_from_previous?: string | null;
   }[];
 };
 
@@ -41,6 +42,14 @@ const PACE_OPTIONS = [
   { value: 'moderate', label: 'Moderate', desc: '3-4 spots/day' },
   { value: 'packed', label: 'Packed', desc: '5+ spots/day, maximize everything' },
 ];
+
+const GROUP_OPTIONS = [
+  { value: 'solo', label: 'Solo', icon: '🧍' },
+  { value: 'couple', label: 'Couple', icon: '👫' },
+  { value: 'family', label: 'Family', icon: '👨‍👩‍👧' },
+  { value: 'friends', label: 'Friends', icon: '👯' },
+];
+
 
 export default function PlanPage() {
   const searchParams = useSearchParams();
@@ -68,6 +77,7 @@ export default function PlanPage() {
   const [days, setDays] = useState(3);
   const [interests, setInterests] = useState<string[]>([]);
   const [pace, setPace] = useState('moderate');
+  const [groupType, setGroupType] = useState('solo');
   const [prefecture, setPrefecture] = useState(() => pinnedSpot?.prefecture ?? 'all');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ItineraryResult | null>(null);
@@ -111,7 +121,7 @@ export default function PlanPage() {
       const res = await fetch('/api/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days, interests, pace, prefecture, spotId: pinnedSpot?.id }),
+        body: JSON.stringify({ days, interests, pace, groupType, prefecture, spotId: pinnedSpot?.id }),
       });
 
       if (!res.ok) {
@@ -277,6 +287,31 @@ export default function PlanPage() {
           </div>
         </div>
 
+        {/* Group type */}
+        <div>
+          <label className="block text-sm font-semibold text-stone-800 mb-3">
+            Who&apos;s travelling?
+          </label>
+          <div className="grid grid-cols-4 gap-3">
+            {GROUP_OPTIONS.map((g) => (
+              <button
+                key={g.value}
+                onClick={() => setGroupType(g.value)}
+                className={`p-3 rounded-xl border text-center transition-all ${
+                  groupType === g.value
+                    ? 'border-red-500 bg-red-50'
+                    : 'border-stone-200 hover:border-stone-400'
+                }`}
+              >
+                <p className="text-xl mb-1">{g.icon}</p>
+                <p className={`font-semibold text-xs ${groupType === g.value ? 'text-red-600' : 'text-stone-800'}`}>
+                  {g.label}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Prefecture */}
         <div>
           <label className="block text-sm font-semibold text-stone-800 mb-3">
@@ -285,9 +320,14 @@ export default function PlanPage() {
           <div className="flex flex-wrap gap-2">
             {[
               { value: 'all', label: 'All of Kyushu' },
+              { value: 'Fukuoka', label: 'Fukuoka' },
+              { value: 'Saga', label: 'Saga' },
+              { value: 'Nagasaki', label: 'Nagasaki' },
               { value: 'Kumamoto', label: 'Kumamoto' },
               { value: 'Oita', label: 'Oita' },
               { value: 'Miyazaki', label: 'Miyazaki' },
+              { value: 'Kagoshima', label: 'Kagoshima' },
+              { value: 'Okinawa', label: 'Okinawa' },
             ].map((opt) => (
               <button
                 key={opt.value}
@@ -436,6 +476,15 @@ export default function PlanPage() {
                     const spotData = findSpot(s.name);
                     return (
                       <div key={j} className="pt-4">
+                        {/* Travel from previous spot */}
+                        {j > 0 && s.travel_from_previous && (
+                          <div className="flex items-center gap-2 mb-4 ml-11">
+                            <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-full px-3 py-1 text-xs text-stone-500">
+                              <Navigation size={11} className="text-stone-400" />
+                              {s.travel_from_previous}
+                            </div>
+                          </div>
+                        )}
                         <div className="flex items-start gap-3">
                           <div className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                             {j + 1}
