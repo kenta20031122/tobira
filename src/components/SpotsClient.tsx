@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { Search, LayoutGrid, Map } from 'lucide-react';
+import { Search, LayoutGrid, Map, SlidersHorizontal, X } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
 import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import type { Category, Prefecture, Spot } from '@/types';
@@ -52,8 +52,23 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>('All');
   const [selectedDuration, setSelectedDuration] = useState<DurationFilter>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [showFilters, setShowFilters] = useState(!!initialPrefecture);
 
   const currentMonth = new Date().getMonth() + 1;
+
+  const activeFilterCount = [
+    selectedPrefecture !== 'All',
+    selectedCategory !== 'All',
+    selectedSeason !== 'All',
+    selectedDuration !== 'All',
+  ].filter(Boolean).length;
+
+  function clearAllFilters() {
+    setSelectedPrefecture('All');
+    setSelectedCategory('All');
+    setSelectedSeason('All');
+    setSelectedDuration('All');
+  }
 
   useEffect(() => {
     fetch('/api/user/favorites')
@@ -97,125 +112,170 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-4 mb-10">
-        {/* Search + view toggle */}
-        <div className="flex gap-3">
-          <div className="relative flex-1">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"
-              size={18}
-            />
-            <input
-              type="text"
-              placeholder="Search spots, activities, keywords..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition"
-            />
-          </div>
-
-          {/* List / Map toggle */}
-          <div className="flex rounded-xl border border-stone-200 bg-white overflow-hidden shrink-0">
-            <button
-              onClick={() => setViewMode('list')}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors ${
-                viewMode === 'list'
-                  ? 'bg-stone-900 text-white'
-                  : 'text-stone-500 hover:text-stone-900'
-              }`}
-            >
-              <LayoutGrid size={16} />
-              List
-            </button>
-            <button
-              onClick={() => setViewMode('map')}
-              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors ${
-                viewMode === 'map'
-                  ? 'bg-stone-900 text-white'
-                  : 'text-stone-500 hover:text-stone-900'
-              }`}
-            >
-              <Map size={16} />
-              Map
-            </button>
-          </div>
+      {/* Search bar row */}
+      <div className="flex gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"
+            size={18}
+          />
+          <input
+            type="text"
+            placeholder="Search spots, activities, keywords..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 rounded-xl border border-stone-200 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition"
+          />
         </div>
 
-        {/* Prefecture filter */}
-        <div className="flex flex-wrap gap-2">
-          {(['All', ...PREFECTURES] as const).map((p) => (
-            <button
-              key={p}
-              onClick={() => setSelectedPrefecture(p)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedPrefecture === p
-                  ? 'bg-stone-900 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
-              }`}
-            >
-              {p === 'All' ? 'All Prefectures' : p}
-            </button>
-          ))}
+        {/* List / Map toggle */}
+        <div className="flex rounded-xl border border-stone-200 bg-white overflow-hidden shrink-0">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors ${
+              viewMode === 'list'
+                ? 'bg-stone-900 text-white'
+                : 'text-stone-500 hover:text-stone-900'
+            }`}
+          >
+            <LayoutGrid size={16} />
+            List
+          </button>
+          <button
+            onClick={() => setViewMode('map')}
+            className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors ${
+              viewMode === 'map'
+                ? 'bg-stone-900 text-white'
+                : 'text-stone-500 hover:text-stone-900'
+            }`}
+          >
+            <Map size={16} />
+            Map
+          </button>
         </div>
 
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2">
-          {(['All', ...CATEGORIES] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => setSelectedCategory(c)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === c
-                  ? 'bg-red-600 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
-              }`}
-            >
-              {c === 'All' ? 'All Types' : CATEGORY_LABELS[c]}
-            </button>
-          ))}
-        </div>
-
-        {/* Season filter */}
-        <div className="flex flex-wrap gap-2">
-          {SEASON_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setSelectedSeason(opt.value)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedSeason === opt.value
-                  ? opt.value === 'now'
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-stone-900 text-white'
-                  : opt.value === 'now'
-                    ? 'bg-white border border-emerald-300 text-emerald-700 hover:border-emerald-500'
-                    : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
-              }`}
-            >
-              {opt.label}
-              {opt.sub && <span className="ml-1 text-xs opacity-70">{opt.sub}</span>}
-            </button>
-          ))}
-        </div>
-
-        {/* Duration filter */}
-        <div className="flex flex-wrap gap-2">
-          {DURATION_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setSelectedDuration(opt.value)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                selectedDuration === opt.value
-                  ? 'bg-stone-900 text-white'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
-              }`}
-            >
-              {opt.label}
-              {opt.sub && <span className="ml-1 text-xs opacity-70">{opt.sub}</span>}
-            </button>
-          ))}
-        </div>
+        {/* Filters toggle */}
+        <button
+          onClick={() => setShowFilters((v) => !v)}
+          className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-colors shrink-0 ${
+            showFilters
+              ? 'bg-stone-900 text-white border-stone-900'
+              : 'bg-white border-stone-200 text-stone-600 hover:border-stone-400'
+          }`}
+        >
+          <SlidersHorizontal size={16} />
+          Filters
+          {activeFilterCount > 0 && (
+            <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ${showFilters ? 'bg-white text-stone-900' : 'bg-red-500 text-white'}`}>
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
+
+      {/* Filter panel */}
+      {showFilters && (
+        <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 space-y-5">
+          {/* Prefecture */}
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Prefecture</p>
+            <div className="flex flex-wrap gap-2">
+              {(['All', ...PREFECTURES] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setSelectedPrefecture(p)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedPrefecture === p
+                      ? 'bg-stone-900 text-white'
+                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                  }`}
+                >
+                  {p === 'All' ? 'All' : p}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Category */}
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Category</p>
+            <div className="flex flex-wrap gap-2">
+              {(['All', ...CATEGORIES] as const).map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setSelectedCategory(c)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedCategory === c
+                      ? 'bg-red-600 text-white'
+                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                  }`}
+                >
+                  {c === 'All' ? 'All' : CATEGORY_LABELS[c]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Season */}
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Season</p>
+            <div className="flex flex-wrap gap-2">
+              {SEASON_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setSelectedSeason(opt.value)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedSeason === opt.value
+                      ? opt.value === 'now'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-stone-900 text-white'
+                      : opt.value === 'now'
+                        ? 'bg-stone-50 border border-emerald-300 text-emerald-700 hover:border-emerald-500'
+                        : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                  }`}
+                >
+                  {opt.label}
+                  {opt.sub && <span className="ml-1 text-xs opacity-60">{opt.sub}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Duration */}
+          <div>
+            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Visit Duration</p>
+            <div className="flex flex-wrap gap-2">
+              {DURATION_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setSelectedDuration(opt.value)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedDuration === opt.value
+                      ? 'bg-stone-900 text-white'
+                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                  }`}
+                >
+                  {opt.label}
+                  {opt.sub && <span className="ml-1 text-xs opacity-60">{opt.sub}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Clear all */}
+          {activeFilterCount > 0 && (
+            <div className="pt-1 border-t border-stone-100">
+              <button
+                onClick={clearAllFilters}
+                className="flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-700 transition-colors"
+              >
+                <X size={13} />
+                Clear all filters
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Results */}
       {filtered.length === 0 ? (
