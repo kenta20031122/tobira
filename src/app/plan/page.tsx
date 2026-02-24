@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -51,6 +51,9 @@ const GROUP_OPTIONS = [
 ];
 
 
+// Module-level store: persists across component unmount/remount during client-side navigation
+let _planStore: { result: ItineraryResult; shareToken: string; expandedDay: number | null } | null = null;
+
 export default function PlanPage() {
   const searchParams = useSearchParams();
 
@@ -98,37 +101,29 @@ export default function PlanPage() {
     });
   }, []);
 
-  // Persist itinerary to sessionStorage so navigating to a spot and back restores it.
-  // IMPORTANT: save effect must be defined BEFORE restore effect — React runs effects
-  // in definition order on mount, ensuring we skip the save on the very first render
-  // (before restore has run) by checking restoredRef.
-  const restoredRef = useRef(false);
+  // Persist itinerary across client-side navigation (e.g. /plan → /spots/[id] → back).
+  // Module-level _planStore survives component unmount. `initialized` prevents the save
+  // effect from wiping the store before the restore effect has had a chance to read it.
+  const [initialized, setInitialized] = useState(false);
 
+  // Save effect — defined first so it runs first on mount (returns early via initialized=false)
   useEffect(() => {
-    if (!restoredRef.current) return;
-    try {
-      if (result) {
-        sessionStorage.setItem(
-          'tobira_plan_result',
-          JSON.stringify({ result, shareToken: savedShareToken, expandedDay })
-        );
-      } else {
-        sessionStorage.removeItem('tobira_plan_result');
-      }
-    } catch {}
-  }, [result, savedShareToken, expandedDay]);
+    if (!initialized) return;
+    if (result) {
+      _planStore = { result, shareToken: savedShareToken, expandedDay };
+    } else {
+      _planStore = null;
+    }
+  }, [initialized, result, savedShareToken, expandedDay]);
 
+  // Restore effect — defined second, runs after save effect; sets initialized=true when done
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem('tobira_plan_result');
-      if (saved) {
-        const { result: r, shareToken, expandedDay: ed } = JSON.parse(saved);
-        if (r) setResult(r);
-        if (shareToken) setSavedShareToken(shareToken);
-        if (ed !== undefined) setExpandedDay(ed);
-      }
-    } catch {}
-    restoredRef.current = true;
+    if (_planStore) {
+      setResult(_planStore.result);
+      setSavedShareToken(_planStore.shareToken);
+      setExpandedDay(_planStore.expandedDay);
+    }
+    setInitialized(true);
   }, []);
 
   const toggleInterest = (interest: string) => {

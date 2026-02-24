@@ -112,7 +112,7 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
           "description": "Why visit and what to do (2 sentences)",
           "time": "Suggested time (e.g. '9:00 AM - 12:00 PM')",
           "tip": "Insider tip locals know but tourists miss",
-          "travel_from_previous": "How to get here from the previous spot (e.g. '20 min by bus', '45 min by local train', 'Walk 10 min'). Use null for the first spot of the day."
+          "travel_from_previous": "How to get here. Rules by position: (1) First spot of Day 1: null. (2) First spot of Day 2+: travel from accommodation near the LAST spot of the previous day (e.g. 'From hotel near Kumamoto Castle, 15 min by tram'). (3) All other spots: travel from the previous spot in the same day (e.g. '20 min by bus', 'Walk 10 min')."
         }
       ]
     }
@@ -121,6 +121,7 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 
 Rules:
 - Use spots from the database when possible, but you may add real Kyushu/Okinawa spots not in the list
+- CRITICAL: Inter-day continuity — the LAST spot of Day N defines the overnight area. Day N+1 MUST start geographically close to that area. NEVER start a new day in a location far from where the previous day ended (e.g. if Day 1 ends in Kumamoto, Day 2 MUST NOT start in Okinawa or a distant prefecture)
 - CRITICAL: Group geographically close spots on the same day — use the lat/lng coordinates to avoid inefficient backtracking
 - Order spots within each day to minimize total travel time (nearest-neighbor routing)
 - Match the pace: relaxed=1-2 spots/day, moderate=3-4, packed=5+
