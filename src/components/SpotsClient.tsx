@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { Search, LayoutGrid, Map } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
-import { CATEGORY_LABELS, PREFECTURE_LABELS } from '@/lib/utils';
+import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import type { Category, Prefecture, Spot } from '@/types';
 
 const SpotsMapView = dynamic(() => import('@/components/maps/SpotsMapView'), {
@@ -20,6 +20,25 @@ const SpotsMapView = dynamic(() => import('@/components/maps/SpotsMapView'), {
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as Category[];
 const PREFECTURES = Object.keys(PREFECTURE_LABELS) as Prefecture[];
 
+type SeasonFilter = 'All' | 'now' | 'spring' | 'summer' | 'autumn' | 'winter';
+type DurationFilter = 'All' | 'short' | 'medium' | 'long';
+
+const SEASON_OPTIONS: { value: SeasonFilter; label: string; sub?: string }[] = [
+  { value: 'All', label: 'All Seasons' },
+  { value: 'now', label: '🌿 In Season Now' },
+  { value: 'spring', label: 'Spring', sub: 'Mar–May' },
+  { value: 'summer', label: 'Summer', sub: 'Jun–Aug' },
+  { value: 'autumn', label: 'Autumn', sub: 'Sep–Nov' },
+  { value: 'winter', label: 'Winter', sub: 'Dec–Feb' },
+];
+
+const DURATION_OPTIONS: { value: DurationFilter; label: string; sub?: string }[] = [
+  { value: 'All', label: 'Any Duration' },
+  { value: 'short', label: 'Quick', sub: '<2h' },
+  { value: 'medium', label: 'Half Day', sub: '2–4h' },
+  { value: 'long', label: 'Full Day', sub: '4h+' },
+];
+
 export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
@@ -30,7 +49,11 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
     initialPrefecture ?? 'All'
   );
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
+  const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>('All');
+  const [selectedDuration, setSelectedDuration] = useState<DurationFilter>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+
+  const currentMonth = new Date().getMonth() + 1;
 
   useEffect(() => {
     fetch('/api/user/favorites')
@@ -50,9 +73,16 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         s.name.toLowerCase().includes(search.toLowerCase()) ||
         s.description.toLowerCase().includes(search.toLowerCase()) ||
         s.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
-      return matchPrefecture && matchCategory && matchSearch;
+      const matchSeason =
+        selectedSeason === 'All' ? true
+        : selectedSeason === 'now' ? isInSeason(s.best_season, currentMonth)
+        : isGoodInSeason(s.best_season, selectedSeason);
+      const matchDuration =
+        selectedDuration === 'All' ? true
+        : getDurationBucket(s.duration) === selectedDuration;
+      return matchPrefecture && matchCategory && matchSearch && matchSeason && matchDuration;
     });
-  }, [spots, selectedPrefecture, selectedCategory, search]);
+  }, [spots, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, currentMonth]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -142,6 +172,46 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
               }`}
             >
               {c === 'All' ? 'All Types' : CATEGORY_LABELS[c]}
+            </button>
+          ))}
+        </div>
+
+        {/* Season filter */}
+        <div className="flex flex-wrap gap-2">
+          {SEASON_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSelectedSeason(opt.value)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedSeason === opt.value
+                  ? opt.value === 'now'
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-stone-900 text-white'
+                  : opt.value === 'now'
+                    ? 'bg-white border border-emerald-300 text-emerald-700 hover:border-emerald-500'
+                    : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
+              }`}
+            >
+              {opt.label}
+              {opt.sub && <span className="ml-1 text-xs opacity-70">{opt.sub}</span>}
+            </button>
+          ))}
+        </div>
+
+        {/* Duration filter */}
+        <div className="flex flex-wrap gap-2">
+          {DURATION_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSelectedDuration(opt.value)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedDuration === opt.value
+                  ? 'bg-stone-900 text-white'
+                  : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
+              }`}
+            >
+              {opt.label}
+              {opt.sub && <span className="ml-1 text-xs opacity-70">{opt.sub}</span>}
             </button>
           ))}
         </div>

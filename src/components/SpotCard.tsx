@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock, Lock } from 'lucide-react';
 import type { Spot } from '@/types';
-import { cn, CATEGORY_LABELS } from '@/lib/utils';
+import { cn, CATEGORY_LABELS, isInSeason } from '@/lib/utils';
 import FavoriteButton from '@/components/FavoriteButton';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -20,6 +20,7 @@ type Props = {
 };
 
 export default function SpotCard({ spot, isFavorited = false }: Props) {
+  const inSeason = isInSeason(spot.best_season, new Date().getMonth() + 1);
   return (
     <Link href={`/spots/${spot.id}`} className="group block">
       <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
@@ -42,6 +43,13 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
           )}
           {/* Favorite button */}
           <FavoriteButton spotId={spot.id} initialFavorited={isFavorited} />
+
+          {/* In Season badge */}
+          {inSeason && (
+            <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
+              🌿 In Season
+            </div>
+          )}
 
           {/* Category badge(s) */}
           <div className="absolute top-3 left-3 flex gap-1 flex-wrap max-w-[70%]">
