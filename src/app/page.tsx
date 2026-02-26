@@ -63,8 +63,7 @@ export default async function HomePage() {
   };
 
   const REGIONS = [
-    { label: 'Hokkaido',           prefectures: ['Hokkaido'] },
-    { label: 'Tohoku',             prefectures: ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
+    { label: 'Hokkaido & Tohoku',  prefectures: ['Hokkaido', 'Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
     { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
     { label: 'Kyushu & Okinawa',  prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima', 'Okinawa'] },
   ];
