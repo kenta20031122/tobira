@@ -14,23 +14,25 @@ const OG_IMAGE = 'https://tobira-travel.com/og.jpg';
 export const metadata: Metadata = {
   metadataBase: new URL('https://tobira-travel.com'),
   title: {
-    default: 'Tobira — Discover Hidden Kyushu',
+    default: 'Tobira — Beyond Tokyo | Discover Real Japan',
     template: '%s | Tobira',
   },
   description:
-    "Go beyond Tokyo. Tobira guides you to Japan's most authentic, lesser-known experiences in Kyushu — curated by locals, powered by AI.",
+    "Go beyond Tokyo. Tobira guides you to Japan's most authentic experiences across Western Japan — Kyushu, Okinawa, and Hiroshima. Curated by locals, powered by AI.",
   openGraph: {
-    title: 'Tobira — Discover Hidden Kyushu',
-    description: "Japan's authentic travel guide, beyond the tourist trail.",
+    title: 'Tobira — Beyond Tokyo | Discover Real Japan',
+    description:
+      "Go beyond Tokyo. Japan's authentic travel guide for Kyushu, Okinawa & Hiroshima — curated by locals, powered by AI.",
     type: 'website',
     url: 'https://tobira-travel.com',
     siteName: 'Tobira',
-    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Mt. Aso Caldera, Kyushu Japan' }],
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Western Japan travel guide — Tobira' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tobira — Discover Hidden Kyushu',
-    description: "Japan's authentic travel guide, beyond the tourist trail.",
+    title: 'Tobira — Beyond Tokyo | Discover Real Japan',
+    description:
+      "Go beyond Tokyo. Japan's authentic travel guide for Kyushu, Okinawa & Hiroshima — curated by locals, powered by AI.",
     images: [OG_IMAGE],
   },
 };
