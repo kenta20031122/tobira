@@ -24,6 +24,14 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Kagoshima: 'Kagoshima',
   Okinawa: 'Okinawa',
   Hiroshima: 'Hiroshima',
+  Yamaguchi: 'Yamaguchi',
+  Okayama: 'Okayama',
+  Tottori: 'Tottori',
+  Shimane: 'Shimane',
+  Ehime: 'Ehime',
+  Kochi: 'Kochi',
+  Tokushima: 'Tokushima',
+  Kagawa: 'Kagawa',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────

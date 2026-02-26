@@ -95,6 +95,62 @@ export default async function HomePage() {
         'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/hiroshima.jpg',
       count: spots.filter((s) => s.prefecture === 'Hiroshima').length,
     },
+    {
+      name: 'Yamaguchi',
+      tagline: 'Torii Cliffs & Karst Caves',
+      image:
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Yamaguchi').length,
+    },
+    {
+      name: 'Okayama',
+      tagline: 'Canal Districts & Garden Art',
+      image:
+        'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Okayama').length,
+    },
+    {
+      name: 'Tottori',
+      tagline: 'Sand Dunes & Sacred Peaks',
+      image:
+        'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Tottori').length,
+    },
+    {
+      name: 'Shimane',
+      tagline: 'Ancient Shrines & Silver Mines',
+      image:
+        'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Shimane').length,
+    },
+    {
+      name: 'Ehime',
+      tagline: 'Oldest Onsen & Island Cycling',
+      image:
+        'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Ehime').length,
+    },
+    {
+      name: 'Kochi',
+      tagline: 'Wild Rivers & Pacific Coast',
+      image:
+        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Kochi').length,
+    },
+    {
+      name: 'Tokushima',
+      tagline: 'Whirlpools & Vine Bridges',
+      image:
+        'https://images.unsplash.com/photo-1566379751960-fa10f9da7a72?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Tokushima').length,
+    },
+    {
+      name: 'Kagawa',
+      tagline: 'Art Islands & Sacred Stairs',
+      image:
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&auto=format&fit=crop&q=80',
+      count: spots.filter((s) => s.prefecture === 'Kagawa').length,
+    },
   ];
 
   return (
@@ -122,8 +178,8 @@ export default async function HomePage() {
           </h1>
           <p className="text-stone-300 text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
             Hand-curated guides to Japan&apos;s most authentic experiences —
-            from Kyushu&apos;s volcanoes and hidden onsen to Hiroshima&apos;s
-            islands and Okinawa&apos;s coral reefs.
+            from Kyushu&apos;s volcanoes and Shikoku&apos;s vine bridges
+            to Hiroshima&apos;s islands and Okinawa&apos;s coral reefs.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -190,8 +246,8 @@ export default async function HomePage() {
             Western Japan. Endless Discovery.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Nine prefectures, each with its own soul. Pick one, or let the AI
-            planner weave them into one perfect journey.
+            Seventeen prefectures, each with its own soul. Pick one, or let
+            the AI planner weave them into one perfect journey.
           </p>
         </div>
 

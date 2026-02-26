@@ -19,6 +19,14 @@ const PREFECTURE_MAP: Record<string, Prefecture> = {
   kagoshima: 'Kagoshima',
   okinawa:   'Okinawa',
   hiroshima: 'Hiroshima',
+  yamaguchi: 'Yamaguchi',
+  okayama:   'Okayama',
+  tottori:   'Tottori',
+  shimane:   'Shimane',
+  ehime:     'Ehime',
+  kochi:     'Kochi',
+  tokushima: 'Tokushima',
+  kagawa:    'Kagawa',
 };
 
 
@@ -37,7 +45,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spots = allSpots.filter((s) => s.prefecture === prefecture);
   const heroImage = spots[0]?.image_url;
 
-  const region = prefecture === 'Hiroshima' ? 'Chugoku Region' : prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
+  const region =
+    ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
+    ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
+    prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
   return {
     title: `${prefecture} Travel Guide: Hidden Gems & Local Spots`,
     description: `Discover ${spots.length} curated spots in ${prefecture}, ${region}. Authentic local experiences, hidden gems, and off-the-beaten-path destinations — beyond the tourist trail.`,
