@@ -44,10 +44,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spot = await getSpotById(id);
   if (!spot) return {};
   return {
-    title: spot.name,
+    title: `${spot.name} — ${spot.prefecture}, Japan`,
     description: spot.description,
     openGraph: {
-      title: spot.name,
+      title: `${spot.name} — ${spot.prefecture}, Japan`,
       description: spot.description,
       images: [{ url: spot.image_url, width: 1200, height: 630, alt: spot.name }],
       type: 'article',
@@ -169,7 +169,7 @@ export default async function SpotDetailPage({ params }: Props) {
       <div className="mb-6">
         <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
           <MapPin size={14} />
-          <span>{spot.prefecture}, Kyushu</span>
+          <span>{spot.prefecture}, {spot.region === 'chugoku' ? 'Chugoku Region' : 'Kyushu'}</span>
         </div>
         <div className="flex items-start justify-between gap-4 mb-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-stone-900">
@@ -342,7 +342,7 @@ export default async function SpotDetailPage({ params }: Props) {
             Add to your AI itinerary
           </h3>
           <p className="text-stone-500 text-sm">
-            Let AI build a multi-day Kyushu trip around this spot.
+            Let AI build a multi-day trip around this spot.
           </p>
         </div>
         <Link

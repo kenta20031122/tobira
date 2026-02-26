@@ -37,12 +37,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spots = allSpots.filter((s) => s.prefecture === prefecture);
   const heroImage = spots[0]?.image_url;
 
+  const region = prefecture === 'Hiroshima' ? 'Chugoku Region' : prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
   return {
     title: `${prefecture} Travel Guide: Hidden Gems & Local Spots`,
-    description: `Discover ${spots.length} curated spots in ${prefecture}, Kyushu. Authentic local experiences, hidden gems, and off-the-beaten-path destinations — beyond the tourist trail.`,
+    description: `Discover ${spots.length} curated spots in ${prefecture}, ${region}. Authentic local experiences, hidden gems, and off-the-beaten-path destinations — beyond the tourist trail.`,
     openGraph: {
       title: `${prefecture} Travel Guide | Tobira`,
-      description: `${spots.length} hidden gems in ${prefecture} — curated by locals.`,
+      description: `${spots.length} hidden gems in ${prefecture}, ${region} — curated by locals.`,
       ...(heroImage && {
         images: [{ url: heroImage, width: 1200, height: 630, alt: prefecture }],
       }),
