@@ -32,6 +32,13 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Kochi: 'Kochi',
   Tokushima: 'Tokushima',
   Kagawa: 'Kagawa',
+  Hokkaido: 'Hokkaido',
+  Aomori: 'Aomori',
+  Iwate: 'Iwate',
+  Miyagi: 'Miyagi',
+  Akita: 'Akita',
+  Yamagata: 'Yamagata',
+  Fukushima: 'Fukushima',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────

@@ -169,7 +169,13 @@ export default async function SpotDetailPage({ params }: Props) {
       <div className="mb-6">
         <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
           <MapPin size={14} />
-          <span>{spot.prefecture}, {spot.region === 'chugoku' ? 'Chugoku Region' : spot.region === 'shikoku' ? 'Shikoku' : 'Kyushu'}</span>
+          <span>{spot.prefecture}, {
+            spot.region === 'chugoku' ? 'Chugoku Region' :
+            spot.region === 'shikoku' ? 'Shikoku' :
+            spot.region === 'hokkaido' ? 'Hokkaido' :
+            spot.region === 'tohoku' ? 'Tohoku' :
+            'Kyushu'
+          }</span>
         </div>
         <div className="flex items-start justify-between gap-4 mb-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-stone-900">

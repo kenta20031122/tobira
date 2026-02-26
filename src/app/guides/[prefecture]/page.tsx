@@ -27,6 +27,13 @@ const PREFECTURE_MAP: Record<string, Prefecture> = {
   kochi:     'Kochi',
   tokushima: 'Tokushima',
   kagawa:    'Kagawa',
+  hokkaido:  'Hokkaido',
+  aomori:    'Aomori',
+  iwate:     'Iwate',
+  miyagi:    'Miyagi',
+  akita:     'Akita',
+  yamagata:  'Yamagata',
+  fukushima: 'Fukushima',
 };
 
 
@@ -46,6 +53,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const heroImage = spots[0]?.image_url;
 
   const region =
+    prefecture === 'Hokkaido' ? 'Hokkaido' :
+    ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
@@ -77,6 +86,12 @@ export default async function PrefectureGuidePage({ params }: Props) {
 
   const heroSpot = spots[0];
   const categories = [...new Set(spots.flatMap((s) => s.categories))];
+  const region =
+    prefecture === 'Hokkaido' ? 'Hokkaido' :
+    ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
+    ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
+    ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
+    prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
 
   return (
     <>
@@ -94,7 +109,7 @@ export default async function PrefectureGuidePage({ params }: Props) {
         <div className="relative z-10 max-w-6xl mx-auto px-4 pb-14 w-full">
           <div className="flex items-center gap-2 text-stone-300 text-sm mb-3">
             <MapPin size={14} />
-            <span>Kyushu & Okinawa, Japan</span>
+            <span>{region}, Japan</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-bold text-white mb-4">
             {prefecture} Travel Guide

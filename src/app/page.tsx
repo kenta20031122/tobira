@@ -9,7 +9,7 @@ const FEATURES = [
     icon: Compass,
     title: 'Curated by Locals',
     description:
-      "Every spot is hand-picked by people who actually live in Kyushu — not scraped from TripAdvisor.",
+      "Every spot is hand-picked by someone who has been there — not scraped from TripAdvisor or trained on influencer content.",
   },
   {
     icon: Sparkles,
@@ -31,126 +31,42 @@ export default async function HomePage() {
   const FEATURED_IDS = ['aso-caldera', 'beppu-hells', 'takachiho-gorge'];
   const featuredSpots = FEATURED_IDS.map((id) => spots.find((s) => s.id === id)!).filter(Boolean);
 
-  const PREFECTURES = [
-    {
-      name: 'Fukuoka',
-      tagline: 'Ramen, Shrines & City Life',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/fukuoka.jpg',
-      count: spots.filter((s) => s.prefecture === 'Fukuoka').length,
-    },
-    {
-      name: 'Saga',
-      tagline: 'Pottery & Ancient Ruins',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/saga.jpg',
-      count: spots.filter((s) => s.prefecture === 'Saga').length,
-    },
-    {
-      name: 'Nagasaki',
-      tagline: 'History, Islands & Peace',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/nagasaki.jpg',
-      count: spots.filter((s) => s.prefecture === 'Nagasaki').length,
-    },
-    {
-      name: 'Kumamoto',
-      tagline: 'Volcanoes & Onsen',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kumamoto.jpg',
-      count: spots.filter((s) => s.prefecture === 'Kumamoto').length,
-    },
-    {
-      name: 'Oita',
-      tagline: 'Hot Springs & Highlands',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/oita.jpg',
-      count: spots.filter((s) => s.prefecture === 'Oita').length,
-    },
-    {
-      name: 'Miyazaki',
-      tagline: 'Myth & Pacific Coast',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/miyazaki.jpg',
-      count: spots.filter((s) => s.prefecture === 'Miyazaki').length,
-    },
-    {
-      name: 'Kagoshima',
-      tagline: 'Sakurajima & Wild South',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/kagoshima.jpg',
-      count: spots.filter((s) => s.prefecture === 'Kagoshima').length,
-    },
-    {
-      name: 'Okinawa',
-      tagline: 'Coral Reefs & Ryukyu Culture',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/okinawa.jpg',
-      count: spots.filter((s) => s.prefecture === 'Okinawa').length,
-    },
-    {
-      name: 'Hiroshima',
-      tagline: 'Peace, Islands & Inland Sea',
-      image:
-        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/hiroshima.jpg',
-      count: spots.filter((s) => s.prefecture === 'Hiroshima').length,
-    },
-    {
-      name: 'Yamaguchi',
-      tagline: 'Torii Cliffs & Karst Caves',
-      image:
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Yamaguchi').length,
-    },
-    {
-      name: 'Okayama',
-      tagline: 'Canal Districts & Garden Art',
-      image:
-        'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Okayama').length,
-    },
-    {
-      name: 'Tottori',
-      tagline: 'Sand Dunes & Sacred Peaks',
-      image:
-        'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Tottori').length,
-    },
-    {
-      name: 'Shimane',
-      tagline: 'Ancient Shrines & Silver Mines',
-      image:
-        'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Shimane').length,
-    },
-    {
-      name: 'Ehime',
-      tagline: 'Oldest Onsen & Island Cycling',
-      image:
-        'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Ehime').length,
-    },
-    {
-      name: 'Kochi',
-      tagline: 'Wild Rivers & Pacific Coast',
-      image:
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Kochi').length,
-    },
-    {
-      name: 'Tokushima',
-      tagline: 'Whirlpools & Vine Bridges',
-      image:
-        'https://images.unsplash.com/photo-1566379751960-fa10f9da7a72?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Tokushima').length,
-    },
-    {
-      name: 'Kagawa',
-      tagline: 'Art Islands & Sacred Stairs',
-      image:
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&auto=format&fit=crop&q=80',
-      count: spots.filter((s) => s.prefecture === 'Kagawa').length,
-    },
+  const PH = 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&auto=format&fit=crop&q=80';
+  const SB = (file: string) =>
+    `https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/${file}`;
+
+  const PREFECTURE_DATA: Record<string, { tagline: string; image: string }> = {
+    Hokkaido:  { tagline: 'Lavender Fields & Wild Frontiers',    image: PH },
+    Aomori:    { tagline: 'Sacred Mountains & Apple Blossoms',   image: PH },
+    Iwate:     { tagline: 'Golden Temples & Hidden Gorges',      image: PH },
+    Miyagi:    { tagline: 'Island Bays & Samurai Coast',         image: PH },
+    Akita:     { tagline: 'Samurai Towns & Volcanic Lakes',      image: PH },
+    Yamagata:  { tagline: 'Snow Onsen & Mountain Shrines',       image: PH },
+    Fukushima: { tagline: 'Castle Towns & Emerald Lakes',        image: PH },
+    Hiroshima: { tagline: 'Peace, Islands & Inland Sea',         image: SB('hiroshima.jpg') },
+    Yamaguchi: { tagline: 'Torii Cliffs & Karst Caves',          image: PH },
+    Okayama:   { tagline: 'Canal Districts & Garden Art',        image: PH },
+    Tottori:   { tagline: 'Sand Dunes & Sacred Peaks',           image: PH },
+    Shimane:   { tagline: 'Ancient Shrines & Silver Mines',      image: PH },
+    Ehime:     { tagline: 'Oldest Onsen & Island Cycling',       image: PH },
+    Kochi:     { tagline: 'Wild Rivers & Pacific Coast',         image: PH },
+    Tokushima: { tagline: 'Whirlpools & Vine Bridges',           image: PH },
+    Kagawa:    { tagline: 'Art Islands & Sacred Stairs',         image: PH },
+    Fukuoka:   { tagline: 'Ramen, Shrines & City Life',          image: SB('fukuoka.jpg') },
+    Saga:      { tagline: 'Pottery & Ancient Ruins',             image: SB('saga.jpg') },
+    Nagasaki:  { tagline: 'History, Islands & Peace',            image: SB('nagasaki.jpg') },
+    Kumamoto:  { tagline: 'Volcanoes & Onsen',                   image: SB('kumamoto.jpg') },
+    Oita:      { tagline: 'Hot Springs & Highlands',             image: SB('oita.jpg') },
+    Miyazaki:  { tagline: 'Myth & Pacific Coast',                image: SB('miyazaki.jpg') },
+    Kagoshima: { tagline: 'Sakurajima & Wild South',             image: SB('kagoshima.jpg') },
+    Okinawa:   { tagline: 'Coral Reefs & Ryukyu Culture',        image: SB('okinawa.jpg') },
+  };
+
+  const REGIONS = [
+    { label: 'Hokkaido',           prefectures: ['Hokkaido'] },
+    { label: 'Tohoku',             prefectures: ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
+    { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
+    { label: 'Kyushu & Okinawa',  prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima', 'Okinawa'] },
   ];
 
   return (
@@ -178,8 +94,8 @@ export default async function HomePage() {
           </h1>
           <p className="text-stone-300 text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
             Hand-curated guides to Japan&apos;s most authentic experiences —
-            from Kyushu&apos;s volcanoes and Shikoku&apos;s vine bridges
-            to Hiroshima&apos;s islands and Okinawa&apos;s coral reefs.
+            from Hokkaido&apos;s wild frontiers and Tohoku&apos;s snow onsen
+            to Kyushu&apos;s volcanoes and Okinawa&apos;s coral reefs.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -200,7 +116,7 @@ export default async function HomePage() {
           </div>
 
           <p className="text-stone-500 text-sm mt-8">
-            {spots.length} hand-picked spots · Western Japan
+            {spots.length} hand-picked spots across Japan
           </p>
         </div>
       </section>
@@ -241,39 +157,49 @@ export default async function HomePage() {
 
       {/* ─── Prefecture Cards ─────────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-4 py-20">
-        <div className="text-center mb-12">
+        <div className="text-center mb-14">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
-            Western Japan. Endless Discovery.
+            All of Japan. Beyond the Guidebook.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Seventeen prefectures, each with its own soul. Pick one, or let
-            the AI planner weave them into one perfect journey.
+            Twenty-four prefectures across Hokkaido, Tohoku, Chugoku, Shikoku and Kyushu — each curated by someone who has actually been there.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {PREFECTURES.map((p) => (
-            <Link
-              key={p.name}
-              href={`/guides/${p.name.toLowerCase()}`}
-              className="group relative rounded-2xl overflow-hidden h-52 sm:h-64 block"
-            >
-              <Image
-                src={p.image}
-                alt={p.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <p className="text-stone-300 text-sm mb-1">{p.tagline}</p>
-                <h3 className="text-white text-2xl font-bold">{p.name}</h3>
-                <p className="text-stone-400 text-sm mt-1">
-                  {p.count} spots curated
-                </p>
+        <div className="space-y-12">
+          {REGIONS.map((region) => (
+            <div key={region.label}>
+              <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
+                {region.label}
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {region.prefectures.map((name) => {
+                  const data = PREFECTURE_DATA[name];
+                  const count = spots.filter((s) => s.prefecture === name).length;
+                  return (
+                    <Link
+                      key={name}
+                      href={`/guides/${name.toLowerCase()}`}
+                      className="group relative rounded-2xl overflow-hidden h-44 sm:h-56 block"
+                    >
+                      <Image
+                        src={data.image}
+                        alt={name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <p className="text-stone-300 text-xs mb-0.5">{data.tagline}</p>
+                        <h3 className="text-white text-lg font-bold leading-tight">{name}</h3>
+                        <p className="text-stone-400 text-xs mt-0.5">{count} spots</p>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -360,8 +286,8 @@ export default async function HomePage() {
               <p className="text-stone-400 text-sm font-medium mb-1">Free</p>
               <p className="text-3xl font-bold mb-4">$0</p>
               <ul className="text-stone-400 text-sm space-y-2 mb-8">
-                <li>✓ All 3 regions — full spot browsing</li>
-                <li>✓ More regions & spots added regularly</li>
+                <li>✓ All regions — full spot browsing</li>
+                <li>✓ More prefectures & spots added regularly</li>
                 <li>✓ 1 AI itinerary plan</li>
               </ul>
               <Link

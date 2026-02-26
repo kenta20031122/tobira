@@ -25,6 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'oita', 'miyazaki', 'kagoshima', 'okinawa', 'hiroshima',
     'yamaguchi', 'okayama', 'tottori', 'shimane',
     'ehime', 'kochi', 'tokushima', 'kagawa',
+    'hokkaido',
+    'aomori', 'iwate', 'miyagi', 'akita', 'yamagata', 'fukushima',
   ].map((pref) => ({
     url: `${BASE_URL}/guides/${pref}`,
     changeFrequency: 'monthly' as const,
