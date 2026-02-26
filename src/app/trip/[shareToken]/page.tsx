@@ -41,8 +41,29 @@ export async function generateMetadata({
   params: Promise<{ shareToken: string }>;
 }) {
   const { shareToken } = await params;
-  const trip = await getTrip(shareToken);
+  const [trip, allSpots] = await Promise.all([
+    getTrip(shareToken),
+    getAllSpots(),
+  ]);
   if (!trip) return { title: 'Trip not found — tobira' };
+
+  // Find first spot image matching day 1 spot 1
+  const firstSpotName = trip.days[0]?.spots[0]?.name ?? '';
+  const matchedSpot = allSpots.find((s) => {
+    const lower = firstSpotName.toLowerCase();
+    return (
+      s.name.toLowerCase().includes(lower) ||
+      lower.includes(s.name.toLowerCase())
+    );
+  });
+
+  const ogImageUrl = new URL('https://tobira-travel.com/api/og/trip');
+  ogImageUrl.searchParams.set('title', trip.title);
+  ogImageUrl.searchParams.set('days', String(trip.days.length));
+  if (matchedSpot?.image_url) {
+    ogImageUrl.searchParams.set('image', matchedSpot.image_url);
+  }
+
   return {
     title: `${trip.title} — tobira`,
     description: trip.overview,
@@ -50,6 +71,13 @@ export async function generateMetadata({
       title: trip.title,
       description: trip.overview,
       siteName: 'tobira',
+      images: [{ url: ogImageUrl.toString(), width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: trip.title,
+      description: trip.overview,
+      images: [ogImageUrl.toString()],
     },
   };
 }

@@ -93,15 +93,45 @@ export default async function SpotDetailPage({ params }: Props) {
     .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
     .slice(0, 3);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: spot.name,
+    description: spot.description,
+    image: spot.image_url,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: spot.address,
+      addressRegion: spot.prefecture,
+      addressCountry: 'JP',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: spot.lat,
+      longitude: spot.lng,
+    },
+    url: `https://tobira-travel.com/spots/${spot.id}`,
+    ...(spot.website_url && { sameAs: spot.website_url }),
+    ...(spot.admission && {
+      isAccessibleForFree: spot.admission.toLowerCase() === 'free',
+    }),
+    touristType: spot.categories,
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Back */}
       <Link
-        href="/spots"
+        href={`/guides/${spot.prefecture.toLowerCase()}`}
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors mb-6"
       >
         <ArrowLeft size={15} />
-        Back to all spots
+        Back to {spot.prefecture} Guide
       </Link>
 
       {/* Hero Image */}
@@ -337,5 +367,6 @@ export default async function SpotDetailPage({ params }: Props) {
         </div>
       )}
     </div>
+    </>
   );
 }

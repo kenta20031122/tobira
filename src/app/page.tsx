@@ -88,6 +88,13 @@ export default async function HomePage() {
         'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/okinawa.jpg',
       count: spots.filter((s) => s.prefecture === 'Okinawa').length,
     },
+    {
+      name: 'Hiroshima',
+      tagline: 'Peace, Islands & Inland Sea',
+      image:
+        'https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/hiroshima.jpg',
+      count: spots.filter((s) => s.prefecture === 'Hiroshima').length,
+    },
   ];
 
   return (
@@ -114,17 +121,17 @@ export default async function HomePage() {
             <span className="text-red-400">Real Japan.</span>
           </h1>
           <p className="text-stone-300 text-lg sm:text-xl max-w-xl mx-auto mb-10 leading-relaxed">
-            Hand-curated guides to Kyushu&apos;s most authentic experiences —
-            volcanoes, hidden onsen, sea-cave shrines, and wild horses on
-            Pacific cliffs.
+            Hand-curated guides to Japan&apos;s most authentic experiences —
+            from Kyushu&apos;s volcanoes and hidden onsen to Hiroshima&apos;s
+            islands and Okinawa&apos;s coral reefs.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/spots"
+              href="/guides"
               className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-full transition-colors text-base"
             >
-              Explore Kyushu
+              Browse Destinations
               <ArrowRight size={18} />
             </Link>
             <Link
@@ -137,8 +144,42 @@ export default async function HomePage() {
           </div>
 
           <p className="text-stone-500 text-sm mt-8">
-            {spots.length} hand-picked spots · Kyushu & Okinawa
+            {spots.length} hand-picked spots · Western Japan
           </p>
+        </div>
+      </section>
+
+      {/* ─── Browse by Interest ───────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-stone-900 mb-3">
+            What are you looking for?
+          </h2>
+          <p className="text-stone-500 max-w-md mx-auto">
+            Browse by interest — or let the AI weave everything into one trip.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
+          {[
+            { label: 'Nature',   emoji: '🌋', category: 'nature'   },
+            { label: 'Onsen',    emoji: '♨️',  category: 'onsen'    },
+            { label: 'Food',     emoji: '🍜', category: 'food'     },
+            { label: 'History',  emoji: '🏯', category: 'history'  },
+            { label: 'Shrines',  emoji: '⛩',  category: 'spiritual'},
+            { label: 'Activity', emoji: '🧗', category: 'activity' },
+          ].map(({ label, emoji, category }) => (
+            <Link
+              key={category}
+              href={`/spots?category=${category}`}
+              className="group flex flex-col items-center gap-2 py-5 px-2 rounded-2xl border border-stone-200 bg-white hover:border-red-300 hover:bg-red-50 transition-colors"
+            >
+              <span className="text-3xl">{emoji}</span>
+              <span className="text-sm font-medium text-stone-700 group-hover:text-red-700 transition-colors">
+                {label}
+              </span>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -146,10 +187,10 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
-            Kyushu & Okinawa. Endless Discovery.
+            Western Japan. Endless Discovery.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Eight prefectures, each with its own soul. Pick one, or let the AI
+            Nine prefectures, each with its own soul. Pick one, or let the AI
             planner weave them into one perfect journey.
           </p>
         </div>
@@ -158,7 +199,7 @@ export default async function HomePage() {
           {PREFECTURES.map((p) => (
             <Link
               key={p.name}
-              href={`/spots?prefecture=${p.name}`}
+              href={`/guides/${p.name.toLowerCase()}`}
               className="group relative rounded-2xl overflow-hidden h-52 sm:h-64 block"
             >
               <Image

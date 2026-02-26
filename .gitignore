@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# spot images (purchased from pixta.jp — do not commit)
+scripts/images/*.jpg
+scripts/images/*.jpeg
+scripts/images/*.png
+scripts/images/*.webp

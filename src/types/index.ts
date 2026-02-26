@@ -1,4 +1,4 @@
-export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki' | 'Fukuoka' | 'Saga' | 'Nagasaki' | 'Kagoshima' | 'Okinawa';
+export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki' | 'Fukuoka' | 'Saga' | 'Nagasaki' | 'Kagoshima' | 'Okinawa' | 'Hiroshima';
 
 export type Category =
   | 'nature'
@@ -12,7 +12,7 @@ export type Spot = {
   id: string;
   name: string;
   prefecture: Prefecture;
-  region: 'kyushu';
+  region: 'kyushu' | 'chugoku';
   categories: Category[];
   description: string;
   address: string;

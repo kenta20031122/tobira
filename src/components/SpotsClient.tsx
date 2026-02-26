@@ -42,17 +42,20 @@ const DURATION_OPTIONS: { value: DurationFilter; label: string; sub?: string }[]
 export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
+  const initialCategory = searchParams.get('category') as Category | null;
 
   const [favIds, setFavIds] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [selectedPrefecture, setSelectedPrefecture] = useState<Prefecture | 'All'>(
     initialPrefecture ?? 'All'
   );
-  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
+  const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>(
+    initialCategory ?? 'All'
+  );
   const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>('All');
   const [selectedDuration, setSelectedDuration] = useState<DurationFilter>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [showFilters, setShowFilters] = useState(!!initialPrefecture);
+  const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory));
 
   const currentMonth = new Date().getMonth() + 1;
 

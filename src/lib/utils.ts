@@ -23,6 +23,7 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Miyazaki: 'Miyazaki',
   Kagoshima: 'Kagoshima',
   Okinawa: 'Okinawa',
+  Hiroshima: 'Hiroshima',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────

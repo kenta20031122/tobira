@@ -9,10 +9,10 @@ const geist = Geist({
   subsets: ['latin'],
 });
 
-const OG_IMAGE = 'https://tobira.vercel.app/og.jpg';
+const OG_IMAGE = 'https://tobira-travel.com/og.jpg';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://tobira.vercel.app'),
+  metadataBase: new URL('https://tobira-travel.com'),
   title: {
     default: 'Tobira — Discover Hidden Kyushu',
     template: '%s | Tobira',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: 'Tobira — Discover Hidden Kyushu',
     description: "Japan's authentic travel guide, beyond the tourist trail.",
     type: 'website',
-    url: 'https://tobira.vercel.app',
+    url: 'https://tobira-travel.com',
     siteName: 'Tobira',
     images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'Mt. Aso Caldera, Kyushu Japan' }],
   },
