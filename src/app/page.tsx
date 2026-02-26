@@ -166,13 +166,13 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-10">
           {REGIONS.map((region) => (
             <div key={region.label}>
               <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
                 {region.label}
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
                 {region.prefectures.map((name) => {
                   const data = PREFECTURE_DATA[name];
                   const count = spots.filter((s) => s.prefecture === name).length;
@@ -180,7 +180,7 @@ export default async function HomePage() {
                     <Link
                       key={name}
                       href={`/guides/${name.toLowerCase()}`}
-                      className="group relative rounded-2xl overflow-hidden h-44 sm:h-56 block"
+                      className="group relative rounded-2xl overflow-hidden flex-shrink-0 w-52 h-64 block"
                     >
                       <Image
                         src={data.image}
