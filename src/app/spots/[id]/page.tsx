@@ -169,10 +169,14 @@ export default async function SpotDetailPage({ params }: Props) {
         <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
           <MapPin size={14} />
           <span>{spot.prefecture}, {
-            spot.region === 'chugoku' ? 'Chugoku Region' :
-            spot.region === 'shikoku' ? 'Shikoku' :
-            spot.region === 'hokkaido' ? 'Hokkaido' :
-            spot.region === 'tohoku' ? 'Tohoku' :
+            spot.region === 'hokkaido'  ? 'Hokkaido' :
+            spot.region === 'tohoku'    ? 'Tohoku' :
+            spot.region === 'kanto'     ? 'Kanto' :
+            spot.region === 'hokuriku'  ? 'Hokuriku' :
+            spot.region === 'chubu'     ? 'Chubu' :
+            spot.region === 'kinki'     ? 'Kinki' :
+            spot.region === 'chugoku'   ? 'Chugoku' :
+            spot.region === 'shikoku'   ? 'Shikoku' :
             'Kyushu'
           }</span>
         </div>
