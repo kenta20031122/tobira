@@ -191,7 +191,7 @@ export default async function HomePage() {
             All of Japan. Beyond the Guidebook.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Thirty-six prefectures across Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku and Kyushu — each curated by someone who has actually been there.
+            All 47 prefectures — from Hokkaido to Okinawa — each curated by someone who has actually been there.
           </p>
         </div>
 
@@ -336,7 +336,7 @@ export default async function HomePage() {
                 <span className="text-red-200 text-base font-normal">/mo</span>
               </p>
               <ul className="text-red-100 text-sm space-y-2 mb-8">
-                <li>✓ All 18+ premium spots unlocked</li>
+                <li>✓ All premium spots unlocked</li>
                 <li>✓ Insider tips & hidden highlights</li>
                 <li>✓ Unlimited AI trip plans</li>
                 <li>✓ New premium spots added monthly</li>

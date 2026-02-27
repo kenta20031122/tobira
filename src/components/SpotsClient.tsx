@@ -108,7 +108,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-stone-900 mb-2">
-          Explore Kyushu
+          Explore Japan
         </h1>
         <p className="text-stone-500 text-lg">
           {spots.length} hand-picked spots, sorted by authenticity — not
