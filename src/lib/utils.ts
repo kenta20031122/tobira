@@ -39,6 +39,18 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Akita: 'Akita',
   Yamagata: 'Yamagata',
   Fukushima: 'Fukushima',
+  Osaka: 'Osaka',
+  Kyoto: 'Kyoto',
+  Nara: 'Nara',
+  Hyogo: 'Hyogo',
+  Shiga: 'Shiga',
+  Wakayama: 'Wakayama',
+  Mie: 'Mie',
+  Aichi: 'Aichi',
+  Shizuoka: 'Shizuoka',
+  Nagano: 'Nagano',
+  Ishikawa: 'Ishikawa',
+  Gifu: 'Gifu',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────

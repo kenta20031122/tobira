@@ -34,6 +34,18 @@ const PREFECTURE_MAP: Record<string, Prefecture> = {
   akita:     'Akita',
   yamagata:  'Yamagata',
   fukushima: 'Fukushima',
+  osaka:     'Osaka',
+  kyoto:     'Kyoto',
+  nara:      'Nara',
+  hyogo:     'Hyogo',
+  shiga:     'Shiga',
+  wakayama:  'Wakayama',
+  mie:       'Mie',
+  aichi:     'Aichi',
+  shizuoka:  'Shizuoka',
+  nagano:    'Nagano',
+  ishikawa:  'Ishikawa',
+  gifu:      'Gifu',
 };
 
 
@@ -55,6 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const region =
     prefecture === 'Hokkaido' ? 'Hokkaido' :
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
+    ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
+    ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
@@ -89,6 +103,8 @@ export default async function PrefectureGuidePage({ params }: Props) {
   const region =
     prefecture === 'Hokkaido' ? 'Hokkaido' :
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
+    ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
+    ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';

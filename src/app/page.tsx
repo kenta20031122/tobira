@@ -43,6 +43,18 @@ export default async function HomePage() {
     Akita:     { tagline: 'Samurai Towns & Volcanic Lakes',      image: PH },
     Yamagata:  { tagline: 'Snow Onsen & Mountain Shrines',       image: PH },
     Fukushima: { tagline: 'Castle Towns & Emerald Lakes',        image: PH },
+    Osaka:     { tagline: 'Street Food, Neon & Ancient Shrines', image: PH },
+    Kyoto:     { tagline: 'Temples, Geisha & Hidden Gardens',    image: PH },
+    Nara:      { tagline: 'Sacred Deer & Ancient Capitals',      image: PH },
+    Hyogo:     { tagline: 'Hot Springs, Clouds & Castle Towns',  image: PH },
+    Shiga:     { tagline: 'Lake Country & Samurai Castles',      image: PH },
+    Wakayama:  { tagline: 'Sacred Mountains & Ocean Trails',     image: PH },
+    Mie:       { tagline: "Japan's Holiest Shrine & Pearl Bays", image: PH },
+    Aichi:     { tagline: 'Rivers, Castles & Meiji Heritage',    image: PH },
+    Shizuoka:  { tagline: 'Mt Fuji Views & Hot Spring Valleys',  image: PH },
+    Nagano:    { tagline: 'Alpine Valleys & Snow Monkeys',       image: PH },
+    Ishikawa:  { tagline: 'Geisha Districts & Wild Coastlines',  image: PH },
+    Gifu:      { tagline: 'Thatched Villages & Mountain Streams',image: PH },
     Hiroshima: { tagline: 'Peace, Islands & Inland Sea',         image: SB('hiroshima.jpg') },
     Yamaguchi: { tagline: 'Torii Cliffs & Karst Caves',          image: SB('yamaguchi.jpg') },
     Okayama:   { tagline: 'Canal Districts & Garden Art',        image: SB('okayama.jpg') },
@@ -64,6 +76,8 @@ export default async function HomePage() {
 
   const REGIONS = [
     { label: 'Hokkaido & Tohoku',  prefectures: ['Hokkaido', 'Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
+    { label: 'Chubu',              prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'] },
+    { label: 'Kinki',              prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
     { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
     { label: 'Kyushu & Okinawa',  prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima', 'Okinawa'] },
   ];
@@ -160,7 +174,7 @@ export default async function HomePage() {
             All of Japan. Beyond the Guidebook.
           </h2>
           <p className="text-stone-500 max-w-lg mx-auto">
-            Twenty-four prefectures across Hokkaido, Tohoku, Chugoku, Shikoku and Kyushu — each curated by someone who has actually been there.
+            Thirty-six prefectures across Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku and Kyushu — each curated by someone who has actually been there.
           </p>
         </div>
 

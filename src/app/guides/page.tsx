@@ -7,9 +7,9 @@ import { CATEGORY_LABELS } from '@/lib/utils';
 import type { Prefecture } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Japan Travel Guides — Hokkaido, Tohoku, Chugoku, Shikoku, Kyushu & Okinawa',
+  title: 'Japan Travel Guides — Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku & Kyushu',
   description:
-    'In-depth travel guides for 24 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
+    'In-depth travel guides for 36 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
   openGraph: {
     title: 'Japan Travel Guides | Tobira',
     description: 'Discover the real Japan, prefecture by prefecture.',
@@ -27,6 +27,28 @@ const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefect
       { slug: 'akita',    prefecture: 'Akita' },
       { slug: 'yamagata', prefecture: 'Yamagata' },
       { slug: 'fukushima',prefecture: 'Fukushima' },
+    ],
+  },
+  {
+    label: 'Chubu',
+    prefectures: [
+      { slug: 'aichi',    prefecture: 'Aichi' },
+      { slug: 'shizuoka', prefecture: 'Shizuoka' },
+      { slug: 'nagano',   prefecture: 'Nagano' },
+      { slug: 'ishikawa', prefecture: 'Ishikawa' },
+      { slug: 'gifu',     prefecture: 'Gifu' },
+    ],
+  },
+  {
+    label: 'Kinki',
+    prefectures: [
+      { slug: 'osaka',    prefecture: 'Osaka' },
+      { slug: 'kyoto',    prefecture: 'Kyoto' },
+      { slug: 'nara',     prefecture: 'Nara' },
+      { slug: 'hyogo',    prefecture: 'Hyogo' },
+      { slug: 'shiga',    prefecture: 'Shiga' },
+      { slug: 'wakayama', prefecture: 'Wakayama' },
+      { slug: 'mie',      prefecture: 'Mie' },
     ],
   },
   {
@@ -73,7 +95,7 @@ export default async function GuidesPage() {
           <span className="text-red-600">Prefecture by Prefecture</span>
         </h1>
         <p className="text-stone-500 text-lg max-w-xl mx-auto">
-          24 prefectures across Hokkaido, Tohoku, Chugoku, Shikoku and Kyushu — each curated by locals, not algorithms.
+          36 prefectures across Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku and Kyushu — each curated by locals, not algorithms.
         </p>
       </div>
 

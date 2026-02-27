@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "upload-images": "node scripts/upload-spot-images.mjs",
-    "check-urls": "node scripts/check-urls.mjs"
+    "check-urls": "node scripts/check-urls.mjs",
+    "seed-kinki-chubu": "node scripts/seed-kinki-chubu.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
