@@ -21,23 +21,26 @@ export default function Footer() {
               <Link href="/spots" className="hover:text-white transition-colors">
                 All Spots
               </Link>
-              <Link
-                href="/spots?prefecture=Kumamoto"
-                className="hover:text-white transition-colors"
-              >
-                Kumamoto
+              <Link href="/guides" className="hover:text-white transition-colors">
+                All Guides
               </Link>
               <Link
-                href="/spots?prefecture=Oita"
+                href="/guides/tokyo"
                 className="hover:text-white transition-colors"
               >
-                Oita
+                Tokyo
               </Link>
               <Link
-                href="/spots?prefecture=Miyazaki"
+                href="/guides/kyoto"
                 className="hover:text-white transition-colors"
               >
-                Miyazaki
+                Kyoto
+              </Link>
+              <Link
+                href="/guides/osaka"
+                className="hover:text-white transition-colors"
+              >
+                Osaka
               </Link>
             </div>
             <div className="flex flex-col gap-2">
@@ -45,7 +48,7 @@ export default function Footer() {
               <Link href="/plan" className="hover:text-white transition-colors">
                 AI Trip Planner
               </Link>
-              <Link href="#pricing" className="hover:text-white transition-colors">
+              <Link href="/pricing" className="hover:text-white transition-colors">
                 Pricing
               </Link>
             </div>
