@@ -43,9 +43,10 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
   const initialCategory = searchParams.get('category') as Category | null;
+  const initialSearch = searchParams.get('q') ?? '';
 
   const [favIds, setFavIds] = useState<string[]>([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(initialSearch);
   const [selectedPrefecture, setSelectedPrefecture] = useState<Prefecture | 'All'>(
     initialPrefecture ?? 'All'
   );
