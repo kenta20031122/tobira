@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sparkles, MapPin, Compass, Search } from 'lucide-react';
+import { ArrowRight, Sparkles, MapPin, Compass } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
+import HomeSearchBar from '@/components/HomeSearchBar';
 
 const FEATURES = [
   {
@@ -124,24 +125,7 @@ export default async function HomePage() {
           </p>
 
           {/* Search */}
-          <form action="/spots" className="relative max-w-xl mx-auto mb-8">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"
-              size={18}
-            />
-            <input
-              type="text"
-              name="q"
-              placeholder="Search spots, e.g. onsen, castle, hiking…"
-              className="w-full pl-11 pr-28 py-4 rounded-full bg-white/95 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-red-400/50 shadow-lg text-sm"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2 rounded-full text-sm transition-colors"
-            >
-              Search
-            </button>
-          </form>
+          <HomeSearchBar />
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
