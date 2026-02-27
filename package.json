@@ -12,7 +12,8 @@
     "seed-kinki-chubu": "node scripts/seed-kinki-chubu.mjs",
     "seed-chubu-extra": "node scripts/seed-chubu-extra.mjs",
     "seed-kinki-extra": "node scripts/seed-kinki-extra.mjs",
-    "seed-kanto": "node scripts/seed-kanto.mjs"
+    "seed-kanto": "node scripts/seed-kanto.mjs",
+    "seed-remaining": "node scripts/seed-remaining.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

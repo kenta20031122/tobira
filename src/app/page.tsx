@@ -62,6 +62,10 @@ export default async function HomePage() {
     Ibaraki:   { tagline: 'Plum Blossoms & Coastal Dunes',       image: PH },
     Tochigi:   { tagline: 'UNESCO Shrines & Onsen Gorges',       image: PH },
     Gunma:     { tagline: 'Silk Road & Mountain Hot Springs',    image: PH },
+    Yamanashi: { tagline: 'Fuji Five Lakes & Wine Country',      image: PH },
+    Niigata:   { tagline: 'Rice, Sake & Japan Sea Coast',        image: PH },
+    Toyama:    { tagline: 'Black Dam & Northern Alps',           image: PH },
+    Fukui:     { tagline: 'Dinosaur Country & Cliffside Coasts', image: PH },
     Hiroshima: { tagline: 'Peace, Islands & Inland Sea',         image: SB('hiroshima.jpg') },
     Yamaguchi: { tagline: 'Torii Cliffs & Karst Caves',          image: SB('yamaguchi.jpg') },
     Okayama:   { tagline: 'Canal Districts & Garden Art',        image: SB('okayama.jpg') },
@@ -83,7 +87,8 @@ export default async function HomePage() {
 
   const REGIONS = [
     { label: 'Hokkaido & Tohoku',  prefectures: ['Hokkaido', 'Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
-    { label: 'Kanto',              prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'] },
+    { label: 'Kanto',              prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma', 'Yamanashi'] },
+    { label: 'Hokuriku',           prefectures: ['Niigata', 'Toyama', 'Fukui'] },
     { label: 'Chubu',              prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'] },
     { label: 'Kinki',              prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
     { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },

@@ -1,4 +1,4 @@
-export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki' | 'Fukuoka' | 'Saga' | 'Nagasaki' | 'Kagoshima' | 'Okinawa' | 'Hiroshima' | 'Yamaguchi' | 'Okayama' | 'Tottori' | 'Shimane' | 'Ehime' | 'Kochi' | 'Tokushima' | 'Kagawa' | 'Hokkaido' | 'Aomori' | 'Iwate' | 'Miyagi' | 'Akita' | 'Yamagata' | 'Fukushima' | 'Osaka' | 'Kyoto' | 'Nara' | 'Hyogo' | 'Shiga' | 'Wakayama' | 'Mie' | 'Aichi' | 'Shizuoka' | 'Nagano' | 'Ishikawa' | 'Gifu' | 'Tokyo' | 'Kanagawa' | 'Saitama' | 'Chiba' | 'Ibaraki' | 'Tochigi' | 'Gunma';
+export type Prefecture = 'Kumamoto' | 'Oita' | 'Miyazaki' | 'Fukuoka' | 'Saga' | 'Nagasaki' | 'Kagoshima' | 'Okinawa' | 'Hiroshima' | 'Yamaguchi' | 'Okayama' | 'Tottori' | 'Shimane' | 'Ehime' | 'Kochi' | 'Tokushima' | 'Kagawa' | 'Hokkaido' | 'Aomori' | 'Iwate' | 'Miyagi' | 'Akita' | 'Yamagata' | 'Fukushima' | 'Osaka' | 'Kyoto' | 'Nara' | 'Hyogo' | 'Shiga' | 'Wakayama' | 'Mie' | 'Aichi' | 'Shizuoka' | 'Nagano' | 'Ishikawa' | 'Gifu' | 'Tokyo' | 'Kanagawa' | 'Saitama' | 'Chiba' | 'Ibaraki' | 'Tochigi' | 'Gunma' | 'Yamanashi' | 'Niigata' | 'Toyama' | 'Fukui';
 
 export type Category =
   | 'nature'
@@ -12,7 +12,7 @@ export type Spot = {
   id: string;
   name: string;
   prefecture: Prefecture;
-  region: 'kyushu' | 'chugoku' | 'shikoku' | 'hokkaido' | 'tohoku' | 'kinki' | 'chubu' | 'kanto';
+  region: 'kyushu' | 'chugoku' | 'shikoku' | 'hokkaido' | 'tohoku' | 'kinki' | 'chubu' | 'kanto' | 'hokuriku';
   categories: Category[];
   description: string;
   address: string;

@@ -58,6 +58,10 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Ibaraki: 'Ibaraki',
   Tochigi: 'Tochigi',
   Gunma: 'Gunma',
+  Yamanashi: 'Yamanashi',
+  Niigata: 'Niigata',
+  Toyama: 'Toyama',
+  Fukui: 'Fukui',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────
