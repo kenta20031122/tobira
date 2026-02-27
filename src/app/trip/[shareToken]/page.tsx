@@ -176,7 +176,6 @@ export default async function SharedTripPage({
                                   alt={spotData.name}
                                   fill
                                   className="object-cover"
-                                  unoptimized
                                 />
                               </div>
                             </Link>

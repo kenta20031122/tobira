@@ -78,7 +78,6 @@ export default async function HomePage() {
           fill
           className="object-cover opacity-40"
           priority
-          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-stone-900/20 via-transparent to-stone-900/60" />
 
@@ -186,7 +185,6 @@ export default async function HomePage() {
                         alt={name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        unoptimized
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-4">

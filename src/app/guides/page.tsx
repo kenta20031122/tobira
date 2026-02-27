@@ -7,35 +7,59 @@ import { CATEGORY_LABELS } from '@/lib/utils';
 import type { Prefecture } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Japan Travel Guides — Kyushu & Okinawa',
+  title: 'Japan Travel Guides — Hokkaido, Tohoku, Chugoku, Shikoku, Kyushu & Okinawa',
   description:
-    'In-depth travel guides for every prefecture in Kyushu and Okinawa. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail.',
+    'In-depth travel guides for 24 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
   openGraph: {
-    title: 'Japan Travel Guides — Kyushu & Okinawa | Tobira',
+    title: 'Japan Travel Guides | Tobira',
     description: 'Discover the real Japan, prefecture by prefecture.',
   },
 };
 
-const PREFECTURE_SLUGS: { slug: string; prefecture: Prefecture }[] = [
-  { slug: 'fukuoka',   prefecture: 'Fukuoka' },
-  { slug: 'saga',      prefecture: 'Saga' },
-  { slug: 'nagasaki',  prefecture: 'Nagasaki' },
-  { slug: 'kumamoto',  prefecture: 'Kumamoto' },
-  { slug: 'oita',      prefecture: 'Oita' },
-  { slug: 'miyazaki',  prefecture: 'Miyazaki' },
-  { slug: 'kagoshima', prefecture: 'Kagoshima' },
-  { slug: 'okinawa',   prefecture: 'Okinawa' },
+const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefecture }[] }[] = [
+  {
+    label: 'Hokkaido & Tohoku',
+    prefectures: [
+      { slug: 'hokkaido',  prefecture: 'Hokkaido' },
+      { slug: 'aomori',   prefecture: 'Aomori' },
+      { slug: 'iwate',    prefecture: 'Iwate' },
+      { slug: 'miyagi',   prefecture: 'Miyagi' },
+      { slug: 'akita',    prefecture: 'Akita' },
+      { slug: 'yamagata', prefecture: 'Yamagata' },
+      { slug: 'fukushima',prefecture: 'Fukushima' },
+    ],
+  },
+  {
+    label: 'Chugoku & Shikoku',
+    prefectures: [
+      { slug: 'hiroshima', prefecture: 'Hiroshima' },
+      { slug: 'yamaguchi', prefecture: 'Yamaguchi' },
+      { slug: 'okayama',   prefecture: 'Okayama' },
+      { slug: 'tottori',   prefecture: 'Tottori' },
+      { slug: 'shimane',   prefecture: 'Shimane' },
+      { slug: 'ehime',     prefecture: 'Ehime' },
+      { slug: 'kochi',     prefecture: 'Kochi' },
+      { slug: 'tokushima', prefecture: 'Tokushima' },
+      { slug: 'kagawa',    prefecture: 'Kagawa' },
+    ],
+  },
+  {
+    label: 'Kyushu & Okinawa',
+    prefectures: [
+      { slug: 'fukuoka',   prefecture: 'Fukuoka' },
+      { slug: 'saga',      prefecture: 'Saga' },
+      { slug: 'nagasaki',  prefecture: 'Nagasaki' },
+      { slug: 'kumamoto',  prefecture: 'Kumamoto' },
+      { slug: 'oita',      prefecture: 'Oita' },
+      { slug: 'miyazaki',  prefecture: 'Miyazaki' },
+      { slug: 'kagoshima', prefecture: 'Kagoshima' },
+      { slug: 'okinawa',   prefecture: 'Okinawa' },
+    ],
+  },
 ];
 
 export default async function GuidesPage() {
   const allSpots = await getAllSpots();
-
-  const prefectureData = PREFECTURE_SLUGS.map(({ slug, prefecture }) => {
-    const spots = allSpots.filter((s) => s.prefecture === prefecture);
-    const heroImage = spots[0]?.image_url ?? '';
-    const categories = [...new Set(spots.flatMap((s) => s.categories))];
-    return { slug, prefecture, spots, heroImage, categories };
-  });
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-16">
@@ -49,46 +73,60 @@ export default async function GuidesPage() {
           <span className="text-red-600">Prefecture by Prefecture</span>
         </h1>
         <p className="text-stone-500 text-lg max-w-xl mx-auto">
-          In-depth guides to Kyushu and Okinawa's hidden gems — curated by locals, not algorithms.
+          24 prefectures across Hokkaido, Tohoku, Chugoku, Shikoku and Kyushu — each curated by locals, not algorithms.
         </p>
       </div>
 
-      {/* Prefecture grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {prefectureData.map(({ slug, prefecture, spots, heroImage, categories }) => (
-          <Link
-            key={slug}
-            href={`/guides/${slug}`}
-            className="group relative rounded-2xl overflow-hidden h-64 block"
-          >
-            {heroImage && (
-              <Image
-                src={heroImage}
-                alt={prefecture}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                unoptimized
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-900/85 via-stone-900/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5">
-              <div className="flex items-center gap-1.5 text-stone-300 text-xs mb-1.5">
-                <MapPin size={11} />
-                <span>{spots.length} curated spots</span>
-              </div>
-              <h2 className="text-white text-xl font-bold mb-2">{prefecture}</h2>
-              <div className="flex flex-wrap gap-1">
-                {categories.slice(0, 3).map((cat) => (
-                  <span
-                    key={cat}
-                    className="text-xs bg-white/15 text-white/90 px-2 py-0.5 rounded-full"
+      {/* Region sections */}
+      <div className="space-y-12">
+        {REGIONS.map((region) => (
+          <div key={region.label}>
+            <h2 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
+              {region.label}
+            </h2>
+            <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+              {region.prefectures.map(({ slug, prefecture }) => {
+                const spots = allSpots.filter((s) => s.prefecture === prefecture);
+                const heroImage = spots[0]?.image_url ?? '';
+                const categories = [...new Set(spots.flatMap((s) => s.categories))];
+                return (
+                  <Link
+                    key={slug}
+                    href={`/guides/${slug}`}
+                    className="group relative rounded-2xl overflow-hidden flex-shrink-0 w-52 h-64 block"
                   >
-                    {CATEGORY_LABELS[cat]}
-                  </span>
-                ))}
-              </div>
+                    {heroImage && (
+                      <Image
+                        src={heroImage}
+                        alt={prefecture}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="208px"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-900/85 via-stone-900/30 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-center gap-1.5 text-stone-300 text-xs mb-1">
+                        <MapPin size={11} />
+                        <span>{spots.length} spots</span>
+                      </div>
+                      <h2 className="text-white text-lg font-bold mb-1.5">{prefecture}</h2>
+                      <div className="flex flex-wrap gap-1">
+                        {categories.slice(0, 2).map((cat) => (
+                          <span
+                            key={cat}
+                            className="text-xs bg-white/15 text-white/90 px-2 py-0.5 rounded-full"
+                          >
+                            {CATEGORY_LABELS[cat]}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>

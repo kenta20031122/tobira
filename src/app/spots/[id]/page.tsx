@@ -142,7 +142,6 @@ export default async function SpotDetailPage({ params }: Props) {
           fill
           className="object-cover"
           priority
-          unoptimized
         />
         {spot.is_premium && !isPro && (
           <div className="absolute top-4 right-4 bg-stone-900/80 text-white text-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">

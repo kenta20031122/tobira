@@ -103,7 +103,6 @@ export default async function PrefectureGuidePage({ params }: Props) {
           fill
           className="object-cover"
           priority
-          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/40 to-stone-900/10" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 pb-14 w-full">
