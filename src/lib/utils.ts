@@ -51,6 +51,13 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Nagano: 'Nagano',
   Ishikawa: 'Ishikawa',
   Gifu: 'Gifu',
+  Tokyo: 'Tokyo',
+  Kanagawa: 'Kanagawa',
+  Saitama: 'Saitama',
+  Chiba: 'Chiba',
+  Ibaraki: 'Ibaraki',
+  Tochigi: 'Tochigi',
+  Gunma: 'Gunma',
 };
 
 // ─── Season utilities ─────────────────────────────────────────────────────────

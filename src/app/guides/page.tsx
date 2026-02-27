@@ -7,9 +7,9 @@ import { CATEGORY_LABELS } from '@/lib/utils';
 import type { Prefecture } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Japan Travel Guides — Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku & Kyushu',
+  title: 'Japan Travel Guides — Kanto, Chubu, Kinki, Tohoku, Chugoku, Shikoku & Kyushu',
   description:
-    'In-depth travel guides for 36 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
+    'In-depth travel guides for 43 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
   openGraph: {
     title: 'Japan Travel Guides | Tobira',
     description: 'Discover the real Japan, prefecture by prefecture.',
@@ -17,6 +17,18 @@ export const metadata: Metadata = {
 };
 
 const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefecture }[] }[] = [
+  {
+    label: 'Kanto',
+    prefectures: [
+      { slug: 'tokyo',     prefecture: 'Tokyo' },
+      { slug: 'kanagawa',  prefecture: 'Kanagawa' },
+      { slug: 'saitama',   prefecture: 'Saitama' },
+      { slug: 'chiba',     prefecture: 'Chiba' },
+      { slug: 'ibaraki',   prefecture: 'Ibaraki' },
+      { slug: 'tochigi',   prefecture: 'Tochigi' },
+      { slug: 'gunma',     prefecture: 'Gunma' },
+    ],
+  },
   {
     label: 'Hokkaido & Tohoku',
     prefectures: [
@@ -95,7 +107,7 @@ export default async function GuidesPage() {
           <span className="text-red-600">Prefecture by Prefecture</span>
         </h1>
         <p className="text-stone-500 text-lg max-w-xl mx-auto">
-          36 prefectures across Hokkaido, Tohoku, Chubu, Kinki, Chugoku, Shikoku and Kyushu — each curated by locals, not algorithms.
+          43 prefectures across Kanto, Chubu, Kinki, Tohoku, Chugoku, Shikoku and Kyushu — each curated by locals, not algorithms.
         </p>
       </div>
 

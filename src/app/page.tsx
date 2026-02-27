@@ -55,6 +55,13 @@ export default async function HomePage() {
     Nagano:    { tagline: 'Alpine Valleys & Snow Monkeys',       image: SB('nagano.jpg') },
     Ishikawa:  { tagline: 'Geisha Districts & Wild Coastlines',  image: SB('ishikawa.jpg') },
     Gifu:      { tagline: 'Thatched Villages & Mountain Streams',image: SB('gifu.jpg') },
+    Tokyo:     { tagline: 'Megacity, Temples & Hidden Alleys',   image: PH },
+    Kanagawa:  { tagline: 'Samurai History & Mountain Bays',     image: PH },
+    Saitama:   { tagline: 'Ancient Tombs & Edo Canals',          image: PH },
+    Chiba:     { tagline: 'Pacific Coast & Hidden Waterfalls',   image: PH },
+    Ibaraki:   { tagline: 'Plum Blossoms & Coastal Dunes',       image: PH },
+    Tochigi:   { tagline: 'UNESCO Shrines & Onsen Gorges',       image: PH },
+    Gunma:     { tagline: 'Silk Road & Mountain Hot Springs',    image: PH },
     Hiroshima: { tagline: 'Peace, Islands & Inland Sea',         image: SB('hiroshima.jpg') },
     Yamaguchi: { tagline: 'Torii Cliffs & Karst Caves',          image: SB('yamaguchi.jpg') },
     Okayama:   { tagline: 'Canal Districts & Garden Art',        image: SB('okayama.jpg') },
@@ -76,6 +83,7 @@ export default async function HomePage() {
 
   const REGIONS = [
     { label: 'Hokkaido & Tohoku',  prefectures: ['Hokkaido', 'Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
+    { label: 'Kanto',              prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'] },
     { label: 'Chubu',              prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'] },
     { label: 'Kinki',              prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
     { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },

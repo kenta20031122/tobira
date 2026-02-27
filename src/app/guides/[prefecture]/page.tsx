@@ -46,6 +46,13 @@ const PREFECTURE_MAP: Record<string, Prefecture> = {
   nagano:    'Nagano',
   ishikawa:  'Ishikawa',
   gifu:      'Gifu',
+  tokyo:     'Tokyo',
+  kanagawa:  'Kanagawa',
+  saitama:   'Saitama',
+  chiba:     'Chiba',
+  ibaraki:   'Ibaraki',
+  tochigi:   'Tochigi',
+  gunma:     'Gunma',
 };
 
 
@@ -69,6 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
     ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
     ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
+    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
@@ -105,6 +113,7 @@ export default async function PrefectureGuidePage({ params }: Props) {
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
     ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
     ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
+    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
