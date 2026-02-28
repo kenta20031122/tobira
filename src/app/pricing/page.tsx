@@ -133,12 +133,29 @@ export default async function PricingPage({
       {/* FAQ */}
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-stone-900 mb-4">Common questions</h2>
-        <div className="space-y-0">
+        <div>
           {FAQ_ITEMS.map(({ q, a }) => (
-            <div key={q} className="border-t border-stone-100 py-4">
-              <p className="font-medium text-stone-800 text-sm mb-1">{q}</p>
-              <p className="text-stone-500 text-sm leading-relaxed">{a}</p>
-            </div>
+            <details key={q} className="group border-t border-stone-100">
+              <summary className="flex items-center justify-between gap-4 py-4 cursor-pointer list-none">
+                <span className="font-medium text-stone-800 text-sm">{q}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="shrink-0 text-stone-400 transition-transform duration-200 group-open:rotate-180"
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </summary>
+              <p className="pb-4 text-stone-500 text-sm leading-relaxed">{a}</p>
+            </details>
           ))}
           <div className="border-t border-stone-100" />
         </div>
