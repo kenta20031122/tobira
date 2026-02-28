@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     template: '%s | Tobira',
   },
   description:
-    "Go beyond Tokyo. Tobira guides you to Japan's most authentic experiences across Western Japan — Kyushu, Okinawa, and Hiroshima. Curated by locals, powered by AI.",
+    "Go beyond Tokyo. Tobira guides you to Japan's most authentic experiences across all 47 prefectures — from Hokkaido to Okinawa. Curated by locals, powered by AI.",
   openGraph: {
     title: 'Tobira — Beyond Tokyo | Discover Real Japan',
     description:
-      "Go beyond Tokyo. Japan's authentic travel guide for Kyushu, Okinawa & Hiroshima — curated by locals, powered by AI.",
+      "Go beyond Tokyo. Japan's authentic travel guide covering all 47 prefectures — curated by locals, powered by AI.",
     type: 'website',
     url: 'https://tobira-travel.com',
     siteName: 'Tobira',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Tobira — Beyond Tokyo | Discover Real Japan',
     description:
-      "Go beyond Tokyo. Japan's authentic travel guide for Kyushu, Okinawa & Hiroshima — curated by locals, powered by AI.",
+      "Go beyond Tokyo. Japan's authentic travel guide covering all 47 prefectures — curated by locals, powered by AI.",
     images: [OG_IMAGE],
   },
 };
@@ -49,10 +49,10 @@ export default function RootLayout({
         <Navbar />
         <main className="pt-16">{children}</main>
         <Footer />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
-      {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
     </html>
   );
 }
