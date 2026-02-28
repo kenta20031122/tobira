@@ -38,6 +38,23 @@ export const metadata: Metadata = {
   },
 };
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Tobira',
+  alternateName: 'tobira beyond tokyo',
+  url: 'https://tobira-travel.com',
+  description: 'Hand-curated Japan travel guide covering all 47 prefectures — curated by locals, powered by AI.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://tobira-travel.com/spots?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,6 +63,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geist.variable} antialiased bg-stone-50 font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <Navbar />
         <main className="pt-16">{children}</main>
         <Footer />

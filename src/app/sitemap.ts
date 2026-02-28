@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/contact`,       changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/privacy`,       changeFrequency: 'yearly',  priority: 0.3 },
     { url: `${BASE_URL}/terms`,         changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${BASE_URL}/tokushoho`,     changeFrequency: 'yearly',  priority: 0.3 },
   ];
 
   const spotRoutes: MetadataRoute.Sitemap = spots.map((spot) => ({

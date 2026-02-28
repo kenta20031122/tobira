@@ -94,6 +94,9 @@ export default function Footer() {
               <Link href="/terms" className="hover:text-white transition-colors">
                 Terms of Service
               </Link>
+              <Link href="/tokushoho" className="hover:text-white transition-colors">
+                特定商取引法
+              </Link>
             </div>
           </div>
         </div>

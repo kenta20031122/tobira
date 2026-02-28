@@ -147,9 +147,20 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <p className="text-stone-500 text-sm mt-8">
-            {spots.length} hand-picked spots across Japan
-          </p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
+            <span className="text-stone-400 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+              {spots.length}+ hand-picked spots
+            </span>
+            <span className="text-stone-400 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+              All 47 prefectures
+            </span>
+            <span className="text-stone-400 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
+              Updated monthly
+            </span>
+          </div>
         </div>
       </section>
 
@@ -351,6 +362,21 @@ export default async function HomePage() {
                 Get Pro — $4.99/mo
               </Link>
             </div>
+          </div>
+
+          <div className="mt-8 space-y-2">
+            <p className="text-stone-500 text-xs flex items-center justify-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Payments secured by Stripe. Cancel anytime.
+            </p>
+            <p className="text-stone-600 text-xs">
+              <Link href="/tokushoho" className="underline hover:text-stone-400 transition-colors">
+                特定商取引法に基づく表記
+              </Link>
+            </p>
           </div>
         </div>
       </section>
