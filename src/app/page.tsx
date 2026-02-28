@@ -87,13 +87,16 @@ export default async function HomePage() {
   };
 
   const REGIONS = [
-    { label: 'Hokkaido & Tohoku',  prefectures: ['Hokkaido', 'Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
-    { label: 'Kanto',              prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma', 'Yamanashi'] },
-    { label: 'Hokuriku',           prefectures: ['Niigata', 'Toyama', 'Fukui'] },
-    { label: 'Chubu',              prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'] },
-    { label: 'Kinki',              prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
-    { label: 'Chugoku & Shikoku', prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane', 'Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
-    { label: 'Kyushu & Okinawa',  prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima', 'Okinawa'] },
+    { label: 'Hokkaido',  prefectures: ['Hokkaido'] },
+    { label: 'Tohoku',    prefectures: ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
+    { label: 'Kanto',     prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'] },
+    { label: 'Hokuriku',  prefectures: ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'] },
+    { label: 'Chubu',     prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'] },
+    { label: 'Kinki',     prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
+    { label: 'Chugoku',   prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'] },
+    { label: 'Shikoku',   prefectures: ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
+    { label: 'Kyushu',    prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima'] },
+    { label: 'Okinawa',   prefectures: ['Okinawa'] },
   ];
 
   return (

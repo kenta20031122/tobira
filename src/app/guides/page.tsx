@@ -18,6 +18,23 @@ export const metadata: Metadata = {
 
 const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefecture }[] }[] = [
   {
+    label: 'Hokkaido',
+    prefectures: [
+      { slug: 'hokkaido',  prefecture: 'Hokkaido' },
+    ],
+  },
+  {
+    label: 'Tohoku',
+    prefectures: [
+      { slug: 'aomori',    prefecture: 'Aomori' },
+      { slug: 'iwate',     prefecture: 'Iwate' },
+      { slug: 'miyagi',    prefecture: 'Miyagi' },
+      { slug: 'akita',     prefecture: 'Akita' },
+      { slug: 'yamagata',  prefecture: 'Yamagata' },
+      { slug: 'fukushima', prefecture: 'Fukushima' },
+    ],
+  },
+  {
     label: 'Kanto',
     prefectures: [
       { slug: 'tokyo',     prefecture: 'Tokyo' },
@@ -27,7 +44,6 @@ const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefect
       { slug: 'ibaraki',   prefecture: 'Ibaraki' },
       { slug: 'tochigi',   prefecture: 'Tochigi' },
       { slug: 'gunma',     prefecture: 'Gunma' },
-      { slug: 'yamanashi', prefecture: 'Yamanashi' },
     ],
   },
   {
@@ -35,51 +51,45 @@ const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefect
     prefectures: [
       { slug: 'niigata',   prefecture: 'Niigata' },
       { slug: 'toyama',    prefecture: 'Toyama' },
+      { slug: 'ishikawa',  prefecture: 'Ishikawa' },
       { slug: 'fukui',     prefecture: 'Fukui' },
-    ],
-  },
-  {
-    label: 'Hokkaido & Tohoku',
-    prefectures: [
-      { slug: 'hokkaido',  prefecture: 'Hokkaido' },
-      { slug: 'aomori',   prefecture: 'Aomori' },
-      { slug: 'iwate',    prefecture: 'Iwate' },
-      { slug: 'miyagi',   prefecture: 'Miyagi' },
-      { slug: 'akita',    prefecture: 'Akita' },
-      { slug: 'yamagata', prefecture: 'Yamagata' },
-      { slug: 'fukushima',prefecture: 'Fukushima' },
     ],
   },
   {
     label: 'Chubu',
     prefectures: [
-      { slug: 'aichi',    prefecture: 'Aichi' },
-      { slug: 'shizuoka', prefecture: 'Shizuoka' },
-      { slug: 'nagano',   prefecture: 'Nagano' },
-      { slug: 'ishikawa', prefecture: 'Ishikawa' },
-      { slug: 'gifu',     prefecture: 'Gifu' },
+      { slug: 'aichi',     prefecture: 'Aichi' },
+      { slug: 'shizuoka',  prefecture: 'Shizuoka' },
+      { slug: 'nagano',    prefecture: 'Nagano' },
+      { slug: 'gifu',      prefecture: 'Gifu' },
+      { slug: 'yamanashi', prefecture: 'Yamanashi' },
     ],
   },
   {
     label: 'Kinki',
     prefectures: [
-      { slug: 'osaka',    prefecture: 'Osaka' },
-      { slug: 'kyoto',    prefecture: 'Kyoto' },
-      { slug: 'nara',     prefecture: 'Nara' },
-      { slug: 'hyogo',    prefecture: 'Hyogo' },
-      { slug: 'shiga',    prefecture: 'Shiga' },
-      { slug: 'wakayama', prefecture: 'Wakayama' },
-      { slug: 'mie',      prefecture: 'Mie' },
+      { slug: 'osaka',     prefecture: 'Osaka' },
+      { slug: 'kyoto',     prefecture: 'Kyoto' },
+      { slug: 'nara',      prefecture: 'Nara' },
+      { slug: 'hyogo',     prefecture: 'Hyogo' },
+      { slug: 'shiga',     prefecture: 'Shiga' },
+      { slug: 'wakayama',  prefecture: 'Wakayama' },
+      { slug: 'mie',       prefecture: 'Mie' },
     ],
   },
   {
-    label: 'Chugoku & Shikoku',
+    label: 'Chugoku',
     prefectures: [
       { slug: 'hiroshima', prefecture: 'Hiroshima' },
       { slug: 'yamaguchi', prefecture: 'Yamaguchi' },
       { slug: 'okayama',   prefecture: 'Okayama' },
       { slug: 'tottori',   prefecture: 'Tottori' },
       { slug: 'shimane',   prefecture: 'Shimane' },
+    ],
+  },
+  {
+    label: 'Shikoku',
+    prefectures: [
       { slug: 'ehime',     prefecture: 'Ehime' },
       { slug: 'kochi',     prefecture: 'Kochi' },
       { slug: 'tokushima', prefecture: 'Tokushima' },
@@ -87,7 +97,7 @@ const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefect
     ],
   },
   {
-    label: 'Kyushu & Okinawa',
+    label: 'Kyushu',
     prefectures: [
       { slug: 'fukuoka',   prefecture: 'Fukuoka' },
       { slug: 'saga',      prefecture: 'Saga' },
@@ -96,6 +106,11 @@ const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefect
       { slug: 'oita',      prefecture: 'Oita' },
       { slug: 'miyazaki',  prefecture: 'Miyazaki' },
       { slug: 'kagoshima', prefecture: 'Kagoshima' },
+    ],
+  },
+  {
+    label: 'Okinawa',
+    prefectures: [
       { slug: 'okinawa',   prefecture: 'Okinawa' },
     ],
   },

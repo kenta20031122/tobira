@@ -177,6 +177,7 @@ export default async function SpotDetailPage({ params }: Props) {
             spot.region === 'kinki'     ? 'Kinki' :
             spot.region === 'chugoku'   ? 'Chugoku' :
             spot.region === 'shikoku'   ? 'Shikoku' :
+            spot.region === 'okinawa'   ? 'Okinawa' :
             'Kyushu'
           }</span>
         </div>

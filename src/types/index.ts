@@ -12,7 +12,7 @@ export type Spot = {
   id: string;
   name: string;
   prefecture: Prefecture;
-  region: 'kyushu' | 'chugoku' | 'shikoku' | 'hokkaido' | 'tohoku' | 'kinki' | 'chubu' | 'kanto' | 'hokuriku';
+  region: 'kyushu' | 'chugoku' | 'shikoku' | 'hokkaido' | 'tohoku' | 'kinki' | 'chubu' | 'kanto' | 'hokuriku' | 'okinawa';
   categories: Category[];
   description: string;
   address: string;
