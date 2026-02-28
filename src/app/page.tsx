@@ -198,7 +198,7 @@ export default async function HomePage() {
         <div className="space-y-10">
           {REGIONS.map((region) => (
             <div key={region.label}>
-              <h3 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
+              <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
                 {region.label}
               </h3>
               <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">

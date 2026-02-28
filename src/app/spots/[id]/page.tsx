@@ -220,7 +220,7 @@ export default async function SpotDetailPage({ params }: Props) {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {spot.duration && (
               <div className="bg-white rounded-xl p-4 border border-stone-200">
-                <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
                   <Clock size={13} />
                   Duration
                 </div>
@@ -229,7 +229,7 @@ export default async function SpotDetailPage({ params }: Props) {
             )}
             {spot.admission && (
               <div className="bg-white rounded-xl p-4 border border-stone-200">
-                <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+                <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
                   <Ticket size={13} />
                   Admission
                 </div>

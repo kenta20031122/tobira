@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Menu, X, LogIn, LogOut, User, Settings, ChevronDown, Heart, Map } from 'lucide-react';
@@ -74,7 +75,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <img src="/icon.svg" alt="tobira" className="w-9 h-9 -mt-2" />
+          <Image src="/icon.svg" alt="tobira" width={36} height={36} className="-mt-2" />
           <span className="text-2xl font-bold tracking-tight text-stone-900">
             tobira
           </span>

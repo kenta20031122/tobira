@@ -182,7 +182,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 space-y-5">
           {/* Prefecture */}
           <div>
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Prefecture</p>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Prefecture</p>
             <div className="flex flex-wrap gap-2">
               {(['All', ...PREFECTURES] as const).map((p) => (
                 <button
@@ -202,7 +202,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
 
           {/* Category */}
           <div>
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Category</p>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Category</p>
             <div className="flex flex-wrap gap-2">
               {(['All', ...CATEGORIES] as const).map((c) => (
                 <button
@@ -222,7 +222,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
 
           {/* Season */}
           <div>
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Season</p>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Season</p>
             <div className="flex flex-wrap gap-2">
               {SEASON_OPTIONS.map((opt) => (
                 <button
@@ -247,7 +247,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
 
           {/* Duration */}
           <div>
-            <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Visit Duration</p>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Visit Duration</p>
             <div className="flex flex-wrap gap-2">
               {DURATION_OPTIONS.map((opt) => (
                 <button
