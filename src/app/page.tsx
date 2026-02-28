@@ -105,7 +105,7 @@ export default async function HomePage() {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-stone-900">
         <Image
           src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&auto=format&fit=crop"
-          alt="Kyushu landscape"
+          alt="Japanese landscape"
           fill
           className="object-cover opacity-40"
           priority
@@ -250,7 +250,7 @@ export default async function HomePage() {
             </div>
             <Link
               href="/spots"
-              className="hidden sm:flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
             >
               View all
               <ArrowRight size={14} />

@@ -8,11 +8,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const spots = await getAllSpots();
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE_URL,              changeFrequency: 'weekly',  priority: 1.0 },
-    { url: `${BASE_URL}/spots`,   changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE_URL}/guides`,  changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${BASE_URL}/plan`,    changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${BASE_URL}/pricing`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: BASE_URL,                    changeFrequency: 'weekly',  priority: 1.0 },
+    { url: `${BASE_URL}/spots`,         changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE_URL}/guides`,        changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${BASE_URL}/plan`,          changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE_URL}/pricing`,       changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/about`,         changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/contact`,       changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE_URL}/privacy`,       changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${BASE_URL}/terms`,         changeFrequency: 'yearly',  priority: 0.3 },
   ];
 
   const spotRoutes: MetadataRoute.Sitemap = spots.map((spot) => ({
