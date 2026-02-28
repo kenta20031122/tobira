@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { Compass, Sparkles, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'About',
+  title: 'About Tobira',
   description:
-    'Tobira is a hand-curated travel guide to Japan — built by someone who lives here, not trained on influencer content.',
+    'Tobira is a hand-curated Japan travel guide built by one person living in Japan — not a media company, not an algorithm. Every spot has been personally researched.',
 };
 
 const VALUES = [
@@ -45,13 +45,17 @@ export default function AboutPage() {
         <p className="text-stone-500 text-lg leading-relaxed max-w-xl mx-auto">
           Tobira started as a personal frustration: every travel guide in English sent
           tourists to the same dozen places, often in the wrong season, with outdated
-          information. We built the guide we wished existed.
+          information. I built the guide I wished existed.
         </p>
       </section>
 
       {/* Story */}
       <section className="max-w-3xl mx-auto px-4 pb-16">
         <div className="bg-white rounded-2xl p-8 sm:p-12 border border-stone-200 space-y-5 text-stone-600 leading-relaxed">
+          <p>
+            Tobira started in 2024, born out of years of living in Japan and watching
+            visitors miss almost everything.
+          </p>
           <p>
             Japan has 47 prefectures. The overwhelming majority of foreign visitors see
             fewer than five. Not because the rest aren&apos;t worth visiting — quite the
@@ -72,6 +76,34 @@ export default function AboutPage() {
             Tobira is an independent project — not a media company, not a startup.
             Just one person living in Japan, trying to share it honestly.
           </p>
+        </div>
+      </section>
+
+      {/* How spots are chosen */}
+      <section className="max-w-3xl mx-auto px-4 pb-16">
+        <div className="bg-white rounded-2xl p-8 sm:p-12 border border-stone-200">
+          <h2 className="text-xl font-bold text-stone-900 mb-6">How spots are chosen</h2>
+          <p className="text-stone-600 leading-relaxed mb-6">
+            Each spot in Tobira&apos;s database passes a set of criteria before it&apos;s added:
+          </p>
+          <ul className="space-y-4 text-stone-600 text-sm leading-relaxed">
+            <li className="flex gap-3">
+              <span className="text-red-500 font-bold shrink-0">—</span>
+              <span><strong className="text-stone-800">Worth the detour</strong> — it offers something you can&apos;t find in a standard guidebook, not just a famous name on a list.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-red-500 font-bold shrink-0">—</span>
+              <span><strong className="text-stone-800">Accurately described</strong> — seasonal conditions, access, and timing are verified. If something has changed, the listing gets updated.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-red-500 font-bold shrink-0">—</span>
+              <span><strong className="text-stone-800">Honest about trade-offs</strong> — if a place is crowded, hard to reach, or only good in one season, that&apos;s written plainly.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-red-500 font-bold shrink-0">—</span>
+              <span><strong className="text-stone-800">No affiliate deals</strong> — no sponsored listings, no paid placements, no &ldquo;10 best&rdquo; lists commissioned by tourism boards.</span>
+            </li>
+          </ul>
         </div>
       </section>
 
@@ -99,7 +131,7 @@ export default function AboutPage() {
           Questions or feedback?
         </h2>
         <p className="text-stone-500 mb-6">
-          We read every message. Seriously.
+          I read every message. Seriously.
         </p>
         <Link
           href="/contact"
