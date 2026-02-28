@@ -237,14 +237,14 @@ export default async function SpotDetailPage({ params }: Props) {
               </div>
             )}
             <div className="bg-white rounded-xl p-4 border border-stone-200">
-              <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+              <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
                 <Calendar size={13} />
                 Best Season
               </div>
               <p className="text-stone-800 text-sm font-medium">{spot.best_season}</p>
             </div>
             <div className="bg-white rounded-xl p-4 border border-stone-200">
-              <div className="flex items-center gap-1.5 text-stone-400 text-xs mb-1">
+              <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
                 <Train size={13} />
                 Access
               </div>
