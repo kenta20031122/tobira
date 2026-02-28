@@ -53,7 +53,7 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto px-4 pb-16">
         <div className="bg-white rounded-2xl p-8 sm:p-12 border border-stone-200 space-y-5 text-stone-600 leading-relaxed">
           <p>
-            Tobira started in 2024, born out of years of living in Japan and watching
+            Tobira started in 2026, born out of years of living in Japan and watching
             visitors miss almost everything.
           </p>
           <p>
