@@ -687,7 +687,7 @@ const spots = [
   },
   {
     id: 'nokogiriyama-ropeway',
-    name: '鋸山 Ropeway',
+    name: 'Nokogiriyama Ropeway',
     prefecture: 'Chiba',
     region: 'kanto',
     categories: ['nature'],
