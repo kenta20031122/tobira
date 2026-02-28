@@ -79,9 +79,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     prefecture === 'Hokkaido' ? 'Hokkaido' :
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
     ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
-    ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
-    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma', 'Yamanashi'].includes(prefecture) ? 'Kanto' :
-    ['Niigata', 'Toyama', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
+    ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'].includes(prefecture) ? 'Chubu' :
+    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
+    ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
@@ -117,15 +117,49 @@ export default async function PrefectureGuidePage({ params }: Props) {
     prefecture === 'Hokkaido' ? 'Hokkaido' :
     ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
     ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
-    ['Aichi', 'Shizuoka', 'Nagano', 'Ishikawa', 'Gifu'].includes(prefecture) ? 'Chubu' :
-    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma', 'Yamanashi'].includes(prefecture) ? 'Kanto' :
-    ['Niigata', 'Toyama', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
+    ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'].includes(prefecture) ? 'Chubu' :
+    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
+    ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
     ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
     ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
     prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${prefecture} Travel Guide — Hidden Gems & Local Spots`,
+    description: `${spots.length} curated spots in ${prefecture}, ${region}, Japan. Authentic local experiences beyond the tourist trail.`,
+    numberOfItems: spots.length,
+    itemListElement: spots.map((spot, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'TouristAttraction',
+        name: spot.name,
+        description: spot.description,
+        image: spot.image_url,
+        url: `https://tobira-travel.com/spots/${spot.id}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: spot.address,
+          addressRegion: prefecture,
+          addressCountry: 'JP',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: spot.lat,
+          longitude: spot.lng,
+        },
+      },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="relative h-[60vh] min-h-[400px] flex items-end overflow-hidden">
         <Image
