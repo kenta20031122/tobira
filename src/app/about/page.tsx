@@ -25,7 +25,7 @@ const VALUES = [
     icon: Sparkles,
     title: 'AI as a tool, not the product',
     description:
-      'The AI itinerary planner exists to help you arrange what we\'ve curated — not to invent destinations or recycle generic advice.',
+      'The AI itinerary planner exists to help you arrange what\'s been curated — not to invent destinations or recycle generic advice.',
   },
 ];
 
@@ -68,7 +68,7 @@ export default function AboutPage() {
             Instagram hotspots, beyond the Golden Route.
           </p>
           <p>
-            Every spot in our database has been selected because it offers something
+            Every spot in Tobira&apos;s database has been selected because it offers something
             genuine: a landscape that takes your breath away, a town that feels untouched,
             a meal that you couldn&apos;t have found without a local pointing the way.
           </p>
