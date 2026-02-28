@@ -1,4 +1,5 @@
 import { getAllSpots } from '@/lib/spots';
+import { PREFECTURE_MAP } from '@/lib/utils';
 import type { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://tobira-travel.com';
@@ -20,19 +21,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const guideRoutes: MetadataRoute.Sitemap = [
-    'fukuoka', 'saga', 'nagasaki', 'kumamoto',
-    'oita', 'miyazaki', 'kagoshima', 'okinawa', 'hiroshima',
-    'yamaguchi', 'okayama', 'tottori', 'shimane',
-    'ehime', 'kochi', 'tokushima', 'kagawa',
-    'hokkaido',
-    'aomori', 'iwate', 'miyagi', 'akita', 'yamagata', 'fukushima',
-    'osaka', 'kyoto', 'nara', 'hyogo', 'shiga', 'wakayama', 'mie',
-    'aichi', 'shizuoka', 'nagano', 'ishikawa', 'gifu',
-    'tokyo', 'kanagawa', 'saitama', 'chiba', 'ibaraki', 'tochigi', 'gunma', 'yamanashi',
-    'niigata', 'toyama', 'fukui',
-  ].map((pref) => ({
-    url: `${BASE_URL}/guides/${pref}`,
+  const guideRoutes: MetadataRoute.Sitemap = Object.keys(PREFECTURE_MAP).map((slug) => ({
+    url: `${BASE_URL}/guides/${slug}`,
     changeFrequency: 'monthly' as const,
     priority: 0.85,
   }));

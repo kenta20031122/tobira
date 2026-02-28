@@ -4,60 +4,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Sparkles } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
-import { CATEGORY_LABELS } from '@/lib/utils';
+import { CATEGORY_LABELS, PREFECTURE_MAP } from '@/lib/utils';
 import SpotCard from '@/components/SpotCard';
 import WhenToVisitSection from '@/components/WhenToVisitSection';
 import type { Prefecture } from '@/types';
-
-const PREFECTURE_MAP: Record<string, Prefecture> = {
-  fukuoka:   'Fukuoka',
-  saga:      'Saga',
-  nagasaki:  'Nagasaki',
-  kumamoto:  'Kumamoto',
-  oita:      'Oita',
-  miyazaki:  'Miyazaki',
-  kagoshima: 'Kagoshima',
-  okinawa:   'Okinawa',
-  hiroshima: 'Hiroshima',
-  yamaguchi: 'Yamaguchi',
-  okayama:   'Okayama',
-  tottori:   'Tottori',
-  shimane:   'Shimane',
-  ehime:     'Ehime',
-  kochi:     'Kochi',
-  tokushima: 'Tokushima',
-  kagawa:    'Kagawa',
-  hokkaido:  'Hokkaido',
-  aomori:    'Aomori',
-  iwate:     'Iwate',
-  miyagi:    'Miyagi',
-  akita:     'Akita',
-  yamagata:  'Yamagata',
-  fukushima: 'Fukushima',
-  osaka:     'Osaka',
-  kyoto:     'Kyoto',
-  nara:      'Nara',
-  hyogo:     'Hyogo',
-  shiga:     'Shiga',
-  wakayama:  'Wakayama',
-  mie:       'Mie',
-  aichi:     'Aichi',
-  shizuoka:  'Shizuoka',
-  nagano:    'Nagano',
-  ishikawa:  'Ishikawa',
-  gifu:      'Gifu',
-  tokyo:     'Tokyo',
-  kanagawa:  'Kanagawa',
-  saitama:   'Saitama',
-  chiba:     'Chiba',
-  ibaraki:   'Ibaraki',
-  tochigi:   'Tochigi',
-  gunma:     'Gunma',
-  yamanashi: 'Yamanashi',
-  niigata:   'Niigata',
-  toyama:    'Toyama',
-  fukui:     'Fukui',
-};
 
 
 export async function generateStaticParams() {

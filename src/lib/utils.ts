@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { Prefecture } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,6 +64,11 @@ export const PREFECTURE_LABELS: Record<string, string> = {
   Toyama: 'Toyama',
   Fukui: 'Fukui',
 };
+
+/** slug (lowercase) → Prefecture name。guides と sitemap で共用 */
+export const PREFECTURE_MAP: Record<string, Prefecture> = Object.fromEntries(
+  Object.keys(PREFECTURE_LABELS).map((name) => [name.toLowerCase(), name as Prefecture])
+);
 
 // ─── Season utilities ─────────────────────────────────────────────────────────
 
