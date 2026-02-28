@@ -7,12 +7,12 @@ import PricingCTA from '@/components/PricingCTA';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Tobira Pro',
-  description: 'Unlock all premium spots across Kyushu.',
+  title: 'Tobira Pro — Unlock All of Japan',
+  description: 'Get full access to premium spots across all 47 prefectures. Insider tips, hidden highlights, and unlimited AI trip plans for $4.99/month.',
 };
 
 const FEATURES = [
-  'Access all 18+ premium spots',
+  'Access all premium spots across Japan',
   'Hidden local tips & insider timing',
   'Full location maps for every spot',
   'Access & duration details',
@@ -56,10 +56,10 @@ export default async function PricingPage({
           Tobira Pro
         </div>
         <h1 className="text-4xl font-bold text-stone-900 mb-3">
-          Unlock Kyushu's Hidden Gems
+          Unlock Japan&apos;s Hidden Gems
         </h1>
         <p className="text-stone-500 text-lg">
-          Go beyond the guidebook. Get access to handpicked secret spots locals actually visit.
+          Go beyond the guidebook. Get access to handpicked secret spots across all 47 prefectures — curated by locals who have actually been there.
         </p>
       </div>
 
