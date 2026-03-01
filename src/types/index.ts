@@ -8,11 +8,15 @@ export type Category =
   | 'activity'
   | 'spiritual';
 
+export type Region =
+  | 'hokkaido' | 'tohoku' | 'kanto' | 'hokuriku' | 'chubu'
+  | 'kinki' | 'chugoku' | 'shikoku' | 'kyushu' | 'okinawa';
+
 export type Spot = {
   id: string;
   name: string;
   prefecture: Prefecture;
-  region: 'kyushu' | 'chugoku' | 'shikoku' | 'hokkaido' | 'tohoku' | 'kinki' | 'chubu' | 'kanto' | 'hokuriku' | 'okinawa';
+  region: Region;
   categories: Category[];
   description: string;
   address: string;

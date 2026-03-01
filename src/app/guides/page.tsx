@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { MapPin } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import { CATEGORY_LABELS } from '@/lib/utils';
+import { REGION_META, REGION_IDS } from '@/lib/regions';
 import type { Prefecture } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Japan Travel Guides — Kanto, Hokuriku, Chubu, Kinki, Tohoku, Chugoku, Shikoku & Kyushu',
+  title: 'Japan Travel Guides — Kanto, Hokuriku, Chubu, Kansai, Tohoku, Chugoku, Shikoku & Kyushu',
   description:
     'In-depth travel guides for all 47 prefectures across Japan. Discover hidden gems, local tips, and authentic experiences beyond the tourist trail — curated by locals, not algorithms.',
   openGraph: {
@@ -16,105 +17,14 @@ export const metadata: Metadata = {
   },
 };
 
-const REGIONS: { label: string; prefectures: { slug: string; prefecture: Prefecture }[] }[] = [
-  {
-    label: 'Hokkaido',
-    prefectures: [
-      { slug: 'hokkaido',  prefecture: 'Hokkaido' },
-    ],
-  },
-  {
-    label: 'Tohoku',
-    prefectures: [
-      { slug: 'aomori',    prefecture: 'Aomori' },
-      { slug: 'iwate',     prefecture: 'Iwate' },
-      { slug: 'miyagi',    prefecture: 'Miyagi' },
-      { slug: 'akita',     prefecture: 'Akita' },
-      { slug: 'yamagata',  prefecture: 'Yamagata' },
-      { slug: 'fukushima', prefecture: 'Fukushima' },
-    ],
-  },
-  {
-    label: 'Kanto',
-    prefectures: [
-      { slug: 'tokyo',     prefecture: 'Tokyo' },
-      { slug: 'kanagawa',  prefecture: 'Kanagawa' },
-      { slug: 'saitama',   prefecture: 'Saitama' },
-      { slug: 'chiba',     prefecture: 'Chiba' },
-      { slug: 'ibaraki',   prefecture: 'Ibaraki' },
-      { slug: 'tochigi',   prefecture: 'Tochigi' },
-      { slug: 'gunma',     prefecture: 'Gunma' },
-    ],
-  },
-  {
-    label: 'Hokuriku',
-    prefectures: [
-      { slug: 'niigata',   prefecture: 'Niigata' },
-      { slug: 'toyama',    prefecture: 'Toyama' },
-      { slug: 'ishikawa',  prefecture: 'Ishikawa' },
-      { slug: 'fukui',     prefecture: 'Fukui' },
-    ],
-  },
-  {
-    label: 'Chubu',
-    prefectures: [
-      { slug: 'aichi',     prefecture: 'Aichi' },
-      { slug: 'shizuoka',  prefecture: 'Shizuoka' },
-      { slug: 'nagano',    prefecture: 'Nagano' },
-      { slug: 'gifu',      prefecture: 'Gifu' },
-      { slug: 'yamanashi', prefecture: 'Yamanashi' },
-    ],
-  },
-  {
-    label: 'Kinki',
-    prefectures: [
-      { slug: 'osaka',     prefecture: 'Osaka' },
-      { slug: 'kyoto',     prefecture: 'Kyoto' },
-      { slug: 'nara',      prefecture: 'Nara' },
-      { slug: 'hyogo',     prefecture: 'Hyogo' },
-      { slug: 'shiga',     prefecture: 'Shiga' },
-      { slug: 'wakayama',  prefecture: 'Wakayama' },
-      { slug: 'mie',       prefecture: 'Mie' },
-    ],
-  },
-  {
-    label: 'Chugoku',
-    prefectures: [
-      { slug: 'hiroshima', prefecture: 'Hiroshima' },
-      { slug: 'yamaguchi', prefecture: 'Yamaguchi' },
-      { slug: 'okayama',   prefecture: 'Okayama' },
-      { slug: 'tottori',   prefecture: 'Tottori' },
-      { slug: 'shimane',   prefecture: 'Shimane' },
-    ],
-  },
-  {
-    label: 'Shikoku',
-    prefectures: [
-      { slug: 'ehime',     prefecture: 'Ehime' },
-      { slug: 'kochi',     prefecture: 'Kochi' },
-      { slug: 'tokushima', prefecture: 'Tokushima' },
-      { slug: 'kagawa',    prefecture: 'Kagawa' },
-    ],
-  },
-  {
-    label: 'Kyushu',
-    prefectures: [
-      { slug: 'fukuoka',   prefecture: 'Fukuoka' },
-      { slug: 'saga',      prefecture: 'Saga' },
-      { slug: 'nagasaki',  prefecture: 'Nagasaki' },
-      { slug: 'kumamoto',  prefecture: 'Kumamoto' },
-      { slug: 'oita',      prefecture: 'Oita' },
-      { slug: 'miyazaki',  prefecture: 'Miyazaki' },
-      { slug: 'kagoshima', prefecture: 'Kagoshima' },
-    ],
-  },
-  {
-    label: 'Okinawa',
-    prefectures: [
-      { slug: 'okinawa',   prefecture: 'Okinawa' },
-    ],
-  },
-];
+// Derived from REGION_META — single source of truth
+const REGIONS = REGION_IDS.map((id) => ({
+  label: REGION_META[id].label,
+  prefectures: REGION_META[id].prefectures.map((pref) => ({
+    slug: pref.toLowerCase(),
+    prefecture: pref as Prefecture,
+  })),
+}));
 
 export default async function GuidesPage() {
   const allSpots = await getAllSpots();
@@ -142,7 +52,9 @@ export default async function GuidesPage() {
             <h2 className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">
               {region.label}
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+            <div className="relative -mx-4">
+              <div className="absolute right-0 top-0 bottom-3 w-12 bg-gradient-to-l from-stone-50 to-transparent z-10 pointer-events-none" />
+            <div className="flex gap-4 overflow-x-auto pb-3 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
               {region.prefectures.map(({ slug, prefecture }) => {
                 const spots = allSpots.filter((s) => s.prefecture === prefecture);
                 const heroImage = spots[0]?.image_url ?? '';
@@ -183,6 +95,7 @@ export default async function GuidesPage() {
                   </Link>
                 );
               })}
+            </div>
             </div>
           </div>
         ))}

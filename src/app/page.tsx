@@ -4,6 +4,8 @@ import { ArrowRight, Sparkles, MapPin, Compass } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
 import HomeSearchBar from '@/components/HomeSearchBar';
+import type { Prefecture } from '@/types';
+import JapanRegionMapWrapper from '@/components/JapanRegionMapWrapper';
 
 const FEATURES = [
   {
@@ -29,75 +31,22 @@ const FEATURES = [
 export default async function HomePage() {
   const spots = await getAllSpots();
 
-  const FEATURED_IDS = ['aso-caldera', 'beppu-hells', 'takachiho-gorge'];
-  const featuredSpots = FEATURED_IDS.map((id) => spots.find((s) => s.id === id)!).filter(Boolean);
+  // Pick 1 non-premium spot from each of 3 geographically diverse regions (north / central / south)
+  const FEATURED_REGIONS = ['hokkaido', 'kinki', 'kyushu'] as const;
+  const featuredSpots = FEATURED_REGIONS
+    .map((region) => spots.find((s) => s.region === region && !s.is_premium) ?? spots.find((s) => s.region === region))
+    .filter((s): s is NonNullable<typeof s> => Boolean(s));
 
-  const PH = 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&auto=format&fit=crop&q=80';
-  const SB = (file: string) =>
-    `https://khgpsvnrorfigvubxhmd.supabase.co/storage/v1/object/public/spot-images/${file}`;
+  const spotCountByPrefecture = Object.fromEntries(
+    spots.reduce((acc, s) => {
+      acc.set(s.prefecture, (acc.get(s.prefecture) ?? 0) + 1);
+      return acc;
+    }, new Map<Prefecture, number>()),
+  ) as Partial<Record<Prefecture, number>>;
 
-  const PREFECTURE_DATA: Record<string, { tagline: string; image: string }> = {
-    Hokkaido:  { tagline: 'Lavender Fields & Wild Frontiers',    image: SB('hokkaido.jpg') },
-    Aomori:    { tagline: 'Sacred Mountains & Apple Blossoms',   image: SB('aomori.jpg') },
-    Iwate:     { tagline: 'Golden Temples & Hidden Gorges',      image: SB('iwate.jpg') },
-    Miyagi:    { tagline: 'Island Bays & Samurai Coast',         image: SB('miyagi.jpg') },
-    Akita:     { tagline: 'Samurai Towns & Volcanic Lakes',      image: SB('akita.jpg') },
-    Yamagata:  { tagline: 'Snow Onsen & Mountain Shrines',       image: SB('yamagata.jpg') },
-    Fukushima: { tagline: 'Castle Towns & Emerald Lakes',        image: SB('fukushima.jpg') },
-    Osaka:     { tagline: 'Street Food, Neon & Ancient Shrines', image: SB('osaka.jpg') },
-    Kyoto:     { tagline: 'Temples, Geisha & Hidden Gardens',    image: SB('kyoto.jpg') },
-    Nara:      { tagline: 'Sacred Deer & Ancient Capitals',      image: SB('nara.jpg') },
-    Hyogo:     { tagline: 'Hot Springs, Clouds & Castle Towns',  image: SB('hyogo.jpg') },
-    Shiga:     { tagline: 'Lake Country & Samurai Castles',      image: SB('shiga.jpg') },
-    Wakayama:  { tagline: 'Sacred Mountains & Ocean Trails',     image: SB('wakayama.jpg') },
-    Mie:       { tagline: "Japan's Holiest Shrine & Pearl Bays", image: SB('mie.jpg') },
-    Aichi:     { tagline: 'Rivers, Castles & Meiji Heritage',    image: SB('aichi.jpg') },
-    Shizuoka:  { tagline: 'Mt Fuji Views & Hot Spring Valleys',  image: SB('shizuoka.jpg') },
-    Nagano:    { tagline: 'Alpine Valleys & Snow Monkeys',       image: SB('nagano.jpg') },
-    Ishikawa:  { tagline: 'Geisha Districts & Wild Coastlines',  image: SB('ishikawa.jpg') },
-    Gifu:      { tagline: 'Thatched Villages & Mountain Streams',image: SB('gifu.jpg') },
-    Tokyo:     { tagline: 'Megacity, Temples & Hidden Alleys',   image: SB('tokyo.jpg') },
-    Kanagawa:  { tagline: 'Samurai History & Mountain Bays',     image: SB('kanagawa.jpg') },
-    Saitama:   { tagline: 'Ancient Tombs & Edo Canals',          image: SB('saitama.jpg') },
-    Chiba:     { tagline: 'Pacific Coast & Hidden Waterfalls',   image: SB('chiba.jpg') },
-    Ibaraki:   { tagline: 'Plum Blossoms & Coastal Dunes',       image: SB('ibaraki.jpg') },
-    Tochigi:   { tagline: 'UNESCO Shrines & Onsen Gorges',       image: SB('tochigi.jpg') },
-    Gunma:     { tagline: 'Silk Road & Mountain Hot Springs',    image: SB('gunma.jpg') },
-    Yamanashi: { tagline: 'Fuji Five Lakes & Wine Country',      image: SB('yamanashi.jpg') },
-    Niigata:   { tagline: 'Rice, Sake & Japan Sea Coast',        image: SB('niigata.jpg') },
-    Toyama:    { tagline: 'Black Dam & Northern Alps',           image: SB('toyama.jpg') },
-    Fukui:     { tagline: 'Dinosaur Country & Cliffside Coasts', image: SB('fukui.jpg') },
-    Hiroshima: { tagline: 'Peace, Islands & Inland Sea',         image: SB('hiroshima.jpg') },
-    Yamaguchi: { tagline: 'Torii Cliffs & Karst Caves',          image: SB('yamaguchi.jpg') },
-    Okayama:   { tagline: 'Canal Districts & Garden Art',        image: SB('okayama.jpg') },
-    Tottori:   { tagline: 'Sand Dunes & Sacred Peaks',           image: SB('tottori.jpg') },
-    Shimane:   { tagline: 'Ancient Shrines & Silver Mines',      image: SB('shimane.jpg') },
-    Ehime:     { tagline: 'Oldest Onsen & Island Cycling',       image: SB('ehime.jpg') },
-    Kochi:     { tagline: 'Wild Rivers & Pacific Coast',         image: SB('kochi.jpg') },
-    Tokushima: { tagline: 'Whirlpools & Vine Bridges',           image: SB('tokushima.jpg') },
-    Kagawa:    { tagline: 'Art Islands & Sacred Stairs',         image: SB('kagawa.jpg') },
-    Fukuoka:   { tagline: 'Ramen, Shrines & City Life',          image: SB('fukuoka.jpg') },
-    Saga:      { tagline: 'Pottery & Ancient Ruins',             image: SB('saga.jpg') },
-    Nagasaki:  { tagline: 'History, Islands & Peace',            image: SB('nagasaki.jpg') },
-    Kumamoto:  { tagline: 'Volcanoes & Onsen',                   image: SB('kumamoto.jpg') },
-    Oita:      { tagline: 'Hot Springs & Highlands',             image: SB('oita.jpg') },
-    Miyazaki:  { tagline: 'Myth & Pacific Coast',                image: SB('miyazaki.jpg') },
-    Kagoshima: { tagline: 'Sakurajima & Wild South',             image: SB('kagoshima.jpg') },
-    Okinawa:   { tagline: 'Coral Reefs & Ryukyu Culture',        image: SB('okinawa.jpg') },
-  };
+  const prefectureCount = new Set(spots.map((s) => s.prefecture)).size;
 
-  const REGIONS = [
-    { label: 'Hokkaido',  prefectures: ['Hokkaido'] },
-    { label: 'Tohoku',    prefectures: ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'] },
-    { label: 'Kanto',     prefectures: ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'] },
-    { label: 'Hokuriku',  prefectures: ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'] },
-    { label: 'Chubu',     prefectures: ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'] },
-    { label: 'Kinki',     prefectures: ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'] },
-    { label: 'Chugoku',   prefectures: ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'] },
-    { label: 'Shikoku',   prefectures: ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'] },
-    { label: 'Kyushu',    prefectures: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima'] },
-    { label: 'Okinawa',   prefectures: ['Okinawa'] },
-  ];
+
 
   return (
     <div>
@@ -154,7 +103,7 @@ export default async function HomePage() {
             </span>
             <span className="text-stone-400 text-xs flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
-              All 47 prefectures
+              {prefectureCount} prefectures
             </span>
             <span className="text-stone-400 text-xs flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
@@ -198,52 +147,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── Prefecture Cards ─────────────────────────────────── */}
+      {/* ─── Explore by Region — Interactive Map ─────────────── */}
       <section className="max-w-6xl mx-auto px-4 py-20">
-        <div className="text-center mb-14">
+        <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
-            All of Japan. Beyond the Guidebook.
+            Where in Japan?
           </h2>
-          <p className="text-stone-500 max-w-lg mx-auto">
-            All 47 prefectures — from Hokkaido to Okinawa — each curated by someone who has actually been there.
+          <p className="text-stone-500 max-w-md mx-auto">
+            Click any region to explore hand-picked spots —
+            from Hokkaido&apos;s frozen north to Okinawa&apos;s coral reefs.
           </p>
         </div>
 
-        <div className="space-y-10">
-          {REGIONS.map((region) => (
-            <div key={region.label}>
-              <h3 className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-4">
-                {region.label}
-              </h3>
-              <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
-                {region.prefectures.map((name) => {
-                  const data = PREFECTURE_DATA[name];
-                  const count = spots.filter((s) => s.prefecture === name).length;
-                  return (
-                    <Link
-                      key={name}
-                      href={`/guides/${name.toLowerCase()}`}
-                      className="group relative rounded-2xl overflow-hidden flex-shrink-0 w-52 h-64 block"
-                    >
-                      <Image
-                        src={data.image}
-                        alt={name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-stone-900/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <p className="text-stone-300 text-xs mb-0.5">{data.tagline}</p>
-                        <h3 className="text-white text-lg font-bold leading-tight">{name}</h3>
-                        <p className="text-stone-400 text-xs mt-0.5">{count} spots</p>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+        <JapanRegionMapWrapper spotCountByPrefecture={spotCountByPrefecture} />
       </section>
 
       {/* ─── Featured Spots ───────────────────────────────────── */}

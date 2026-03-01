@@ -6,7 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { Search, LayoutGrid, Map, SlidersHorizontal, X } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
 import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
-import type { Category, Prefecture, Spot } from '@/types';
+import type { Category, Prefecture, Region, Spot } from '@/types';
+import { REGION_META, REGION_IDS } from '@/lib/regions';
 
 const SpotsMapView = dynamic(() => import('@/components/maps/SpotsMapView'), {
   ssr: false,
@@ -43,6 +44,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
   const initialCategory = searchParams.get('category') as Category | null;
+  const initialRegion = searchParams.get('region') as Region | null;
   const initialSearch = searchParams.get('q') ?? '';
 
   const [favIds, setFavIds] = useState<string[]>([]);
@@ -53,16 +55,18 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>(
     initialCategory ?? 'All'
   );
+  const [selectedRegion, setSelectedRegion] = useState<Region | 'All'>(initialRegion ?? 'All');
   const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>('All');
   const [selectedDuration, setSelectedDuration] = useState<DurationFilter>('All');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory));
+  const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory || initialRegion));
 
   const currentMonth = new Date().getMonth() + 1;
 
   const activeFilterCount = [
     selectedPrefecture !== 'All',
     selectedCategory !== 'All',
+    selectedRegion !== 'All',
     selectedSeason !== 'All',
     selectedDuration !== 'All',
   ].filter(Boolean).length;
@@ -70,6 +74,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   function clearAllFilters() {
     setSelectedPrefecture('All');
     setSelectedCategory('All');
+    setSelectedRegion('All');
     setSelectedSeason('All');
     setSelectedDuration('All');
   }
@@ -83,6 +88,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
 
   const filtered = useMemo(() => {
     return spots.filter((s) => {
+      const matchRegion = selectedRegion === 'All' || s.region === selectedRegion;
       const matchPrefecture =
         selectedPrefecture === 'All' || s.prefecture === selectedPrefecture;
       const matchCategory =
@@ -99,9 +105,9 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
       const matchDuration =
         selectedDuration === 'All' ? true
         : getDurationBucket(s.duration) === selectedDuration;
-      return matchPrefecture && matchCategory && matchSearch && matchSeason && matchDuration;
+      return matchRegion && matchPrefecture && matchCategory && matchSearch && matchSeason && matchDuration;
     });
-  }, [spots, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, currentMonth]);
+  }, [spots, selectedRegion, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, currentMonth]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -177,9 +183,44 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         </button>
       </div>
 
+      {/* Active region chip */}
+      {selectedRegion !== 'All' && (
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-sm text-stone-500">Region:</span>
+          <button
+            onClick={() => setSelectedRegion('All')}
+            className="flex items-center gap-1.5 text-sm px-3 py-1 rounded-full text-white"
+            style={{ backgroundColor: REGION_META[selectedRegion].color }}
+          >
+            {REGION_META[selectedRegion].label}
+            <X size={13} />
+          </button>
+        </div>
+      )}
+
       {/* Filter panel */}
       {showFilters && (
         <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 space-y-5">
+          {/* Region */}
+          <div>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Region</p>
+            <div className="flex flex-wrap gap-2">
+              {(['All', ...REGION_IDS] as const).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setSelectedRegion(r)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    selectedRegion === r
+                      ? 'bg-stone-900 text-white'
+                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                  }`}
+                >
+                  {r === 'All' ? 'All Regions' : REGION_META[r].label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Prefecture */}
           <div>
             <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Prefecture</p>
