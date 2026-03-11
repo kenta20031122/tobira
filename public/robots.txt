@@ -5,5 +5,9 @@ Disallow: /login
 Disallow: /signup
 Disallow: /trips
 Disallow: /favorites
+Disallow: /auth/
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /trip/
 
 Sitemap: https://tobira-travel.com/sitemap.xml

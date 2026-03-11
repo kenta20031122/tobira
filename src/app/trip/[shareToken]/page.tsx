@@ -67,6 +67,7 @@ export async function generateMetadata({
   return {
     title: `${trip.title} — tobira`,
     description: trip.overview,
+    robots: { index: false, follow: false },
     openGraph: {
       title: trip.title,
       description: trip.overview,
@@ -193,12 +194,12 @@ export default async function SharedTripPage({
 
       {/* CTA */}
       <div className="mt-10 text-center print:hidden">
-        <p className="text-stone-500 text-sm mb-4">Want to build your own Kyushu itinerary?</p>
+        <p className="text-stone-500 text-sm mb-4">Want to build your own Japan itinerary?</p>
         <Link
           href="/plan"
           className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
         >
-          Create My Kyushu Trip
+          Create My Japan Trip
         </Link>
       </div>
     </div>

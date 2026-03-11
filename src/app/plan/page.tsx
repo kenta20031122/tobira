@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, Copy, Link2, Navigation } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { REGION_META, REGION_IDS } from '@/lib/regions';
 import type { Spot } from '@/types';
 
 type DayPlan = {
@@ -50,6 +51,14 @@ const GROUP_OPTIONS = [
   { value: 'friends', label: 'Friends', icon: '👯' },
 ];
 
+const LOADING_MESSAGES = [
+  'Analyzing your preferences...',
+  'Browsing local knowledge...',
+  'Building your day-by-day itinerary...',
+  'Adding insider tips...',
+  'Optimizing your route...',
+];
+
 
 // Module-level store: persists across component unmount/remount during client-side navigation
 let _planStore: { result: ItineraryResult; shareToken: string; expandedDay: number | null } | null = null;
@@ -81,7 +90,8 @@ export default function PlanPage() {
   const [interests, setInterests] = useState<string[]>([]);
   const [pace, setPace] = useState('moderate');
   const [groupType, setGroupType] = useState('solo');
-  const [prefecture, setPrefecture] = useState(() => pinnedSpot?.prefecture ?? 'all');
+  const [region, setRegion] = useState('all');
+  const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ItineraryResult | null>(null);
   const [error, setError] = useState('');
@@ -100,6 +110,23 @@ export default function PlanPage() {
       setIsLoggedIn(!!data.user);
     });
   }, []);
+
+  // When pinned spot loads, auto-select its region
+  useEffect(() => {
+    if (pinnedSpot) {
+      setRegion(pinnedSpot.region);
+    }
+  }, [pinnedSpot]);
+
+  // Cycle loading messages while generating
+  useEffect(() => {
+    if (!loading) return;
+    setLoadingMsgIndex(0);
+    const interval = setInterval(() => {
+      setLoadingMsgIndex((i) => (i + 1) % LOADING_MESSAGES.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [loading]);
 
   // Persist itinerary across client-side navigation (e.g. /plan → /spots/[id] → back).
   // Module-level _planStore survives component unmount. `initialized` prevents the save
@@ -149,7 +176,7 @@ export default function PlanPage() {
       const res = await fetch('/api/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days, interests, pace, groupType, prefecture, spotId: pinnedSpot?.id }),
+        body: JSON.stringify({ days, interests, pace, groupType, region, spotId: pinnedSpot?.id }),
       });
 
       if (!res.ok) {
@@ -203,7 +230,7 @@ export default function PlanPage() {
           AI Trip Planner
         </div>
         <h1 className="text-4xl font-bold text-stone-900 mb-3">
-          Build Your Kyushu Itinerary
+          Build Your Japan Itinerary
         </h1>
         <p className="text-stone-500 text-lg">
           Tell us what you love. Get a day-by-day plan built around you.
@@ -227,7 +254,7 @@ export default function PlanPage() {
               Planning around this spot
             </p>
             <p className="font-semibold text-stone-900 truncate">{pinnedSpot.name}</p>
-            <p className="text-xs text-stone-400 truncate">{pinnedSpot.prefecture}, Kyushu</p>
+            <p className="text-xs text-stone-400 truncate">{pinnedSpot.prefecture}, Japan</p>
           </div>
           <Link
             href={`/spots/${pinnedSpot.id}`}
@@ -259,7 +286,7 @@ export default function PlanPage() {
             </span>
           </div>
           <p className="text-stone-400 text-xs mt-1">
-            {days === 1 ? '1 day' : `${days} days`} in Kyushu
+            {days === 1 ? '1 day' : `${days} days`}
           </p>
         </div>
 
@@ -339,28 +366,18 @@ export default function PlanPage() {
           </div>
         </div>
 
-        {/* Prefecture */}
+        {/* Region */}
         <div>
           <label className="block text-sm font-semibold text-stone-800 mb-3">
             Focus area
           </label>
           <div className="flex flex-wrap gap-2">
-            {[
-              { value: 'all', label: 'All of Kyushu' },
-              { value: 'Fukuoka', label: 'Fukuoka' },
-              { value: 'Saga', label: 'Saga' },
-              { value: 'Nagasaki', label: 'Nagasaki' },
-              { value: 'Kumamoto', label: 'Kumamoto' },
-              { value: 'Oita', label: 'Oita' },
-              { value: 'Miyazaki', label: 'Miyazaki' },
-              { value: 'Kagoshima', label: 'Kagoshima' },
-              { value: 'Okinawa', label: 'Okinawa' },
-            ].map((opt) => (
+            {[{ value: 'all', label: 'All of Japan' }, ...REGION_IDS.map((id) => ({ value: id, label: REGION_META[id].label }))].map((opt) => (
               <button
                 key={opt.value}
-                onClick={() => setPrefecture(opt.value)}
+                onClick={() => setRegion(opt.value)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  prefecture === opt.value
+                  region === opt.value
                     ? 'bg-stone-900 text-white'
                     : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                 }`}
@@ -401,32 +418,51 @@ export default function PlanPage() {
         )}
 
         {/* Free plan notice */}
-        <p className="text-stone-400 text-xs text-center">
-          Free accounts include 1 AI plan per month.{' '}
-          <Link href="/pricing" className="underline hover:text-stone-600 transition-colors">
-            Upgrade to Pro
-          </Link>{' '}
-          for unlimited.
-        </p>
+        {isLoggedIn ? (
+          <p className="text-stone-400 text-xs text-center">
+            Free accounts include 1 AI plan per month.{' '}
+            <Link href="/pricing" className="underline hover:text-stone-600 transition-colors">
+              Upgrade to Pro
+            </Link>{' '}
+            for unlimited.
+          </p>
+        ) : (
+          <p className="text-stone-400 text-xs text-center">
+            <Link href="/login?next=/plan" className="underline hover:text-stone-600 transition-colors font-medium text-stone-500">
+              Sign in
+            </Link>{' '}
+            to generate your itinerary. Free accounts get 1 plan per month.
+          </p>
+        )}
 
         {/* Submit */}
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors text-base"
-        >
-          {loading ? (
-            <>
-              <Loader2 size={18} className="animate-spin" />
-              <span>Building your itinerary...</span>
-            </>
-          ) : (
-            <>
-              <Sparkles size={18} />
-              <span>Generate My Kyushu Itinerary</span>
-            </>
-          )}
-        </button>
+        {isLoggedIn ? (
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-semibold py-4 rounded-xl transition-colors text-base"
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                <span>{LOADING_MESSAGES[loadingMsgIndex]}</span>
+              </>
+            ) : (
+              <>
+                <Sparkles size={18} />
+                <span>Generate My Itinerary</span>
+              </>
+            )}
+          </button>
+        ) : (
+          <Link
+            href="/login?next=/plan"
+            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-4 rounded-xl transition-colors text-base"
+          >
+            <Sparkles size={18} />
+            <span>Sign in to Generate</span>
+          </Link>
+        )}
       </div>
 
       {/* Result */}
@@ -462,7 +498,7 @@ export default function PlanPage() {
                 className="w-full flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
               >
                 {saveLoading ? <Loader2 size={16} className="animate-spin" /> : <Link2 size={16} />}
-                {saveLoading ? 'Saving...' : 'Share with travel companions'}
+                {saveLoading ? 'Saving...' : 'Save & Share Trip'}
               </button>
             ) : (
               <Link
@@ -470,7 +506,7 @@ export default function PlanPage() {
                 className="w-full flex items-center justify-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
               >
                 <Link2 size={16} />
-                Sign in to share this trip
+                Sign in to save & share this trip
               </Link>
             )}
           </div>
@@ -503,8 +539,8 @@ export default function PlanPage() {
                     const spotData = findSpot(s.name);
                     return (
                       <div key={j} className="pt-4">
-                        {/* Travel from previous spot */}
-                        {j > 0 && s.travel_from_previous && (
+                        {/* Travel from previous spot / overnight area */}
+                        {s.travel_from_previous && (
                           <div className="flex items-center gap-2 mb-4 ml-11">
                             <div className="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-full px-3 py-1 text-xs text-stone-500">
                               <Navigation size={11} className="text-stone-400" />

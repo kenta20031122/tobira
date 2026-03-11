@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const adminClient = createAdminClient();
   const { data, error } = await adminClient
     .from('saved_trips')
-    .insert({ user_id: user.id, title, overview, days, share_token: shareToken })
+    .insert({ user_id: user.id, title, overview, days, share_token: shareToken, is_public: true })
     .select('id, share_token')
     .single();
 

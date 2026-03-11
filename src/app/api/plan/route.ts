@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getAllSpots } from '@/lib/spots';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { REGION_META } from '@/lib/regions';
+import type { Region } from '@/types';
 
 export const maxDuration = 60;
 
@@ -60,7 +62,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { days, interests, pace, groupType, prefecture, spotId } = await req.json();
+  const { days, interests, pace, groupType, region, spotId } = await req.json();
 
   const spots = await getAllSpots();
 
@@ -69,7 +71,7 @@ export async function POST(req: NextRequest) {
 
   // Filter relevant spots for context — keep payload small to stay within timeout
   const relevantSpots = spots
-    .filter((s) => prefecture === 'all' || s.prefecture === prefecture)
+    .filter((s) => region === 'all' || s.region === (region as Region))
     .map((s) => ({
       name: s.name,
       prefecture: s.prefecture,
@@ -87,7 +89,11 @@ IMPORTANT: The traveler specifically wants to visit "${anchorSpot.name}" (${anch
 `
     : '';
 
-  const prompt = `You are a local Kyushu travel expert helping a foreign tourist plan an authentic trip.
+  const focusLabel = region === 'all'
+    ? 'All of Japan'
+    : REGION_META[region as Region]?.label ?? region;
+
+  const prompt = `You are a Japan travel expert helping a foreign tourist plan an authentic trip.
 ${anchorSection}
 Available spots in our curated database:
 ${JSON.stringify(relevantSpots, null, 2)}
@@ -96,7 +102,7 @@ Create a ${days}-day itinerary for a traveler with these preferences:
 - Interests: ${interests.join(', ')}
 - Travel pace: ${pace}
 - Group type: ${groupType ?? 'solo'}
-- Focus area: ${prefecture === 'all' ? 'All of Kyushu & Okinawa (Fukuoka, Saga, Nagasaki, Kumamoto, Oita, Miyazaki, Kagoshima, Okinawa)' : prefecture}
+- Focus area: ${focusLabel}
 
 Return ONLY valid JSON matching this exact structure (no markdown, no explanation):
 {
@@ -120,8 +126,8 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 }
 
 Rules:
-- Use spots from the database when possible, but you may add real Kyushu/Okinawa spots not in the list
-- CRITICAL: Inter-day continuity — the LAST spot of Day N defines the overnight area. Day N+1 MUST start geographically close to that area. NEVER start a new day in a location far from where the previous day ended (e.g. if Day 1 ends in Kumamoto, Day 2 MUST NOT start in Okinawa or a distant prefecture)
+- Use spots from the database when possible, but you may add real Japan spots not in the list
+- CRITICAL: Inter-day continuity — the LAST spot of Day N defines the overnight area. Day N+1 MUST start geographically close to that area. NEVER start a new day in a location far from where the previous day ended
 - CRITICAL: Group geographically close spots on the same day — use the lat/lng coordinates to avoid inefficient backtracking
 - Order spots within each day to minimize total travel time (nearest-neighbor routing)
 - Match the pace: relaxed=1-2 spots/day, moderate=3-4, packed=5+
