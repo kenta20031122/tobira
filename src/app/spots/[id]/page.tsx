@@ -17,6 +17,7 @@ import { getAllSpots, getSpotById } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
 import FavoriteButton from '@/components/FavoriteButton';
 import SpotMapWrapper from '@/components/maps/SpotMapWrapper';
+import AdBanner from '@/components/AdBanner';
 import { CATEGORY_LABELS, cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -363,6 +364,8 @@ export default async function SpotDetailPage({ params }: Props) {
           Plan a Trip
         </Link>
       </div>
+
+      <AdBanner isPro={isPro} />
 
       {/* Related Spots */}
       {related.length > 0 && (

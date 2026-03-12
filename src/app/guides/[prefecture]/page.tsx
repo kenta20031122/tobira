@@ -10,6 +10,7 @@ import { PREFECTURE_TO_REGION, REGION_META } from '@/lib/regions';
 import { createClient } from '@/lib/supabase/server';
 import SpotCard from '@/components/SpotCard';
 import WhenToVisitSection from '@/components/WhenToVisitSection';
+import AdBanner from '@/components/AdBanner';
 import type { Prefecture } from '@/types';
 
 
@@ -211,6 +212,8 @@ export default async function PrefectureGuidePage({ params }: Props) {
             ))}
           </div>
         </div>
+
+        <AdBanner isPro={isPro} />
 
         {/* Best seasons */}
         <WhenToVisitSection spots={spots} prefecture={prefecture} />

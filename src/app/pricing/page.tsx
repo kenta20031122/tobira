@@ -18,6 +18,8 @@ const FEATURES = [
   'Full location maps for every spot',
   'Access & duration details',
   'Highlights from locals who know',
+  'Unlimited AI trip itineraries',
+  'Ad-free experience',
   'All future premium spots included',
 ];
 
