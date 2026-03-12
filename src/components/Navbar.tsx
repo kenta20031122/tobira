@@ -89,6 +89,9 @@ export default function Navbar() {
           <Link href="/guides" className="hover:text-stone-900 transition-colors">
             Guides
           </Link>
+          <Link href="/discover" className="hover:text-stone-900 transition-colors">
+            Discover
+          </Link>
           <Link href="/plan" className="hover:text-stone-900 transition-colors">
             Plan a Trip
           </Link>
@@ -177,6 +180,9 @@ export default function Navbar() {
         <div className="md:hidden bg-white border-t border-stone-200 px-4 py-4 flex flex-col gap-4 text-sm font-medium text-stone-700">
           <Link href="/guides" onClick={() => setOpen(false)}>
             Guides
+          </Link>
+          <Link href="/discover" onClick={() => setOpen(false)}>
+            Discover
           </Link>
           <Link href="/plan" onClick={() => setOpen(false)}>
             Plan a Trip

@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, MapPin, Compass } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import SpotCard from '@/components/SpotCard';
 import HomeSearchBar from '@/components/HomeSearchBar';
+import SpotFinder from '@/components/SpotFinder';
 import type { Prefecture } from '@/types';
 import JapanRegionMapWrapper from '@/components/JapanRegionMapWrapper';
 
@@ -113,38 +114,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── Browse by Interest ───────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
+      {/* ─── Spot Finder ──────────────────────────────────────── */}
+      <section className="max-w-3xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
             What are you looking for?
           </h2>
           <p className="text-stone-500 max-w-md mx-auto">
-            Browse by interest — or let the AI weave everything into one trip.
+            Answer a few questions — we&apos;ll find your perfect spot.
           </p>
         </div>
-
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4">
-          {[
-            { label: 'Nature',   emoji: '🌋', category: 'nature'   },
-            { label: 'Onsen',    emoji: '♨️',  category: 'onsen'    },
-            { label: 'Food',     emoji: '🍜', category: 'food'     },
-            { label: 'History',  emoji: '🏯', category: 'history'  },
-            { label: 'Shrines',  emoji: '⛩',  category: 'spiritual'},
-            { label: 'Activity', emoji: '🧗', category: 'activity' },
-          ].map(({ label, emoji, category }) => (
-            <Link
-              key={category}
-              href={`/spots?category=${category}`}
-              className="group flex flex-col items-center gap-2 py-5 px-2 rounded-2xl border border-stone-200 bg-white hover:border-red-300 hover:bg-red-50 transition-colors"
-            >
-              <span className="text-3xl">{emoji}</span>
-              <span className="text-sm font-medium text-stone-700 group-hover:text-red-700 transition-colors">
-                {label}
-              </span>
-            </Link>
-          ))}
-        </div>
+        <SpotFinder spots={spots} />
       </section>
 
       {/* ─── Explore by Region — Interactive Map ─────────────── */}

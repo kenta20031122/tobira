@@ -25,14 +25,16 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
     <Link href={`/spots/${spot.id}`} className="group block">
       <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
         {/* Image */}
-        <div className="relative h-52 overflow-hidden">
-          <Image
-            src={spot.image_url}
-            alt={spot.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+        <div className="relative h-52 overflow-hidden bg-stone-100">
+          {spot.image_url && (
+            <Image
+              src={spot.image_url}
+              alt={spot.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          )}
           {/* Premium badge */}
           {spot.is_premium && (
             <div className="absolute top-3 right-3 bg-stone-900/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
