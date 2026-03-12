@@ -83,24 +83,23 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/spots"
+              href="/discover"
               className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-full transition-colors text-base"
+            >
+              <Sparkles size={18} />
+              Find My Match
+            </Link>
+            <Link
+              href="/spots"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-full transition-colors border border-white/20 text-base"
             >
               Browse All Spots
               <ArrowRight size={18} />
             </Link>
-            <Link
-              href="/plan"
-              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-full transition-colors border border-white/20 text-base"
-            >
-              <Sparkles size={18} />
-              Plan with AI
-            </Link>
           </div>
           <p className="text-stone-500 text-sm mt-5">
-            Not sure where to go?{' '}
-            <Link href="/discover" className="text-red-400 hover:text-red-300 underline underline-offset-2 transition-colors">
-              Answer 5 questions → we&apos;ll find your match
+            <Link href="/plan" className="text-red-400 hover:text-red-300 underline underline-offset-2 transition-colors">
+              Plan with AI →
             </Link>
           </p>
 
@@ -122,16 +121,22 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Spot Finder ──────────────────────────────────────── */}
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-stone-900 mb-3">
-            What are you looking for?
-          </h2>
-          <p className="text-stone-500 max-w-md mx-auto">
-            Answer a few questions — we&apos;ll find your perfect spot.
-          </p>
+      <section className="bg-stone-50 border-y border-stone-100">
+        <div className="max-w-3xl mx-auto px-4 py-16">
+          <div className="text-center mb-10">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 uppercase tracking-widest mb-4">
+              <Sparkles size={13} />
+              Find Your Match
+            </span>
+            <h2 className="text-3xl font-bold text-stone-900 mb-3">
+              What are you looking for?
+            </h2>
+            <p className="text-stone-500 max-w-md mx-auto">
+              Answer a few questions — we&apos;ll find your perfect spot.
+            </p>
+          </div>
+          <SpotFinder spots={spots} />
         </div>
-        <SpotFinder spots={spots} />
       </section>
 
       {/* ─── Explore by Region — Interactive Map ─────────────── */}
@@ -154,6 +159,9 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-end justify-between mb-10">
             <div>
+              <span className="inline-block text-xs font-semibold text-red-600 uppercase tracking-widest mb-3">
+                ✦ Editor&apos;s Picks
+              </span>
               <h2 className="text-3xl font-bold text-stone-900 mb-2">
                 Must-See Spots
               </h2>
@@ -164,7 +172,7 @@ export default async function HomePage() {
             </div>
             <Link
               href="/spots"
-              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors shrink-0 ml-4"
             >
               View all
               <ArrowRight size={14} />
@@ -180,7 +188,7 @@ export default async function HomePage() {
           <div className="text-center mt-10">
             <Link
               href="/spots"
-              className="inline-flex items-center gap-2 border border-stone-300 text-stone-700 font-medium px-6 py-3 rounded-full hover:bg-stone-100 transition-colors"
+              className="inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-700 text-white font-medium px-8 py-3.5 rounded-full transition-colors"
             >
               See all {spots.length} spots
               <ArrowRight size={16} />
@@ -190,7 +198,8 @@ export default async function HomePage() {
       </section>
 
       {/* ─── Features ─────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-4 py-20">
+      <section className="bg-stone-50 border-y border-stone-100">
+        <div className="max-w-6xl mx-auto px-4 py-20">
         <div className="text-center mb-14">
           <h2 className="text-3xl font-bold text-stone-900 mb-3">
             Not just another travel app
@@ -201,10 +210,10 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {FEATURES.map((f) => (
-            <div key={f.title} className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-red-50 text-red-600 mb-4">
+            <div key={f.title} className="border border-stone-100 rounded-2xl p-8 hover:shadow-md hover:border-stone-200 transition-all">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-red-50 text-red-600 mb-5">
                 <f.icon size={22} />
               </div>
               <h3 className="font-semibold text-stone-900 text-lg mb-2">
@@ -215,6 +224,7 @@ export default async function HomePage() {
               </p>
             </div>
           ))}
+        </div>
         </div>
       </section>
 
@@ -227,10 +237,13 @@ export default async function HomePage() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="rounded-2xl border border-stone-700 p-8 text-left">
-              <p className="text-stone-400 text-sm font-medium mb-1">Free</p>
+            <div className="rounded-2xl border border-stone-700 p-8 text-left flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-stone-400 text-sm font-medium">Free</p>
+                <span className="text-xs bg-stone-800 text-stone-400 px-2.5 py-0.5 rounded-full">No card required</span>
+              </div>
               <p className="text-3xl font-bold mb-4">$0</p>
-              <ul className="text-stone-400 text-sm space-y-2 mb-8">
+              <ul className="text-stone-400 text-sm space-y-2 mb-8 flex-1">
                 <li>✓ All regions — full spot browsing</li>
                 <li>✓ More prefectures & spots added regularly</li>
                 <li>✓ 1 AI itinerary plan</li>
@@ -243,7 +256,7 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="rounded-2xl bg-red-600 p-8 text-left relative">
+            <div className="rounded-2xl bg-red-600 ring-2 ring-red-400 ring-offset-2 ring-offset-stone-900 p-8 text-left relative flex flex-col">
               <div className="absolute top-4 right-4 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
                 Most Popular
               </div>
@@ -252,7 +265,7 @@ export default async function HomePage() {
                 $4.99
                 <span className="text-red-200 text-base font-normal">/mo</span>
               </p>
-              <ul className="text-red-100 text-sm space-y-2 mb-8">
+              <ul className="text-red-100 text-sm space-y-2 mb-8 flex-1">
                 <li>✓ All premium spots unlocked</li>
                 <li>✓ Insider tips & hidden highlights</li>
                 <li>✓ Unlimited AI trip plans</li>
@@ -267,38 +280,45 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="mt-8 space-y-2">
-            <p className="text-stone-500 text-xs flex items-center justify-center gap-1.5">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 text-xs">
+            <p className="text-stone-500 flex items-center gap-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
               Payments secured by Stripe. Cancel anytime.
             </p>
-            <p className="text-stone-600 text-xs">
-              <Link href="/tokushoho" className="underline hover:text-stone-400 transition-colors">
-                特定商取引法に基づく表記
-              </Link>
-            </p>
+            <span className="hidden sm:block text-stone-700">·</span>
+            <Link href="/tokushoho" className="text-stone-600 underline hover:text-stone-400 transition-colors">
+              特定商取引法に基づく表記
+            </Link>
           </div>
         </div>
       </section>
 
       {/* ─── Final CTA ────────────────────────────────────────── */}
-      <section className="max-w-3xl mx-auto px-4 py-24 text-center">
-        <h2 className="text-4xl font-bold text-stone-900 mb-4">
-          Your Japan trip starts here.
-        </h2>
-        <p className="text-stone-500 text-lg mb-10">
-          No queues. No crowds. Just the Japan most visitors never find.
-        </p>
-        <Link
-          href="/spots"
-          className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-10 py-4 rounded-full transition-colors text-lg"
-        >
-          Open the Door
-          <ArrowRight size={20} />
-        </Link>
+      <section className="bg-stone-50 border-t border-stone-100">
+        <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+          <p className="text-xs font-semibold text-red-600 uppercase tracking-widest mb-4">Ready to explore?</p>
+          <h2 className="text-4xl font-bold text-stone-900 mb-4">
+            Your Japan trip starts here.
+          </h2>
+          <p className="text-stone-500 text-lg mb-10">
+            No queues. No crowds. Just the Japan most visitors never find.
+          </p>
+          <Link
+            href="/discover"
+            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-10 py-4 rounded-full transition-colors text-lg"
+          >
+            <Sparkles size={20} />
+            Find My Match
+          </Link>
+          <div className="mt-5">
+            <Link href="/spots" className="text-sm text-stone-400 hover:text-stone-600 transition-colors flex items-center justify-center gap-1">
+              Browse All Spots <ArrowRight size={13} />
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );

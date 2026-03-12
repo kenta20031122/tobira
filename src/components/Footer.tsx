@@ -18,7 +18,7 @@ const SNS_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-stone-900 text-stone-400 py-12 mt-20">
+    <footer className="bg-stone-900 text-stone-400 py-12">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between gap-8">
           {/* Brand */}
