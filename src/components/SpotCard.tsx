@@ -36,9 +36,9 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           )}
-          {/* Premium badge */}
+          {/* Premium badge — top right */}
           {spot.is_premium && (
-            <div className="absolute top-3 right-3 bg-stone-900/80 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+            <div className="absolute top-3 right-3 bg-amber-400 text-stone-900 text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
               <Lock size={10} />
               Pro
             </div>
@@ -46,12 +46,16 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
           {/* Favorite button */}
           <FavoriteButton spotId={spot.id} initialFavorited={isFavorited} />
 
-          {/* In Season badge */}
-          {inSeason && (
+          {/* Bottom-left: In Season takes priority; Pro Exclusive shown when not in season */}
+          {inSeason ? (
             <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
               🌿 In Season
             </div>
-          )}
+          ) : spot.is_premium ? (
+            <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-stone-900/75 backdrop-blur-sm text-amber-300 text-xs font-semibold px-2.5 py-1 rounded-full">
+              ✦ Pro Exclusive
+            </div>
+          ) : null}
 
           {/* Category badge(s) */}
           <div className="absolute top-3 left-3 flex gap-1 flex-wrap max-w-[70%]">

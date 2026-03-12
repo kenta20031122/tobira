@@ -87,10 +87,10 @@ export default function Navbar() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-stone-600">
           <Link href="/guides" className="hover:text-stone-900 transition-colors">
-            Guides
+            By Prefecture
           </Link>
           <Link href="/discover" className="hover:text-stone-900 transition-colors">
-            Discover
+            Find My Match
           </Link>
           <Link href="/plan" className="hover:text-stone-900 transition-colors">
             Plan a Trip
@@ -114,6 +114,16 @@ export default function Navbar() {
                   Trips
                 </Link>
               </div>
+
+              {/* Try Pro CTA — logged-in non-Pro only */}
+              {!isPro && (
+                <Link
+                  href="/pricing"
+                  className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full transition-colors"
+                >
+                  ✦ Try Pro
+                </Link>
+              )}
 
               {/* User dropdown */}
               <div className="relative" ref={dropdownRef}>
@@ -179,16 +189,27 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-white border-t border-stone-200 px-4 py-4 flex flex-col gap-4 text-sm font-medium text-stone-700">
           <Link href="/guides" onClick={() => setOpen(false)}>
-            Guides
+            By Prefecture
           </Link>
           <Link href="/discover" onClick={() => setOpen(false)}>
-            Discover
+            Find My Match
           </Link>
           <Link href="/plan" onClick={() => setOpen(false)}>
             Plan a Trip
           </Link>
           {userEmail ? (
             <>
+              {/* Try Pro banner — logged-in non-Pro only */}
+              {!isPro && (
+                <Link
+                  href="/pricing"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between bg-red-50 border border-red-200 text-red-700 text-sm font-semibold px-4 py-2.5 rounded-xl"
+                >
+                  <span>✦ Upgrade to Pro</span>
+                  <span className="text-red-400">→</span>
+                </Link>
+              )}
               {isPro && (
                 <span className="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full self-start">
                   Pro

@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Sparkles } from 'lucide-react';
+import { MapPin, Sparkles, Lock } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import { CATEGORY_LABELS, PREFECTURE_MAP } from '@/lib/utils';
+import { PREFECTURE_INTRO } from '@/lib/prefectures';
+import { createClient } from '@/lib/supabase/server';
 import SpotCard from '@/components/SpotCard';
 import WhenToVisitSection from '@/components/WhenToVisitSection';
 import type { Prefecture } from '@/types';
@@ -61,6 +63,16 @@ export default async function PrefectureGuidePage({ params }: Props) {
   const spots = allSpots.filter((s) => s.prefecture === prefecture);
   if (spots.length === 0) notFound();
 
+  // Auth + Pro check
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let isPro = false;
+  if (user) {
+    const { data } = await supabase.from('subscriptions').select('status').eq('user_id', user.id).single();
+    isPro = data?.status === 'active';
+  }
+
+  const premiumCount = spots.filter((s) => s.is_premium).length;
   const heroSpot = spots[0];
   const categories = [...new Set(spots.flatMap((s) => s.categories))];
   const region =
@@ -150,6 +162,34 @@ export default async function PrefectureGuidePage({ params }: Props) {
       </section>
 
       <div className="max-w-6xl mx-auto px-4 py-14">
+
+        {/* Prefecture intro */}
+        {PREFECTURE_INTRO[prefecture as Prefecture] && (
+          <div className="mb-12 max-w-3xl">
+            <p className="text-lg text-stone-600 leading-relaxed">
+              {PREFECTURE_INTRO[prefecture as Prefecture]}
+            </p>
+          </div>
+        )}
+
+        {/* Premium upsell — non-Pro users only */}
+        {!isPro && premiumCount > 0 && (
+          <div className="flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 rounded-2xl px-6 py-4 mb-10">
+            <div className="flex items-center gap-3">
+              <Lock size={18} className="text-amber-600 shrink-0" />
+              <p className="text-sm text-stone-700">
+                <span className="font-semibold">{premiumCount} hidden gem{premiumCount > 1 ? 's' : ''}</span> in {prefecture} include insider locations, local tips, and full access details.
+              </p>
+            </div>
+            <Link
+              href="/pricing"
+              className="shrink-0 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full transition-colors whitespace-nowrap"
+            >
+              Unlock with Pro
+            </Link>
+          </div>
+        )}
+
         {/* Spots grid */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-stone-900 mb-2">

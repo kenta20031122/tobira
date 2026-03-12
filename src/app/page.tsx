@@ -83,10 +83,10 @@ export default async function HomePage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/guides"
+              href="/spots"
               className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-full transition-colors text-base"
             >
-              Browse Destinations
+              Browse All Spots
               <ArrowRight size={18} />
             </Link>
             <Link
@@ -97,6 +97,12 @@ export default async function HomePage() {
               Plan with AI
             </Link>
           </div>
+          <p className="text-stone-500 text-sm mt-5">
+            Not sure where to go?{' '}
+            <Link href="/discover" className="text-red-400 hover:text-red-300 underline underline-offset-2 transition-colors">
+              Answer 5 questions → we&apos;ll find your match
+            </Link>
+          </p>
 
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-8">
             <span className="text-stone-400 text-xs flex items-center gap-1.5">
