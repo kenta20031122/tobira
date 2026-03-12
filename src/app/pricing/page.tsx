@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Check, Lock, MapPin, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import PricingCTA from '@/components/PricingCTA';
@@ -77,8 +78,15 @@ export default async function PricingPage({
     isPro = sub?.status === 'active';
   }
 
+  // Fetch a sample of premium spots for the preview grid
+  const { data: premiumSpots, count: premiumCount } = await supabase
+    .from('spots')
+    .select('id, name, prefecture, image_url', { count: 'exact' })
+    .eq('is_premium', true)
+    .limit(8);
+
   return (
-    <div className="max-w-lg mx-auto px-4 py-16">
+    <div className="max-w-2xl mx-auto px-4 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -103,6 +111,43 @@ export default async function PricingPage({
           Go beyond the guidebook. Get access to handpicked secret spots across all 47 prefectures — curated by locals who have actually been there.
         </p>
       </div>
+
+      {/* Premium spots preview */}
+      {premiumSpots && premiumSpots.length > 0 && (
+        <div className="mb-10">
+          <p className="text-center text-sm font-semibold text-stone-500 uppercase tracking-wider mb-4">
+            What Pro unlocks
+          </p>
+          <div className="grid grid-cols-4 gap-2 mb-3">
+            {premiumSpots.map((spot) => (
+              <div key={spot.id} className="relative aspect-square rounded-xl overflow-hidden bg-stone-100">
+                {spot.image_url && (
+                  <Image
+                    src={spot.image_url}
+                    alt={spot.name}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                    sizes="160px"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/70 to-transparent" />
+                <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                  <p className="text-white text-xs font-semibold leading-tight line-clamp-2">{spot.name}</p>
+                  <p className="text-white/60 text-[10px]">{spot.prefecture}</p>
+                </div>
+                <div className="absolute top-1.5 right-1.5 bg-amber-400 text-stone-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                  <Lock size={8} />
+                  Pro
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-stone-400">
+            {premiumCount && premiumCount > 8 ? `+ ${premiumCount - 8} more premium spots across all 47 prefectures` : 'Premium spots across all 47 prefectures'}
+          </p>
+        </div>
+      )}
 
       {/* Pricing card */}
       <div className="bg-white border border-stone-200 rounded-2xl p-8 mb-6">

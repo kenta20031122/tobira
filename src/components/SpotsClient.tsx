@@ -324,9 +324,25 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
 
       {/* Results */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 text-stone-400">
-          <p className="text-lg font-medium mb-2">No spots found</p>
-          <p className="text-sm">Try adjusting your filters or search term</p>
+        <div className="text-center py-20">
+          <div className="text-4xl mb-4">🗾</div>
+          <p className="text-lg font-semibold text-stone-700 mb-1">No spots match these filters</p>
+          <p className="text-sm text-stone-400 mb-6">Try adjusting your filters or search term</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={clearAllFilters}
+              className="flex items-center gap-1.5 text-sm px-4 py-2.5 rounded-full border border-stone-200 text-stone-600 hover:border-stone-400 transition-colors"
+            >
+              <X size={14} />
+              Clear all filters
+            </button>
+            <a
+              href="/discover"
+              className="flex items-center gap-1.5 text-sm px-4 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+            >
+              ✦ Find My Match instead
+            </a>
+          </div>
         </div>
       ) : viewMode === 'map' ? (
         <div className="h-[600px] rounded-xl overflow-hidden border border-stone-200">

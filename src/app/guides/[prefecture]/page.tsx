@@ -6,6 +6,7 @@ import { MapPin, Sparkles, Lock } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import { CATEGORY_LABELS, PREFECTURE_MAP } from '@/lib/utils';
 import { PREFECTURE_INTRO } from '@/lib/prefectures';
+import { PREFECTURE_TO_REGION, REGION_META } from '@/lib/regions';
 import { createClient } from '@/lib/supabase/server';
 import SpotCard from '@/components/SpotCard';
 import WhenToVisitSection from '@/components/WhenToVisitSection';
@@ -74,6 +75,12 @@ export default async function PrefectureGuidePage({ params }: Props) {
 
   const premiumCount = spots.filter((s) => s.is_premium).length;
   const heroSpot = spots[0];
+
+  // Related prefectures in the same region
+  const regionId = PREFECTURE_TO_REGION[prefecture];
+  const relatedPrefectures = regionId
+    ? REGION_META[regionId].prefectures.filter((p) => p !== prefecture)
+    : [];
   const categories = [...new Set(spots.flatMap((s) => s.categories))];
   const region =
     prefecture === 'Hokkaido' ? 'Hokkaido' :
@@ -207,6 +214,31 @@ export default async function PrefectureGuidePage({ params }: Props) {
 
         {/* Best seasons */}
         <WhenToVisitSection spots={spots} prefecture={prefecture} />
+
+        {/* Related prefectures in same region */}
+        {relatedPrefectures.length > 0 && regionId && (
+          <div className="mb-16">
+            <h2 className="text-xl font-bold text-stone-900 mb-1">
+              More from {REGION_META[regionId].label}
+            </h2>
+            <p className="text-stone-500 text-sm mb-5">Other prefectures in the same region</p>
+            <div className="flex flex-wrap gap-2">
+              {relatedPrefectures.map((pref) => {
+                const slug = Object.entries(PREFECTURE_MAP).find(([, v]) => v === pref)?.[0];
+                if (!slug) return null;
+                return (
+                  <Link
+                    key={pref}
+                    href={`/guides/${slug}`}
+                    className="px-4 py-2 rounded-full border border-stone-200 bg-white text-stone-700 text-sm font-medium hover:border-stone-400 hover:text-stone-900 transition-colors"
+                  >
+                    {pref}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* CTA */}
         <div className="bg-stone-900 rounded-2xl p-8 text-center">
