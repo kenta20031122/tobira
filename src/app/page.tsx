@@ -57,6 +57,7 @@ export default async function HomePage() {
           src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1600&auto=format&fit=crop"
           alt="Japanese landscape"
           fill
+          unoptimized
           className="object-cover opacity-40"
           priority
         />

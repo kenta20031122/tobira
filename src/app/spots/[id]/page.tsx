@@ -140,6 +140,7 @@ export default async function SpotDetailPage({ params }: Props) {
           src={spot.image_url}
           alt={spot.name}
           fill
+          unoptimized
           className="object-cover"
           priority
         />
