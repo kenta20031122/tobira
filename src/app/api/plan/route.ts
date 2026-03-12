@@ -62,12 +62,19 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { days, interests, pace, groupType, region, spotId } = await req.json();
+  const { days, interests, pace, groupType, region, spotId, spotIds } = await req.json();
 
   const spots = await getAllSpots();
 
-  // If a specific spot was requested, find it
-  const anchorSpot = spotId ? spots.find((s) => s.id === spotId) : null;
+  // Support single spotId (legacy) or spotIds[] (new multi-spot flow)
+  const anchorIds: string[] = spotIds?.length
+    ? spotIds
+    : spotId
+    ? [spotId]
+    : [];
+  const anchorSpots = anchorIds
+    .map((id: string) => spots.find((s) => s.id === id))
+    .filter(Boolean) as typeof spots;
 
   // Filter relevant spots for context — keep payload small to stay within timeout
   const relevantSpots = spots
@@ -83,9 +90,10 @@ export async function POST(req: NextRequest) {
       duration: s.duration,
     }));
 
-  const anchorSection = anchorSpot
+  const anchorSection = anchorSpots.length > 0
     ? `
-IMPORTANT: The traveler specifically wants to visit "${anchorSpot.name}" (${anchorSpot.prefecture}). You MUST include this spot in the itinerary. Brief info: ${anchorSpot.description.slice(0, 120)}
+IMPORTANT: The traveler specifically wants to visit the following spots. You MUST include ALL of them in the itinerary:
+${anchorSpots.map(s => `- "${s.name}" (${s.prefecture}): ${s.description.slice(0, 100)}`).join('\n')}
 `
     : '';
 

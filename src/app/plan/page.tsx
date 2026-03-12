@@ -72,9 +72,12 @@ export default function PlanPage() {
     fetch('/api/spots').then((r) => r.json()).then(setAllSpots).catch(() => {});
   }, []);
 
-  const pinnedSpot = useMemo(() => {
-    const id = searchParams.get('spot');
-    return id ? allSpots.find((s) => s.id === id) ?? null : null;
+  const pinnedSpots = useMemo(() => {
+    // Support ?spots=id1,id2,id3 (new multi-spot) or ?spot=id (legacy single)
+    const multi = searchParams.get('spots');
+    const single = searchParams.get('spot');
+    const ids = multi ? multi.split(',') : single ? [single] : [];
+    return ids.map(id => allSpots.find(s => s.id === id)).filter(Boolean) as Spot[];
   }, [searchParams, allSpots]);
 
   function findSpot(name: string) {
@@ -102,6 +105,7 @@ export default function PlanPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [savedShareToken, setSavedShareToken] = useState('');
+  const [siteOrigin, setSiteOrigin] = useState('');
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -109,14 +113,15 @@ export default function PlanPage() {
     supabase.auth.getUser().then(({ data }) => {
       setIsLoggedIn(!!data.user);
     });
+    setSiteOrigin(window.location.origin);
   }, []);
 
-  // When pinned spot loads, auto-select its region
+  // When pinned spots load, auto-select region from the first one
   useEffect(() => {
-    if (pinnedSpot) {
-      setRegion(pinnedSpot.region);
+    if (pinnedSpots.length > 0) {
+      setRegion(pinnedSpots[0].region);
     }
-  }, [pinnedSpot]);
+  }, [pinnedSpots]);
 
   // Cycle loading messages while generating
   useEffect(() => {
@@ -176,7 +181,7 @@ export default function PlanPage() {
       const res = await fetch('/api/plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ days, interests, pace, groupType, region, spotId: pinnedSpot?.id }),
+        body: JSON.stringify({ days, interests, pace, groupType, region, spotIds: pinnedSpots.map(s => s.id) }),
       });
 
       if (!res.ok) {
@@ -215,7 +220,7 @@ export default function PlanPage() {
   };
 
   const handleCopy = () => {
-    const url = `${window.location.origin}/trip/${savedShareToken}`;
+    const url = `${siteOrigin}/trip/${savedShareToken}`;
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -237,32 +242,26 @@ export default function PlanPage() {
         </p>
       </div>
 
-      {/* Pinned Spot Banner */}
-      {pinnedSpot && (
-        <div className="flex items-center gap-4 bg-white border border-stone-200 rounded-2xl p-4 mb-8">
-          <div className="relative w-20 h-16 rounded-xl overflow-hidden shrink-0">
-            <Image
-              src={pinnedSpot.image_url}
-              alt={pinnedSpot.name}
-              fill
-              unoptimized
-              className="object-cover"
-            />
+      {/* Pinned Spots Banner */}
+      {pinnedSpots.length > 0 && (
+        <div className="mb-8">
+          <p className="text-xs font-medium text-red-500 mb-2 flex items-center gap-1">
+            <MapPin size={11} />
+            Building itinerary around {pinnedSpots.length === 1 ? 'this spot' : `these ${pinnedSpots.length} spots`}
+          </p>
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {pinnedSpots.map(spot => (
+              <div key={spot.id} className="flex items-center gap-3 bg-white border border-stone-200 rounded-2xl p-3 min-w-[220px] shrink-0">
+                <div className="relative w-14 h-11 rounded-lg overflow-hidden shrink-0">
+                  <Image src={spot.image_url} alt={spot.name} fill unoptimized className="object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-stone-900 text-sm truncate">{spot.name}</p>
+                  <p className="text-xs text-stone-400 truncate">{spot.prefecture}</p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-red-500 mb-0.5 flex items-center gap-1">
-              <MapPin size={11} />
-              Planning around this spot
-            </p>
-            <p className="font-semibold text-stone-900 truncate">{pinnedSpot.name}</p>
-            <p className="text-xs text-stone-400 truncate">{pinnedSpot.prefecture}, Japan</p>
-          </div>
-          <Link
-            href={`/spots/${pinnedSpot.id}`}
-            className="text-xs text-stone-400 hover:text-stone-600 transition-colors shrink-0"
-          >
-            View spot
-          </Link>
         </div>
       )}
 
@@ -481,7 +480,7 @@ export default function PlanPage() {
                 </p>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-600 truncate font-mono">
-                    {`${window.location.origin}/trip/${savedShareToken}`}
+                    {`${siteOrigin}/trip/${savedShareToken}`}
                   </div>
                   <button
                     onClick={handleCopy}

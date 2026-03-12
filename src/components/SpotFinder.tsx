@@ -2,9 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowRight, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowRight, RotateCcw, Sparkles, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import type { Spot } from '@/types';
-import { isGoodInSeason, getDurationBucket, CATEGORY_LABELS } from '@/lib/utils';
+import { isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import SpotCard from '@/components/SpotCard';
 
 // ─── Question definitions ──────────────────────────────────────────────────────
@@ -12,6 +12,7 @@ import SpotCard from '@/components/SpotCard';
 type OptionDef = {
   id: string;
   label: string;
+  subtitle?: string;
   emoji: string;
   filter: (s: Spot) => boolean;
 };
@@ -36,16 +37,6 @@ const QUESTIONS: QuestionDef[] = [
     ],
   },
   {
-    id: 'region',
-    text: 'Which part of Japan?',
-    options: [
-      { id: 'north', label: 'Northern Japan', emoji: '❄️', filter: s => ['hokkaido', 'tohoku'].includes(s.region) },
-      { id: 'central', label: 'Central Honshu', emoji: '🗻', filter: s => ['kanto', 'chubu', 'hokuriku'].includes(s.region) },
-      { id: 'west', label: 'Western Japan', emoji: '⛩️', filter: s => ['kinki', 'chugoku', 'shikoku'].includes(s.region) },
-      { id: 'south', label: 'Kyushu & Islands', emoji: '🌺', filter: s => ['kyushu', 'okinawa'].includes(s.region) },
-    ],
-  },
-  {
     id: 'season',
     text: 'When are you visiting?',
     options: [
@@ -56,12 +47,26 @@ const QUESTIONS: QuestionDef[] = [
     ],
   },
   {
-    id: 'duration',
-    text: 'How long do you spend at each spot?',
+    id: 'region',
+    text: 'Any part of Japan in mind?',
+    // Only ask after at least 2 answers — let vibe & season go first
+    condition: (a) => Object.keys(a).length >= 2,
     options: [
-      { id: 'short', label: 'Quick stop', emoji: '⚡', filter: s => getDurationBucket(s.duration) === 'short' },
-      { id: 'medium', label: 'Half a day', emoji: '🕐', filter: s => getDurationBucket(s.duration) === 'medium' },
-      { id: 'long', label: 'Full day +', emoji: '🌅', filter: s => getDurationBucket(s.duration) === 'long' },
+      { id: 'north', label: 'Wild North', subtitle: 'Hokkaido · Sapporo · Tohoku', emoji: '❄️', filter: s => ['hokkaido', 'tohoku'].includes(s.region) },
+      { id: 'central', label: 'Tokyo & Mt. Fuji', subtitle: 'Kanto · Chubu · Japanese Alps', emoji: '🗻', filter: s => ['kanto', 'chubu', 'hokuriku'].includes(s.region) },
+      { id: 'west', label: 'Kyoto & Osaka', subtitle: 'Kansai · Hiroshima · Shikoku', emoji: '⛩️', filter: s => ['kinki', 'chugoku', 'shikoku'].includes(s.region) },
+      { id: 'south', label: 'Volcanoes & Tropics', subtitle: 'Kyushu · Okinawa islands', emoji: '🌺', filter: s => ['kyushu', 'okinawa'].includes(s.region) },
+      { id: 'anywhere', label: 'No preference', subtitle: 'Show me the best matches', emoji: '🤷', filter: _s => true },
+    ],
+  },
+  {
+    id: 'duration',
+    text: "What's your travel style?",
+    options: [
+      { id: 'short', label: 'Cram in as much as possible', emoji: '⚡', filter: s => getDurationBucket(s.duration) === 'short' },
+      { id: 'medium', label: 'Mix of sightseeing and slow time', emoji: '🕐', filter: s => getDurationBucket(s.duration) === 'medium' },
+      { id: 'long', label: 'Slow down and go deep', emoji: '🌅', filter: s => getDurationBucket(s.duration) === 'long' },
+      { id: 'any_duration', label: 'Not sure yet', emoji: '🤷', filter: _s => true },
     ],
   },
   {
@@ -150,6 +155,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [history, setHistory] = useState<{ askedIds: string[]; pool: Spot[]; answers: Record<string, string> }[]>([]);
   const [done, setDone] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const currentQ = useMemo(() => {
     if (done) return null;
@@ -160,7 +166,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     // Save undo state
     setHistory(h => [...h, { askedIds, pool, answers }]);
 
-    const newPool = opt.id === 'any' ? pool : pool.filter(opt.filter);
+    const newPool = (opt.id === 'any' || opt.id === 'anywhere' || opt.id === 'any_duration') ? pool : pool.filter(opt.filter);
     const filtered = newPool.length > 0 ? newPool : pool; // fallback if 0 results
     const newAsked = [...askedIds, q.id];
     const newAnswers = { ...answers, [q.id]: opt.id };
@@ -191,45 +197,63 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     setAnswers({});
     setHistory([]);
     setDone(false);
+    setShowAll(false);
   }
 
   // ── Results ──
   if (done) {
-    const topSpots = pool.slice(0, 3);
-    const topRegion = topSpots[0]?.region;
+    const displaySpots = showAll ? pool : pool.slice(0, 3);
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <p className="text-stone-500 text-sm">
-            <span className="font-semibold text-stone-800">{pool.length}</span> spot{pool.length !== 1 ? 's' : ''} match your vibe
-          </p>
-          <button onClick={restart} className="flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-600 transition-colors">
-            <RotateCcw size={13} />
-            Start over
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDone(false)}
+              className="flex items-center gap-1.5 text-sm border border-stone-200 text-stone-600 hover:border-stone-400 hover:text-stone-800 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              <ArrowLeft size={13} />
+              Keep refining
+            </button>
+          </div>
+          <div className="flex items-center gap-3">
+            <p className="text-stone-500 text-sm">
+              <span className="font-semibold text-stone-800">{pool.length}</span> spot{pool.length !== 1 ? 's' : ''} match your vibe
+            </p>
+            <button onClick={restart} className="flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-600 transition-colors">
+              <RotateCcw size={13} />
+              Start over
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {topSpots.map(s => <SpotCard key={s.id} spot={s} />)}
+          {displaySpots.map(s => (
+            <div key={s.id} className="flex flex-col">
+              <SpotCard spot={s} />
+              <Link
+                href={`/discover/plan?anchor=${s.id}`}
+                className="mt-2 flex items-center justify-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 rounded-xl py-2 transition-colors"
+              >
+                <Sparkles size={12} />
+                Plan around this
+                <ArrowRight size={12} />
+              </Link>
+            </div>
+          ))}
         </div>
 
         {pool.length > 3 && (
-          <p className="text-center text-sm text-stone-500">
-            +{pool.length - 3} more matches —{' '}
-            <Link href="/spots" className="text-red-600 hover:text-red-700 font-medium">browse all</Link>
-          </p>
-        )}
-
-        <div className="text-center">
-          <Link
-            href={topRegion ? `/plan?region=${topRegion}` : '/plan'}
-            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+          <button
+            onClick={() => setShowAll(v => !v)}
+            className="w-full flex items-center justify-center gap-1.5 text-sm text-stone-600 border border-stone-200 hover:border-stone-300 bg-white hover:bg-stone-50 rounded-xl py-2.5 transition-colors"
           >
-            <Sparkles size={15} />
-            Build a full itinerary
-            <ArrowRight size={15} />
-          </Link>
-        </div>
+            {showAll ? (
+              <><ChevronUp size={14} /> Show less</>
+            ) : (
+              <><ChevronDown size={14} /> Show all {pool.length} matches</>
+            )}
+          </button>
+        )}
       </div>
     );
   }
@@ -237,22 +261,30 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
   // ── Question ──
   if (!currentQ) return null;
 
-  const cols = currentQ.options.length <= 2 ? 'grid-cols-2' : 'grid-cols-2';
-
   return (
     <div className="space-y-5">
-      {/* Header: pool counter + undo */}
+      {/* Header: Back + pool counter + See matches */}
       <div className="flex items-center justify-between text-sm">
         <div className="flex gap-2">
           {history.length > 0 && (
-            <button onClick={handleUndo} className="text-stone-400 hover:text-stone-600 transition-colors text-xs underline underline-offset-2">
-              ← Undo
+            <button
+              onClick={handleUndo}
+              className="flex items-center gap-1.5 text-stone-600 hover:text-stone-800 border border-stone-200 hover:border-stone-400 px-3 py-1.5 rounded-lg text-xs transition-colors"
+            >
+              <ArrowLeft size={12} />
+              Back
             </button>
           )}
         </div>
-        <span className="text-stone-500 tabular-nums">
-          <span className="font-semibold text-stone-800">{pool.length}</span> spots left
-        </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setDone(true)}
+            className="text-red-600 hover:text-red-700 text-xs font-medium transition-colors"
+          >
+            See {pool.length} matches →
+          </button>
+          <span className="text-stone-400 text-xs tabular-nums">{pool.length} spots left</span>
+        </div>
       </div>
 
       {/* Question */}
@@ -262,7 +294,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         </p>
         <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-5">{currentQ.text}</h3>
 
-        <div className={`grid ${cols} gap-3`}>
+        <div className="grid grid-cols-2 gap-3">
           {currentQ.options.map(opt => (
             <button
               key={opt.id}
@@ -273,6 +305,11 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
               <span className="text-sm font-medium text-stone-700 group-hover:text-red-700 transition-colors leading-snug">
                 {opt.label}
               </span>
+              {opt.subtitle && (
+                <span className="text-xs text-stone-400 group-hover:text-red-400 transition-colors leading-tight">
+                  {opt.subtitle}
+                </span>
+              )}
             </button>
           ))}
         </div>

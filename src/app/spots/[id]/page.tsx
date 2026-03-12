@@ -38,7 +38,7 @@ export async function generateStaticParams() {
   return allSpots.map((s) => ({ id: s.id }));
 }
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ back?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -62,8 +62,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function SpotDetailPage({ params }: Props) {
+export default async function SpotDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { back } = await searchParams;
+  const backHref = back ? decodeURIComponent(back) : null;
 
   // Fetch spot and auth in parallel
   const supabase = await createClient();
@@ -128,11 +130,11 @@ export default async function SpotDetailPage({ params }: Props) {
       <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Back */}
       <Link
-        href={`/guides/${spot.prefecture.toLowerCase()}`}
+        href={backHref ?? `/guides/${spot.prefecture.toLowerCase()}`}
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors mb-6"
       >
         <ArrowLeft size={15} />
-        Back to {spot.prefecture} Guide
+        {backHref ? 'Back to spot picker' : `Back to ${spot.prefecture} Guide`}
       </Link>
 
       {/* Hero Image */}
