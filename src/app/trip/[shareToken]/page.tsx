@@ -176,6 +176,7 @@ export default async function SharedTripPage({
                                   src={spotData.image_url}
                                   alt={spotData.name}
                                   fill
+                                  unoptimized
                                   className="object-cover"
                                 />
                               </div>

@@ -245,6 +245,7 @@ export default function PlanPage() {
               src={pinnedSpot.image_url}
               alt={pinnedSpot.name}
               fill
+              unoptimized
               className="object-cover"
             />
           </div>
@@ -586,6 +587,7 @@ export default function PlanPage() {
                                       src={spotData.image_url}
                                       alt={spotData.name}
                                       fill
+                                      unoptimized
                                       className="object-cover"
                                     />
                                   </div>

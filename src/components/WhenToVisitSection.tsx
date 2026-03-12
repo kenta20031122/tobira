@@ -68,6 +68,7 @@ function SeasonCard({ seasonKey, label, months, spots }: {
                 src={s.image_url}
                 alt={s.name}
                 fill
+                unoptimized
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>

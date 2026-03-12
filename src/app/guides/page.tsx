@@ -70,6 +70,7 @@ export default async function GuidesPage() {
                         src={heroImage}
                         alt={prefecture}
                         fill
+                        unoptimized
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                         sizes="208px"
                       />
