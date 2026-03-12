@@ -222,20 +222,53 @@ export default async function PrefectureGuidePage({ params }: Props) {
               More from {REGION_META[regionId].label}
             </h2>
             <p className="text-stone-500 text-sm mb-5">Other prefectures in the same region</p>
-            <div className="flex flex-wrap gap-2">
-              {relatedPrefectures.map((pref) => {
-                const slug = Object.entries(PREFECTURE_MAP).find(([, v]) => v === pref)?.[0];
-                if (!slug) return null;
-                return (
-                  <Link
-                    key={pref}
-                    href={`/guides/${slug}`}
-                    className="px-4 py-2 rounded-full border border-stone-200 bg-white text-stone-700 text-sm font-medium hover:border-stone-400 hover:text-stone-900 transition-colors"
-                  >
-                    {pref}
-                  </Link>
-                );
-              })}
+            <div className="relative -mx-4">
+              <div className="absolute right-0 top-0 bottom-3 w-12 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+              <div className="flex gap-4 overflow-x-auto pb-3 px-4 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+                {relatedPrefectures.map((pref) => {
+                  const slug = Object.entries(PREFECTURE_MAP).find(([, v]) => v === pref)?.[0];
+                  if (!slug) return null;
+                  const prefSpots = allSpots.filter((s) => s.prefecture === pref);
+                  const heroImage = prefSpots[0]?.image_url ?? '';
+                  const cats = [...new Set(prefSpots.flatMap((s) => s.categories))];
+                  return (
+                    <Link
+                      key={pref}
+                      href={`/guides/${slug}`}
+                      className="group relative rounded-2xl overflow-hidden flex-shrink-0 w-44 h-56 block"
+                    >
+                      {heroImage && (
+                        <Image
+                          src={heroImage}
+                          alt={pref}
+                          fill
+                          unoptimized
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="176px"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-900/85 via-stone-900/30 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <div className="flex items-center gap-1 text-stone-300 text-xs mb-1">
+                          <MapPin size={10} />
+                          <span>{prefSpots.length} spots</span>
+                        </div>
+                        <p className="text-white text-base font-bold mb-1.5">{pref}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {cats.slice(0, 2).map((cat) => (
+                            <span
+                              key={cat}
+                              className="text-xs bg-white/15 text-white/90 px-2 py-0.5 rounded-full"
+                            >
+                              {CATEGORY_LABELS[cat]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
