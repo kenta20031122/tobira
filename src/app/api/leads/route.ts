@@ -119,6 +119,22 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
           </td>
         </tr>
 
+        <!-- Create account CTA -->
+        <tr>
+          <td style="padding:0 32px 32px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;">
+              <tr>
+                <td style="padding:20px 24px;">
+                  <p style="margin:0 0 4px 0;font-size:13px;font-weight:600;color:#16a34a;text-transform:uppercase;letter-spacing:0.06em;">Free account</p>
+                  <p style="margin:0 0 6px 0;font-size:15px;font-weight:600;color:#1c1917;">Save your results &amp; plan your trip</p>
+                  <p style="margin:0 0 14px 0;font-size:14px;color:#57534e;">Create a free account to save these spots, build an AI itinerary, and access them anytime.</p>
+                  <a href="https://tobira-travel.com/login" style="display:inline-block;background:#16a34a;color:#ffffff;font-size:14px;font-weight:600;padding:10px 20px;border-radius:999px;text-decoration:none;">Create free account →</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
         <!-- Footer -->
         <tr>
           <td style="padding:24px 32px;border-top:1px solid #e7e5e4;text-align:center;">
@@ -148,11 +164,11 @@ export async function POST(req: NextRequest) {
     .from('leads')
     .upsert({ email, answers, matched_spot_ids: matchedSpotIds }, { onConflict: 'email' });
 
-  // Fetch spot details for email (top 5)
+  // Fetch spot details for email (top 10)
   const { data: spots } = await admin
     .from('spots')
     .select('id, name, prefecture, description, image_url')
-    .in('id', matchedSpotIds.slice(0, 5));
+    .in('id', matchedSpotIds.slice(0, 10));
 
   const personality = getPersonalitySummary(answers ?? {});
 

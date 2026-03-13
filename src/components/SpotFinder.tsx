@@ -267,6 +267,21 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
           />
         )}
 
+        {/* Post-unlock: nudge to create account */}
+        {emailUnlocked && !isLoggedIn && (
+          <div className="flex items-center justify-between gap-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+            <p className="text-sm text-emerald-800">
+              <span className="font-semibold">Results unlocked!</span> Create a free account to save these spots and plan your trip.
+            </p>
+            <Link
+              href="/login"
+              className="shrink-0 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full transition-colors"
+            >
+              Create account →
+            </Link>
+          </div>
+        )}
+
         {!showGate && pool.length > 3 && (
           <button
             onClick={() => setShowAll(v => !v)}
