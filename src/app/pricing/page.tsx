@@ -154,20 +154,20 @@ export default async function PricingPage({
           {COMPARISON_ROWS.map((row, i) => (
             <div key={row.label} className={`grid grid-cols-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-stone-100' : ''}`}>
               <div className="px-4 py-3 text-sm text-stone-700 font-medium">{row.label}</div>
-              <div className="px-4 py-3 text-center border-l border-stone-100">
+              <div className="px-4 py-3 text-center border-l border-stone-100 bg-stone-50">
                 {typeof row.free === 'boolean' ? (
                   row.free
-                    ? <Check size={15} className="text-stone-400 mx-auto" />
-                    : <X size={15} className="text-stone-300 mx-auto" />
+                    ? <Check size={15} className="text-emerald-500 mx-auto" />
+                    : <X size={15} className="text-red-300 mx-auto" />
                 ) : (
-                  <span className="text-xs text-stone-500">{row.free}</span>
+                  <span className="text-xs text-stone-600 font-medium">{row.free}</span>
                 )}
               </div>
               <div className="px-4 py-3 text-center bg-stone-900 border-l border-stone-800">
                 {typeof row.pro === 'boolean' ? (
                   row.pro
-                    ? <Check size={15} className="text-red-400 mx-auto" />
-                    : <X size={15} className="text-stone-600 mx-auto" />
+                    ? <Check size={15} className="text-emerald-400 mx-auto" />
+                    : <X size={15} className="text-stone-500 mx-auto" />
                 ) : (
                   <span className="text-xs text-white font-medium">{row.pro}</span>
                 )}
