@@ -64,7 +64,11 @@ export default function SpotEmailGate({ answers, remainingCount, matchedSpotIds,
       <div className="bg-stone-900 px-6 py-4 flex items-center gap-2">
         <Lock size={14} className="text-stone-400" />
         <p className="text-sm text-stone-300 font-medium">
-          <span className="font-semibold text-white">{remainingCount} more match{remainingCount !== 1 ? 'es' : ''}</span> waiting for you
+          {remainingCount > 0 ? (
+            <><span className="font-semibold text-white">{remainingCount} more match{remainingCount !== 1 ? 'es' : ''}</span> waiting for you</>
+          ) : (
+            <span className="font-semibold text-white">Save your results to your inbox</span>
+          )}
         </p>
       </div>
 
@@ -83,10 +87,12 @@ export default function SpotEmailGate({ answers, remainingCount, matchedSpotIds,
 
         {/* Email CTA */}
         <p className="text-stone-900 font-semibold text-base mb-1">
-          Save your full results
+          {remainingCount > 0 ? 'Save your full results' : 'Save these results'}
         </p>
         <p className="text-stone-500 text-sm mb-4">
-          We&apos;ll email you all {remainingCount + 2} matches so you can revisit them when planning.
+          {remainingCount > 0
+            ? `We'll email you all ${remainingCount + 2} matches so you can revisit them when planning.`
+            : "We'll email you these matches so you can revisit them when planning your trip."}
         </p>
 
         <form onSubmit={handleSubmit} className="flex gap-2">

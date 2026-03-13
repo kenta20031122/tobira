@@ -186,7 +186,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     setAnswers(newAnswers);
 
     // Stop when pool is small enough or no more useful questions
-    if (filtered.length <= 4 || !getNextQuestion(filtered, newAsked, newAnswers)) {
+    if (filtered.length <= 10 || !getNextQuestion(filtered, newAsked, newAnswers)) {
       setDone(true);
     }
   }
@@ -213,8 +213,9 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
 
   // ── Results ──
   if (done) {
-    const showGate = !isLoggedIn && !emailUnlocked && pool.length > 2;
-    const visibleSpots = showGate ? pool.slice(0, 2) : (showAll ? pool : pool.slice(0, 3));
+    const showGate = !isLoggedIn && !emailUnlocked;
+    const remainingCount = Math.max(0, pool.length - 2);
+    const visibleSpots = (showGate && pool.length > 2) ? pool.slice(0, 2) : (showAll ? pool : pool.slice(0, 3));
 
     return (
       <div className="space-y-6">
@@ -242,7 +243,9 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleSpots.map(s => (
             <div key={s.id} className="flex flex-col">
-              <SpotCard spot={s} />
+              <div className="flex-1">
+                <SpotCard spot={s} />
+              </div>
               <Link
                 href={`/discover/plan?anchor=${s.id}`}
                 className="mt-2 flex items-center justify-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700 border border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 rounded-xl py-2 transition-colors"
@@ -258,7 +261,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         {showGate && (
           <SpotEmailGate
             answers={answers}
-            remainingCount={pool.length - 2}
+            remainingCount={remainingCount}
             matchedSpotIds={pool.map(s => s.id)}
             onUnlock={() => setEmailUnlocked(true)}
           />

@@ -22,8 +22,8 @@ type Props = {
 export default function SpotCard({ spot, isFavorited = false }: Props) {
   const inSeason = isInSeason(spot.best_season, new Date().getMonth() + 1);
   return (
-    <Link href={`/spots/${spot.id}`} className="group block">
-      <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+    <Link href={`/spots/${spot.id}`} className="group block h-full">
+      <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 h-full flex flex-col">
         {/* Image */}
         <div className="relative h-52 overflow-hidden bg-stone-100">
           {spot.image_url && (
@@ -74,7 +74,7 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4 flex flex-col flex-1">
           <div className="flex items-start justify-between gap-2 mb-1">
             <h3 className="font-semibold text-stone-900 text-base leading-snug group-hover:text-red-600 transition-colors">
               {spot.name}
@@ -104,7 +104,7 @@ export default function SpotCard({ spot, isFavorited = false }: Props) {
 
           {/* Duration */}
           {spot.duration && (
-            <div className="flex items-center gap-1 text-xs text-stone-400 mt-3 pt-3 border-t border-stone-100">
+            <div className="flex items-center gap-1 text-xs text-stone-400 mt-auto pt-3 border-t border-stone-100">
               <Clock size={11} />
               <span>{spot.duration}</span>
             </div>
