@@ -51,11 +51,10 @@ export default function SpotEmailGate({ answers, remainingCount, matchedSpotIds,
         body: JSON.stringify({ email: email.trim(), answers, matchedSpotIds }),
       });
       if (!res.ok) throw new Error('Failed');
-      onUnlock();
+      onUnlock(); // component unmounts here — no state updates after this
     } catch {
+      setLoading(false); // only reset on error (component stays mounted)
       setError('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
     }
   }
 
