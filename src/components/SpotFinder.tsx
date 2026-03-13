@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, RotateCcw, Sparkles, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import type { Spot } from '@/types';
 import { isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import SpotCard from '@/components/SpotCard';
+import SpotEmailGate from '@/components/SpotEmailGate';
+import { createClient } from '@/lib/supabase/client';
 
 // ─── Question definitions ──────────────────────────────────────────────────────
 
@@ -156,6 +158,14 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
   const [history, setHistory] = useState<{ askedIds: string[]; pool: Spot[]; answers: Record<string, string> }[]>([]);
   const [done, setDone] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [emailUnlocked, setEmailUnlocked] = useState(false);
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
+  }, []);
 
   const currentQ = useMemo(() => {
     if (done) return null;
@@ -198,11 +208,14 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     setHistory([]);
     setDone(false);
     setShowAll(false);
+    setEmailUnlocked(false);
   }
 
   // ── Results ──
   if (done) {
-    const displaySpots = showAll ? pool : pool.slice(0, 3);
+    const showGate = !isLoggedIn && !emailUnlocked && pool.length > 2;
+    const visibleSpots = showGate ? pool.slice(0, 2) : (showAll ? pool : pool.slice(0, 3));
+
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -227,7 +240,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {displaySpots.map(s => (
+          {visibleSpots.map(s => (
             <div key={s.id} className="flex flex-col">
               <SpotCard spot={s} />
               <Link
@@ -242,7 +255,16 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
           ))}
         </div>
 
-        {pool.length > 3 && (
+        {showGate && (
+          <SpotEmailGate
+            answers={answers}
+            remainingCount={pool.length - 2}
+            matchedSpotIds={pool.map(s => s.id)}
+            onUnlock={() => setEmailUnlocked(true)}
+          />
+        )}
+
+        {!showGate && pool.length > 3 && (
           <button
             onClick={() => setShowAll(v => !v)}
             className="w-full flex items-center justify-center gap-1.5 text-sm text-stone-600 border border-stone-200 hover:border-stone-300 bg-white hover:bg-stone-50 rounded-xl py-2.5 transition-colors"
