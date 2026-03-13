@@ -29,7 +29,7 @@ interface Props {
   answers: Record<string, string>;
   remainingCount: number;
   matchedSpotIds: string[];
-  onUnlock: () => void;
+  onUnlock: (email: string) => void;
 }
 
 export default function SpotEmailGate({ answers, remainingCount, matchedSpotIds, onUnlock }: Props) {
@@ -51,7 +51,7 @@ export default function SpotEmailGate({ answers, remainingCount, matchedSpotIds,
         body: JSON.stringify({ email: email.trim(), answers, matchedSpotIds }),
       });
       if (!res.ok) throw new Error('Failed');
-      onUnlock(); // component unmounts here — no state updates after this
+      onUnlock(email.trim()); // component unmounts here — no state updates after this
     } catch {
       setLoading(false); // only reset on error (component stays mounted)
       setError('Something went wrong. Please try again.');

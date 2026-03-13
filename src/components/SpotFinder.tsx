@@ -160,6 +160,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
   const [showAll, setShowAll] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [emailUnlocked, setEmailUnlocked] = useState(false);
+  const [unlockedEmail, setUnlockedEmail] = useState('');
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data }) => {
@@ -209,6 +210,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     setDone(false);
     setShowAll(false);
     setEmailUnlocked(false);
+    setUnlockedEmail('');
   }
 
   // ── Results ──
@@ -263,7 +265,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
             answers={answers}
             remainingCount={remainingCount}
             matchedSpotIds={pool.map(s => s.id)}
-            onUnlock={() => setEmailUnlocked(true)}
+            onUnlock={(email) => { setEmailUnlocked(true); setUnlockedEmail(email); }}
           />
         )}
 
@@ -274,7 +276,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
               <span className="font-semibold">Results unlocked!</span> Create a free account to save these spots and plan your trip.
             </p>
             <Link
-              href="/login"
+              href={`/signup?email=${encodeURIComponent(unlockedEmail)}`}
               className="shrink-0 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-full transition-colors"
             >
               Create account →
