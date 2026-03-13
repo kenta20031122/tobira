@@ -3,13 +3,20 @@
 import Link from 'next/link';
 import { ArrowRight, Clock, Navigation, Sparkles, Check, X } from 'lucide-react';
 
+export interface PrefillData {
+  days: number;
+  interests: string[];
+  groupType: string;
+  region: string;
+}
+
 interface Props {
-  onStart: () => void;
+  onStart: (prefill?: PrefillData) => void;
 }
 
 // ── Section 1: Hero ───────────────────────────────────────────────────────────
 
-function HeroSection({ onStart }: { onStart: () => void }) {
+function HeroSection({ onStart }: { onStart: (prefill?: PrefillData) => void }) {
   return (
     <div className="text-center mb-16">
       <h1 className="text-4xl sm:text-5xl font-bold text-stone-900 mb-4 leading-tight">
@@ -154,25 +161,28 @@ function SampleOutputSection() {
 
 // ── Section 3: Use Cases ──────────────────────────────────────────────────────
 
-const USE_CASES = [
+const USE_CASES: { emoji: string; title: string; tags: string[]; prefill: PrefillData }[] = [
   {
     emoji: '♨️',
     title: 'Solo Onsen Retreat',
     tags: ['5 days', 'Solo', 'Onsen & Wellness', 'Tohoku'],
+    prefill: { days: 5, groupType: 'solo', interests: ['Onsen & Wellness'], region: 'tohoku' },
   },
   {
     emoji: '🏯',
     title: 'Culture & Food Weekend',
     tags: ['3 days', 'Couple', 'Culture & Food', 'Kansai'],
+    prefill: { days: 3, groupType: 'couple', interests: ['Culture & History', 'Food & Local Cuisine'], region: 'kinki' },
   },
   {
     emoji: '🌋',
     title: 'Family Adventure',
     tags: ['7 days', 'Family', 'Nature & Adventure', 'Kyushu'],
+    prefill: { days: 7, groupType: 'family', interests: ['Nature & Hiking', 'Adventure'], region: 'kyushu' },
   },
 ];
 
-function UseCasesSection({ onStart }: { onStart: () => void }) {
+function UseCasesSection({ onStart }: { onStart: (prefill?: PrefillData) => void }) {
   return (
     <div className="mb-16">
       <div className="text-center mb-6">
@@ -184,7 +194,7 @@ function UseCasesSection({ onStart }: { onStart: () => void }) {
         {USE_CASES.map((uc) => (
           <button
             key={uc.title}
-            onClick={onStart}
+            onClick={() => onStart(uc.prefill)}
             className="group text-left bg-white border border-stone-200 rounded-2xl p-5 hover:border-red-300 hover:shadow-sm transition-all"
           >
             <span className="text-3xl mb-3 block">{uc.emoji}</span>
@@ -286,7 +296,7 @@ function FreePro() {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function PlanPageHero({ onStart }: Props) {
+export default function PlanPageHero({ onStart }: { onStart: (prefill?: PrefillData) => void }) {
   return (
     <div className="mb-8">
       <HeroSection onStart={onStart} />

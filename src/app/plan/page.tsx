@@ -8,7 +8,7 @@ import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, 
 import { createClient } from '@/lib/supabase/client';
 import { REGION_META, REGION_IDS } from '@/lib/regions';
 import type { Spot } from '@/types';
-import PlanPageHero from '@/components/PlanPageHero';
+import PlanPageHero, { type PrefillData } from '@/components/PlanPageHero';
 
 type DayPlan = {
   day: number;
@@ -92,7 +92,13 @@ export default function PlanPage() {
 
   const formRef = useRef<HTMLDivElement>(null);
 
-  function scrollToForm() {
+  function scrollToForm(prefill?: PrefillData) {
+    if (prefill) {
+      setDays(prefill.days);
+      setGroupType(prefill.groupType);
+      setInterests(prefill.interests);
+      setRegion(prefill.region);
+    }
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
