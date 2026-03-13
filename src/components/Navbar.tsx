@@ -86,11 +86,11 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-stone-600">
-          <Link href="/guides" className="hover:text-stone-900 transition-colors">
-            By Prefecture
-          </Link>
           <Link href="/discover" className="hover:text-stone-900 transition-colors">
             Find My Match
+          </Link>
+          <Link href="/guides" className="hover:text-stone-900 transition-colors">
+            By Prefecture
           </Link>
           <Link href="/plan" className="hover:text-stone-900 transition-colors">
             Plan a Trip
@@ -188,11 +188,11 @@ export default function Navbar() {
       {/* Mobile nav */}
       {open && (
         <div className="md:hidden bg-white border-t border-stone-200 px-4 py-4 flex flex-col gap-4 text-sm font-medium text-stone-700">
-          <Link href="/guides" onClick={() => setOpen(false)}>
-            By Prefecture
-          </Link>
           <Link href="/discover" onClick={() => setOpen(false)}>
             Find My Match
+          </Link>
+          <Link href="/guides" onClick={() => setOpen(false)}>
+            By Prefecture
           </Link>
           <Link href="/plan" onClick={() => setOpen(false)}>
             Plan a Trip

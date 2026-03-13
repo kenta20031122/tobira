@@ -90,16 +90,16 @@ export default async function HomePage() {
               Find My Match
             </Link>
             <Link
-              href="/spots"
+              href="/guides"
               className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-full transition-colors border border-white/20 text-base"
             >
-              Browse All Spots
-              <ArrowRight size={18} />
+              <MapPin size={18} />
+              Browse by Region
             </Link>
           </div>
           <p className="text-stone-500 text-sm mt-5">
             <Link href="/plan" className="text-red-400 hover:text-red-300 underline underline-offset-2 transition-colors">
-              Plan with AI →
+              Plan a Trip →
             </Link>
           </p>
 
@@ -116,6 +116,49 @@ export default async function HomePage() {
               <span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" />
               Updated monthly
             </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Featured Spots ───────────────────────────────────── */}
+      <section className="bg-white py-20">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <span className="inline-block text-xs font-semibold text-red-600 uppercase tracking-widest mb-3">
+                ✦ Editor&apos;s Picks
+              </span>
+              <h2 className="text-3xl font-bold text-stone-900 mb-2">
+                Must-See Spots
+              </h2>
+              <p className="text-stone-500">
+                Chosen for uniqueness, accessibility, and the &quot;I
+                can&apos;t believe this is real&quot; factor.
+              </p>
+            </div>
+            <Link
+              href="/spots"
+              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors shrink-0 ml-4"
+            >
+              View all
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredSpots.map((spot) => (
+              <SpotCard key={spot.id} spot={spot} />
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/discover"
+              className="inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-700 text-white font-medium px-8 py-3.5 rounded-full transition-colors"
+            >
+              <Sparkles size={16} />
+              Find spots like these
+            </Link>
           </div>
         </div>
       </section>
@@ -152,49 +195,6 @@ export default async function HomePage() {
         </div>
 
         <JapanRegionMapWrapper spotCountByPrefecture={spotCountByPrefecture} />
-      </section>
-
-      {/* ─── Featured Spots ───────────────────────────────────── */}
-      <section className="bg-white py-20">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <span className="inline-block text-xs font-semibold text-red-600 uppercase tracking-widest mb-3">
-                ✦ Editor&apos;s Picks
-              </span>
-              <h2 className="text-3xl font-bold text-stone-900 mb-2">
-                Must-See Spots
-              </h2>
-              <p className="text-stone-500">
-                Chosen for uniqueness, accessibility, and the &quot;I
-                can&apos;t believe this is real&quot; factor.
-              </p>
-            </div>
-            <Link
-              href="/spots"
-              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors shrink-0 ml-4"
-            >
-              View all
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredSpots.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} />
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              href="/spots"
-              className="inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-700 text-white font-medium px-8 py-3.5 rounded-full transition-colors"
-            >
-              See all {spots.length} spots
-              <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* ─── Features ─────────────────────────────────────────── */}
@@ -314,8 +314,8 @@ export default async function HomePage() {
             Find My Match
           </Link>
           <div className="mt-5">
-            <Link href="/spots" className="text-sm text-stone-400 hover:text-stone-600 transition-colors flex items-center justify-center gap-1">
-              Browse All Spots <ArrowRight size={13} />
+            <Link href="/guides" className="text-sm text-stone-400 hover:text-stone-600 transition-colors flex items-center justify-center gap-1">
+              Browse by Region <ArrowRight size={13} />
             </Link>
           </div>
         </div>
