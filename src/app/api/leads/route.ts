@@ -31,9 +31,20 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
   const spotRows = spots.map(s => `
     <tr>
       <td style="padding:16px 0;border-bottom:1px solid #e7e5e4;">
-        <p style="margin:0 0 4px 0;font-size:16px;font-weight:600;color:#1c1917;">${s.name}</p>
-        <p style="margin:0 0 6px 0;font-size:13px;color:#78716c;">${s.prefecture}</p>
-        <p style="margin:0;font-size:14px;color:#44403c;line-height:1.5;">${s.description.slice(0, 120)}…</p>
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            ${s.image_url ? `
+            <td width="88" style="vertical-align:top;padding-right:14px;">
+              <img src="${s.image_url}" width="88" height="66" alt="${s.name}"
+                style="display:block;border-radius:8px;object-fit:cover;width:88px;height:66px;" />
+            </td>` : ''}
+            <td style="vertical-align:top;">
+              <p style="margin:0 0 3px 0;font-size:16px;font-weight:600;color:#1c1917;">${s.name}</p>
+              <p style="margin:0 0 6px 0;font-size:13px;color:#78716c;">${s.prefecture}</p>
+              <p style="margin:0;font-size:14px;color:#44403c;line-height:1.5;">${s.description.slice(0, 110)}…</p>
+            </td>
+          </tr>
+        </table>
       </td>
     </tr>
   `).join('');
@@ -49,8 +60,10 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
         <!-- Header -->
         <tr>
           <td style="background:#1c1917;padding:28px 32px;">
-            <p style="margin:0;font-size:22px;font-weight:700;color:#ffffff;">tobira</p>
-            <p style="margin:4px 0 0 0;font-size:13px;color:#a8a29e;">· beyond tokyo</p>
+            <a href="https://tobira-travel.com" style="text-decoration:none;">
+              <p style="margin:0;font-size:22px;font-weight:700;color:#ffffff;">tobira</p>
+              <p style="margin:4px 0 0 0;font-size:13px;color:#a8a29e;">· beyond tokyo</p>
+            </a>
           </td>
         </tr>
 
@@ -108,8 +121,9 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
 
         <!-- Footer -->
         <tr>
-          <td style="padding:20px 32px;border-top:1px solid #e7e5e4;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#a8a29e;">You received this because you signed up at tobira-travel.com. <a href="https://tobira-travel.com" style="color:#a8a29e;">Visit site</a></p>
+          <td style="padding:24px 32px;border-top:1px solid #e7e5e4;text-align:center;">
+            <a href="https://tobira-travel.com" style="display:inline-block;font-size:13px;font-weight:600;color:#1c1917;text-decoration:none;border:1px solid #e7e5e4;border-radius:999px;padding:8px 20px;margin-bottom:14px;">Visit tobira-travel.com →</a>
+            <p style="margin:0;font-size:12px;color:#a8a29e;">You received this because you signed up at tobira-travel.com.</p>
           </td>
         </tr>
 
