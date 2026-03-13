@@ -61,7 +61,7 @@ function HeroSection({ onStart }: { onStart: (prefill?: PrefillData) => void }) 
       </div>
 
       <button
-        onClick={onStart}
+        onClick={() => onStart()}
         className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-full transition-colors text-base"
       >
         <Sparkles size={18} />
