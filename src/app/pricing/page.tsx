@@ -141,7 +141,7 @@ export default async function PricingPage({
           {/* Header row */}
           <div className="grid grid-cols-3 border-b border-stone-100">
             <div className="p-4" />
-            <div className="p-4 text-center border-l border-stone-100">
+            <div className="p-4 text-center border-l border-stone-100 bg-stone-50">
               <p className="text-xs font-medium text-stone-400 uppercase tracking-wide">Free</p>
               <p className="font-bold text-stone-900 text-lg mt-0.5">$0</p>
             </div>
@@ -158,7 +158,7 @@ export default async function PricingPage({
                 {typeof row.free === 'boolean' ? (
                   row.free
                     ? <Check size={15} className="text-emerald-500 mx-auto" />
-                    : <X size={15} className="text-red-300 mx-auto" />
+                    : <X size={15} className="text-red-400 mx-auto" />
                 ) : (
                   <span className="text-xs text-stone-600 font-medium">{row.free}</span>
                 )}
