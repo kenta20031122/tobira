@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import { Sparkles, Loader2, Clock, ChevronDown, ChevronUp, MapPin, Lock, Check, 
 import { createClient } from '@/lib/supabase/client';
 import { REGION_META, REGION_IDS } from '@/lib/regions';
 import type { Spot } from '@/types';
+import PlanPageHero from '@/components/PlanPageHero';
 
 type DayPlan = {
   day: number;
@@ -87,6 +88,12 @@ export default function PlanPage() {
         s.name.toLowerCase().includes(lower) ||
         lower.includes(s.name.toLowerCase())
     );
+  }
+
+  const formRef = useRef<HTMLDivElement>(null);
+
+  function scrollToForm() {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   const [days, setDays] = useState(3);
@@ -228,6 +235,10 @@ export default function PlanPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
+
+      {/* LP — 結果が出るまで表示 */}
+      {!result && <PlanPageHero onStart={scrollToForm} />}
+
       {/* Header */}
       <div className="text-center mb-12">
         <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 text-sm font-medium px-4 py-2 rounded-full mb-4">
@@ -266,7 +277,7 @@ export default function PlanPage() {
       )}
 
       {/* Form */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-8 space-y-8 mb-8">
+      <div ref={formRef} className="bg-white rounded-2xl border border-stone-200 p-8 space-y-8 mb-8">
         {/* Days */}
         <div>
           <label className="block text-sm font-semibold text-stone-800 mb-3">
