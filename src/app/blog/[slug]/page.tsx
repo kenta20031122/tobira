@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Clock, Sparkles, ChevronRight } from 'lucide-react';
 import { getArticle, getAllArticles, getRelatedArticles } from '@/lib/articles';
@@ -41,6 +42,21 @@ export default async function ArticlePage({
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
+      {/* Cover image */}
+      {article.coverImage && (
+        <div className="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-stone-100 mb-10">
+          <Image
+            src={article.coverImage}
+            alt={article.title}
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 672px"
+            priority
+          />
+        </div>
+      )}
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-stone-400 mb-8">
         <Link href="/" className="hover:text-stone-600 transition-colors">Home</Link>
@@ -102,7 +118,8 @@ export default async function ArticlePage({
           href="/discover"
           className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm"
         >
-          Find your Japan
+          <Sparkles size={15} />
+          Find match spots
           <ArrowRight size={14} />
         </Link>
       </div>

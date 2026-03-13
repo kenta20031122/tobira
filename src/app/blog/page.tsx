@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Clock, Sparkles } from 'lucide-react';
 import { getAllArticles } from '@/lib/articles';
 
@@ -23,16 +24,27 @@ export default function BlogPage() {
       </div>
 
       {/* Article list */}
-      <div className="space-y-px rounded-2xl border border-stone-200 overflow-hidden">
-        {articles.map((article, i) => (
+      <div className="space-y-4">
+        {articles.map((article) => (
           <Link
             key={article.slug}
             href={`/blog/${article.slug}`}
-            className={`group block bg-white hover:bg-stone-50 transition-colors px-6 py-5 ${
-              i < articles.length - 1 ? 'border-b border-stone-100' : ''
-            }`}
+            className="group block bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md hover:border-stone-300 transition-all"
           >
-            <div className="flex items-start justify-between gap-4">
+            {/* Cover image */}
+            {article.coverImage && (
+              <div className="relative h-44 bg-stone-100 overflow-hidden">
+                <Image
+                  src={article.coverImage}
+                  alt={article.title}
+                  fill
+                  unoptimized
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, 672px"
+                />
+              </div>
+            )}
+            <div className="px-6 py-5 flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <h2 className="font-semibold text-stone-900 group-hover:text-red-600 transition-colors mb-1 leading-snug">
                   {article.title}
@@ -40,12 +52,10 @@ export default function BlogPage() {
                 <p className="text-sm text-stone-500 line-clamp-2 leading-relaxed">
                   {article.description}
                 </p>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="flex items-center gap-1 text-xs text-stone-400">
-                    <Clock size={11} />
-                    {article.readMinutes} min read
-                  </span>
-                </div>
+                <span className="flex items-center gap-1 text-xs text-stone-400 mt-2">
+                  <Clock size={11} />
+                  {article.readMinutes} min read
+                </span>
               </div>
               <ArrowRight size={16} className="shrink-0 text-stone-300 group-hover:text-red-400 transition-colors mt-1" />
             </div>
@@ -65,7 +75,7 @@ export default function BlogPage() {
           className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm"
         >
           <Sparkles size={15} />
-          Take the quiz
+          Find match spots
           <ArrowRight size={14} />
         </Link>
       </div>

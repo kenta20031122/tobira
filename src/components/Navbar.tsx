@@ -95,6 +95,9 @@ export default function Navbar() {
           <Link href="/plan" className="hover:text-stone-900 transition-colors">
             Plan a Trip
           </Link>
+          <Link href="/blog" className="hover:text-stone-900 transition-colors">
+            Blog
+          </Link>
           {userEmail ? (
             <>
               {/* Quick-access links */}
@@ -196,6 +199,9 @@ export default function Navbar() {
           </Link>
           <Link href="/plan" onClick={() => setOpen(false)}>
             Plan a Trip
+          </Link>
+          <Link href="/blog" onClick={() => setOpen(false)}>
+            Blog
           </Link>
           {userEmail ? (
             <>

@@ -4,6 +4,7 @@ export interface Article {
   description: string;
   publishedAt: string;
   readMinutes: number;
+  coverImage?: string;
   intro: string;
   sections: { heading: string; body: string }[];
   ctaHeading: string;
