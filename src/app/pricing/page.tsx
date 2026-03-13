@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Check, Lock, MapPin, Sparkles } from 'lucide-react';
+import { Check, Lock, MapPin, Sparkles, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import PricingCTA from '@/components/PricingCTA';
 
@@ -11,6 +11,23 @@ export const metadata: Metadata = {
   title: 'Tobira Pro — Unlock All of Japan',
   description: 'Get full access to premium spots across all 47 prefectures. Insider tips, hidden highlights, and unlimited AI trip plans for $4.99/month.',
 };
+
+const COMPARISON_ROWS: { label: string; free: boolean | string; pro: boolean | string }[] = [
+  { label: 'Spot browsing — all regions',  free: true,        pro: true },
+  { label: 'Standard spot details',        free: true,        pro: true },
+  { label: 'Save & favourite spots',       free: true,        pro: true },
+  { label: 'AI trip itinerary',            free: '1 / month', pro: 'Unlimited' },
+  { label: 'Premium spot access',          free: false,       pro: true },
+  { label: 'Insider tips & local secrets', free: false,       pro: true },
+  { label: 'Best-time-to-visit advice',    free: false,       pro: true },
+  { label: 'Full maps & access details',   free: false,       pro: true },
+];
+
+const WHO_PRO = [
+  { emoji: '🗺️', title: 'Deep explorers',  desc: 'You want to go beyond the guidebook and find spots most tourists never reach.' },
+  { emoji: '📅', title: 'Trip planners',    desc: "You're building a real itinerary and want unlimited AI plans with insider detail." },
+  { emoji: '🤿', title: 'Japan obsessives', desc: 'You visit Japan regularly and want to keep discovering new hidden gems each time.' },
+];
 
 const FEATURES = [
   'Access all premium spots across Japan',
@@ -114,6 +131,52 @@ export default async function PricingPage({
         </p>
       </div>
 
+      {/* Free vs Pro comparison table */}
+      <div className="mb-10">
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold text-stone-900">How far does free take you?</h2>
+          <p className="text-stone-500 text-sm mt-1">Start free — upgrade when you&apos;re ready to go deep.</p>
+        </div>
+        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+          {/* Header row */}
+          <div className="grid grid-cols-3 border-b border-stone-100">
+            <div className="p-4" />
+            <div className="p-4 text-center border-l border-stone-100">
+              <p className="text-xs font-medium text-stone-400 uppercase tracking-wide">Free</p>
+              <p className="font-bold text-stone-900 text-lg mt-0.5">$0</p>
+            </div>
+            <div className="p-4 text-center bg-stone-900 border-l border-stone-800">
+              <p className="text-xs font-medium text-red-400 uppercase tracking-wide">Pro</p>
+              <p className="font-bold text-white text-lg mt-0.5">$4.99<span className="text-stone-400 text-sm font-normal">/mo</span></p>
+            </div>
+          </div>
+          {/* Feature rows */}
+          {COMPARISON_ROWS.map((row, i) => (
+            <div key={row.label} className={`grid grid-cols-3 ${i < COMPARISON_ROWS.length - 1 ? 'border-b border-stone-100' : ''}`}>
+              <div className="px-4 py-3 text-sm text-stone-700 font-medium">{row.label}</div>
+              <div className="px-4 py-3 text-center border-l border-stone-100">
+                {typeof row.free === 'boolean' ? (
+                  row.free
+                    ? <Check size={15} className="text-stone-400 mx-auto" />
+                    : <X size={15} className="text-stone-300 mx-auto" />
+                ) : (
+                  <span className="text-xs text-stone-500">{row.free}</span>
+                )}
+              </div>
+              <div className="px-4 py-3 text-center bg-stone-900 border-l border-stone-800">
+                {typeof row.pro === 'boolean' ? (
+                  row.pro
+                    ? <Check size={15} className="text-red-400 mx-auto" />
+                    : <X size={15} className="text-stone-600 mx-auto" />
+                ) : (
+                  <span className="text-xs text-white font-medium">{row.pro}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Premium spots preview */}
       {premiumSpots && premiumSpots.length > 0 && (
         <div className="mb-10">
@@ -175,6 +238,27 @@ export default async function PricingPage({
         </ul>
 
         <PricingCTA isLoggedIn={!!user} isPro={isPro} />
+      </div>
+
+      {/* Who is Pro for? */}
+      <div className="mb-10">
+        <h2 className="text-xl font-bold text-stone-900 mb-1 text-center">Is Pro right for you?</h2>
+        <p className="text-stone-500 text-sm text-center mb-6">Pro is built for travellers who want to go deeper.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+          {WHO_PRO.map((p) => (
+            <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-5">
+              <span className="text-3xl mb-3 block">{p.emoji}</span>
+              <p className="font-semibold text-stone-900 mb-1.5">{p.title}</p>
+              <p className="text-sm text-stone-500 leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-sm text-stone-400">
+          Not sure yet?{' '}
+          <Link href="/spots" className="text-stone-600 underline hover:text-stone-800 transition-colors">
+            Start free — browse spots →
+          </Link>
+        </p>
       </div>
 
       {/* FAQ */}
