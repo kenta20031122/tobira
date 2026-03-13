@@ -168,12 +168,12 @@ export default async function ArticlePage({
               <h2 className="text-xl font-bold text-stone-900 mb-3">{section.heading}</h2>
 
               {/* セクション情報バッジ（spots DB + 記事データから自動取得） */}
-              {(sectionSpots[i][0]?.best_season || section.travel_time) && (
+              {((section.best_season ?? sectionSpots[i][0]?.best_season) || section.travel_time) && (
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {sectionSpots[i][0]?.best_season && (
+                  {(section.best_season ?? sectionSpots[i][0]?.best_season) && (
                     <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">
                       <Calendar size={10} />
-                      {sectionSpots[i][0].best_season}
+                      {section.best_season ?? sectionSpots[i][0]?.best_season}
                     </span>
                   )}
                   {section.travel_time && (

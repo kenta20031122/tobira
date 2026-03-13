@@ -18,6 +18,7 @@ export interface ArticleSection {
     href: string;         // 例: "/spots/beppu-hells" or "/guides/oita"
   };
   travel_time?: string;   // 主要都市からの移動時間（例: "2.5 hrs from Tokyo"）
+  best_season?: string;   // ベストシーズン上書き（例: "Jul for lavender / Feb for skiing"）
 }
 
 export interface Article {
