@@ -164,7 +164,7 @@ export default async function ArticlePage({
       {article.sections.length > 0 && (
         <div className="mb-12 space-y-12">
           {article.sections.map((section, i) => (
-            <section key={i} id={`section-${i}`}>
+            <section key={i} id={`section-${i}`} className="scroll-mt-20">
               <h2 className="text-xl font-bold text-stone-900 mb-3">{section.heading}</h2>
 
               {/* セクション情報バッジ（spots DB + 記事データから自動取得） */}
