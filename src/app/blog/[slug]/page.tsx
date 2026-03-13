@@ -2,11 +2,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { ArrowRight, Clock, Sparkles, ChevronRight } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, Sparkles, ChevronRight, MapPin, Train } from 'lucide-react';
 import { getArticle, getAllArticles, getRelatedArticles } from '@/lib/articles';
+import type { SpotQuery } from '@/lib/articles';
+import { createAdminClient } from '@/lib/supabase/admin';
+import type { Spot } from '@/types';
 
-export function generateStaticParams() {
-  return getAllArticles().map(a => ({ slug: a.slug }));
+export const dynamic = 'force-dynamic';
+
+export async function generateStaticParams() {
+  const articles = await getAllArticles();
+  return articles.map(a => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({
@@ -15,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticle(slug);
+  const article = await getArticle(slug);
   if (!article) return {};
   return {
     title: `${article.title} | Tobira Japan`,
@@ -35,10 +41,55 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = getArticle(slug);
+  const article = await getArticle(slug);
   if (!article) notFound();
 
-  const related = getRelatedArticles(slug, 2);
+  const related = await getRelatedArticles(slug, 2);
+
+  // spot_ids（手動指定）と spot_query（自動取得）をまとめて解決する
+  const supabase = createAdminClient();
+
+  // 1) spot_ids: 全セクションの ID を一括取得
+  const allSpotIds = article.sections.flatMap(s => s.spot_ids ?? []);
+  const spotMap: Record<string, Spot> = {};
+  if (allSpotIds.length > 0) {
+    const { data } = await supabase
+      .from('spots')
+      .select('id, name, prefecture, image_url, region, categories, best_season')
+      .in('id', allSpotIds);
+    for (const s of data ?? []) spotMap[s.id] = s as Spot;
+  }
+
+  // 2) spot_query: セクションごとに DB クエリを実行してキャッシュ
+  //    キー = JSON.stringify(query) でメモ化して重複クエリを避ける
+  const queryCache: Record<string, Spot[]> = {};
+  async function resolveQuery(q: SpotQuery): Promise<Spot[]> {
+    const key = JSON.stringify(q);
+    if (queryCache[key]) return queryCache[key];
+    let builder = supabase
+      .from('spots')
+      .select('id, name, prefecture, image_url, region, categories, best_season');
+    if (q.address_contains) builder = builder.ilike('address', `%${q.address_contains}%`);
+    if (q.prefecture)       builder = builder.eq('prefecture', q.prefecture);
+    if (q.categories?.length) builder = builder.contains('categories', q.categories);
+    builder = builder.limit(q.limit ?? 3);
+    const { data } = await builder;
+    queryCache[key] = (data ?? []) as Spot[];
+    return queryCache[key];
+  }
+
+  // セクションごとの表示 spot リスト（spot_ids 優先、なければ spot_query）
+  const sectionSpots: Spot[][] = await Promise.all(
+    article.sections.map(async s => {
+      if (s.spot_ids?.length) {
+        return s.spot_ids.map(id => spotMap[id]).filter(Boolean) as Spot[];
+      }
+      if (s.spot_query) {
+        return resolveQuery(s.spot_query);
+      }
+      return [];
+    })
+  );
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
@@ -92,15 +143,109 @@ export default async function ArticlePage({
         </p>
       )}
 
+      {/* Table of Contents */}
+      {article.sections.filter(s => s.heading).length > 2 && (
+        <nav className="bg-stone-50 border border-stone-200 rounded-xl p-5 mb-10">
+          <p className="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Contents</p>
+          <ol className="space-y-2">
+            {article.sections.filter(s => s.heading).map((s, i) => (
+              <li key={i} className="flex items-baseline gap-2">
+                <span className="text-[10px] font-mono text-stone-300 w-4 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                <a href={`#section-${i}`} className="text-sm text-stone-600 hover:text-red-600 transition-colors leading-snug">
+                  {s.heading}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
+
       {/* Sections */}
       {article.sections.length > 0 && (
-        <div className="prose prose-stone max-w-none mb-12 space-y-8">
+        <div className="mb-12 space-y-12">
           {article.sections.map((section, i) => (
-            <section key={i}>
+            <section key={i} id={`section-${i}`}>
               <h2 className="text-xl font-bold text-stone-900 mb-3">{section.heading}</h2>
+
+              {/* セクション情報バッジ（spots DB + 記事データから自動取得） */}
+              {(sectionSpots[i][0]?.best_season || section.travel_time) && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {sectionSpots[i][0]?.best_season && (
+                    <span className="inline-flex items-center gap-1 text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">
+                      <Calendar size={10} />
+                      {sectionSpots[i][0].best_season}
+                    </span>
+                  )}
+                  {section.travel_time && (
+                    <span className="inline-flex items-center gap-1 text-xs bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1 rounded-full">
+                      <Train size={10} />
+                      {section.travel_time}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* セクション画像: 手動指定 > spot_query の1枚目 > なし */}
+              {(section.image ?? sectionSpots[i][0]?.image_url) && (
+                <div className="relative h-52 sm:h-64 rounded-xl overflow-hidden bg-stone-100 mb-4">
+                  <Image
+                    src={(section.image ?? sectionSpots[i][0]?.image_url)!}
+                    alt={section.heading}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 672px"
+                  />
+                </div>
+              )}
+
+              {/* 本文 */}
               {section.body.split('\n').filter(Boolean).map((para, j) => (
                 <p key={j} className="text-stone-600 leading-relaxed mb-3">{para}</p>
               ))}
+
+              {/* セクションリンク（任意） */}
+              {section.section_link && (
+                <Link
+                  href={section.section_link.href}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors mt-2 mb-1"
+                >
+                  {section.section_link.text}
+                  <ArrowRight size={13} />
+                </Link>
+              )}
+
+              {/* Spot カード（spot_ids / spot_query どちらでも表示） */}
+              {sectionSpots[i].length > 0 && (
+                <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {sectionSpots[i].map(spot => (
+                    <Link
+                      key={spot.id}
+                      href={`/spots/${spot.id}`}
+                      className="group relative rounded-xl overflow-hidden bg-stone-100 aspect-[4/3] block"
+                    >
+                      {spot.image_url && (
+                        <Image
+                          src={spot.image_url}
+                          alt={spot.name}
+                          fill
+                          unoptimized
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          sizes="220px"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-900/70 via-transparent to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-2.5">
+                        <p className="text-white text-xs font-semibold leading-tight line-clamp-2">{spot.name}</p>
+                        <p className="text-white/60 text-[10px] flex items-center gap-0.5 mt-0.5">
+                          <MapPin size={9} />
+                          {spot.prefecture}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </section>
           ))}
         </div>
