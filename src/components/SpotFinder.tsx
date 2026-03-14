@@ -114,6 +114,29 @@ const QUESTIONS: QuestionDef[] = [
   },
 ];
 
+// ─── Match profile: generate a short sentence from answers ───────────────────
+
+const VIBE_LABELS: Record<string, string> = {
+  nature: 'nature & adventure',
+  history: 'history & culture',
+  food: 'food & local life',
+  onsen: 'onsen & wellness',
+};
+const ATMOSPHERE_LABELS: Record<string, string> = {
+  serene: 'tranquil, unhurried places',
+  wow: 'surprising off-the-beaten-path finds',
+  cultural: 'culturally immersive experiences',
+  wild: 'raw, wild landscapes',
+};
+
+function generateMatchProfile(answers: Record<string, string>): string {
+  const traits: string[] = [];
+  if (answers.vibe && VIBE_LABELS[answers.vibe]) traits.push(VIBE_LABELS[answers.vibe]);
+  if (answers.atmosphere && ATMOSPHERE_LABELS[answers.atmosphere]) traits.push(ATMOSPHERE_LABELS[answers.atmosphere]);
+  if (answers.crowd === 'hidden' && !traits.some(t => t.includes('off-the-beaten'))) traits.push('hidden gems');
+  return traits.slice(0, 2).join(' and ');
+}
+
 // ─── Scoring: pick the question that splits the pool most evenly ───────────────
 
 function getNextQuestion(
@@ -218,6 +241,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
     const showGate = !isLoggedIn && !emailUnlocked;
     const remainingCount = Math.max(0, pool.length - 2);
     const visibleSpots = (showGate && pool.length > 2) ? pool.slice(0, 2) : (showAll ? pool : pool.slice(0, 3));
+    const matchProfile = generateMatchProfile(answers);
 
     return (
       <div className="space-y-6">
@@ -242,7 +266,20 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {matchProfile && (
+          <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3">
+            <p className="text-xs font-semibold text-red-600 uppercase tracking-widest mb-1 flex items-center gap-1">
+              <Sparkles size={11} /> Your match profile
+            </p>
+            <p className="text-sm text-stone-700">
+              Based on your answers, you seem to enjoy{' '}
+              <strong className="text-stone-900">{matchProfile}</strong>.{' '}
+              Here are our top picks for you.
+            </p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {visibleSpots.map(s => (
             <div key={s.id} className="flex flex-col">
               <div className="flex-1">
@@ -334,7 +371,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         <p className="text-xs text-stone-400 font-medium uppercase tracking-wide mb-1">
           Question {askedIds.length + 1}
         </p>
-        <h3 className="text-xl sm:text-2xl font-bold text-stone-900 mb-5">{currentQ.text}</h3>
+        <h3 className="text-2xl sm:text-3xl font-bold text-stone-900 mb-5">{currentQ.text}</h3>
 
         <div className="grid grid-cols-2 gap-3">
           {currentQ.options.map(opt => (

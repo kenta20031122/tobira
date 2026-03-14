@@ -6,7 +6,6 @@ import { getAllArticles } from '@/lib/articles';
 import { createAdminClient } from '@/lib/supabase/admin';
 import SpotCard from '@/components/SpotCard';
 import HomeSearchBar from '@/components/HomeSearchBar';
-import SpotFinder from '@/components/SpotFinder';
 import type { Prefecture } from '@/types';
 import JapanRegionMapWrapper from '@/components/JapanRegionMapWrapper';
 
@@ -185,22 +184,46 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── Spot Finder ──────────────────────────────────────── */}
+      {/* ─── Find Your Match CTA ──────────────────────────────── */}
       <section className="bg-stone-50 border-y border-stone-100">
-        <div className="max-w-3xl mx-auto px-4 py-16">
-          <div className="text-center mb-10">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 uppercase tracking-widest mb-4">
-              <Sparkles size={13} />
-              Find Your Match
-            </span>
-            <h2 className="text-3xl font-bold text-stone-900 mb-3">
-              What are you looking for?
-            </h2>
-            <p className="text-stone-500 max-w-md mx-auto">
-              Answer a few questions — we&apos;ll find your perfect spot.
-            </p>
+        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 uppercase tracking-widest mb-4">
+            <Sparkles size={13} />
+            Find Your Match
+          </span>
+          <h2 className="text-3xl font-bold text-stone-900 mb-3">
+            Not sure where to go?
+          </h2>
+          <p className="text-stone-500 max-w-md mx-auto mb-10">
+            Answer a few questions about how you travel — we&apos;ll narrow {spots.length}+ spots down to your perfect matches.
+          </p>
+
+          {/* Decorative quiz preview */}
+          <div className="grid grid-cols-2 gap-3 mb-8 pointer-events-none select-none opacity-60">
+            {[
+              { emoji: '🌿', label: 'Nature & adventure' },
+              { emoji: '🏯', label: 'History & culture' },
+              { emoji: '🍜', label: 'Food & local life' },
+              { emoji: '♨️', label: 'Onsen & wellness' },
+            ].map((opt) => (
+              <div
+                key={opt.label}
+                className="flex flex-col items-center gap-2 p-4 rounded-2xl border border-stone-200 bg-white text-center"
+              >
+                <span className="text-2xl">{opt.emoji}</span>
+                <span className="text-sm font-medium text-stone-700">{opt.label}</span>
+              </div>
+            ))}
           </div>
-          <SpotFinder spots={spots} />
+
+          <Link
+            href="/discover"
+            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-full transition-colors text-base"
+          >
+            <Sparkles size={18} />
+            Find My Match
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
 
