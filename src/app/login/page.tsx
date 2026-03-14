@@ -30,7 +30,6 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setFormError('')
-    setMessage('')
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)

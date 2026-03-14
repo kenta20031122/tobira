@@ -159,11 +159,13 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         selectedPrefecture === 'All' || s.prefecture === selectedPrefecture;
       const matchCategory =
         selectedCategory === 'All' || s.categories.includes(selectedCategory);
+      const q = search.trim().toLowerCase();
       const matchSearch =
-        search.trim() === '' ||
-        s.name.toLowerCase().includes(search.toLowerCase()) ||
-        s.description.toLowerCase().includes(search.toLowerCase()) ||
-        s.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
+        q === '' ||
+        s.name.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        s.address.toLowerCase().includes(q) ||
+        s.tags.some((t) => t.toLowerCase().includes(q));
       const matchSeason =
         selectedSeason === 'All' ? true
         : selectedSeason === 'now' ? isInSeason(s.best_season, currentMonth)
@@ -208,8 +210,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
           Explore Japan
         </h1>
         <p className="text-stone-500 text-lg">
-          {spots.length} hand-picked spots, sorted by authenticity — not
-          popularity.
+          {spots.length} hand-picked spots across Japan — curated, not scraped.
         </p>
       </div>
 
