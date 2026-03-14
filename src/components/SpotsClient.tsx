@@ -327,7 +327,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
                 const meta = REGION_META[r];
                 const isRegionSelected = selectedRegion === r && selectedPrefecture === 'All';
                 return (
-                  <div key={r} className="flex items-center gap-0">
+                  <div key={r} className="flex items-center gap-3">
                     {/* Region label — fixed width */}
                     <button
                       onClick={() => { setSelectedRegion(r); setSelectedPrefecture('All'); }}
