@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Search, LayoutGrid, Map, SlidersHorizontal, X } from 'lucide-react';
+import { Search, LayoutGrid, Map, SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
 import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import type { Category, Prefecture, Region, Spot } from '@/types';
@@ -20,9 +20,11 @@ const SpotsMapView = dynamic(() => import('@/components/maps/SpotsMapView'), {
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as Category[];
 const PREFECTURES = Object.keys(PREFECTURE_LABELS) as Prefecture[];
+const PAGE_SIZE = 30;
 
 type SeasonFilter = 'All' | 'now' | 'spring' | 'summer' | 'autumn' | 'winter';
 type DurationFilter = 'All' | 'short' | 'medium' | 'long';
+type SortOption = 'default' | 'name_asc' | 'name_desc' | 'duration_asc' | 'duration_desc' | 'region';
 
 const SEASON_OPTIONS: { value: SeasonFilter; label: string; sub?: string }[] = [
   { value: 'All', label: 'All Seasons' },
@@ -40,6 +42,17 @@ const DURATION_OPTIONS: { value: DurationFilter; label: string; sub?: string }[]
   { value: 'long', label: 'Full Day', sub: '4h+' },
 ];
 
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'default', label: 'Default' },
+  { value: 'name_asc', label: 'Name A–Z' },
+  { value: 'name_desc', label: 'Name Z–A' },
+  { value: 'duration_asc', label: 'Duration: Short first' },
+  { value: 'duration_desc', label: 'Duration: Long first' },
+  { value: 'region', label: 'Region' },
+];
+
+const DURATION_RANK: Record<string, number> = { short: 0, medium: 1, long: 2 };
+
 export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -50,6 +63,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const initialSearch = searchParams.get('q') ?? '';
   const initialSeason = (searchParams.get('season') ?? 'All') as SeasonFilter;
   const initialDuration = (searchParams.get('duration') ?? 'All') as DurationFilter;
+  const initialSort = (searchParams.get('sort') ?? 'default') as SortOption;
 
   const [favIds, setFavIds] = useState<string[]>([]);
   const [search, setSearch] = useState(initialSearch);
@@ -62,8 +76,10 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const [selectedRegion, setSelectedRegion] = useState<Region | 'All'>(initialRegion ?? 'All');
   const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>(initialSeason);
   const [selectedDuration, setSelectedDuration] = useState<DurationFilter>(initialDuration);
+  const [sortBy, setSortBy] = useState<SortOption>(initialSort);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory || initialRegion || initialSeason !== 'All' || initialDuration !== 'All'));
+  const [page, setPage] = useState(1);
 
   const currentMonth = new Date().getMonth() + 1;
 
@@ -74,6 +90,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
     category: Category | 'All';
     season: SeasonFilter;
     duration: DurationFilter;
+    sort: SortOption;
   }) => {
     const p = new URLSearchParams();
     if (params.q) p.set('q', params.q);
@@ -82,6 +99,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
     if (params.category !== 'All') p.set('category', params.category);
     if (params.season !== 'All') p.set('season', params.season);
     if (params.duration !== 'All') p.set('duration', params.duration);
+    if (params.sort !== 'default') p.set('sort', params.sort);
     const qs = p.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [router, pathname]);
@@ -100,6 +118,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
     setSelectedRegion('All');
     setSelectedSeason('All');
     setSelectedDuration('All');
+    setPage(1);
   }
 
   useEffect(() => {
@@ -119,14 +138,20 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         category: selectedCategory,
         season: selectedSeason,
         duration: selectedDuration,
+        sort: sortBy,
       });
     }, search !== initialSearch ? 400 : 0);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, selectedRegion, selectedPrefecture, selectedCategory, selectedSeason, selectedDuration]);
+  }, [search, selectedRegion, selectedPrefecture, selectedCategory, selectedSeason, selectedDuration, sortBy]);
+
+  // Reset page when filters or sort change
+  useEffect(() => {
+    setPage(1);
+  }, [search, selectedRegion, selectedPrefecture, selectedCategory, selectedSeason, selectedDuration, sortBy]);
 
   const filtered = useMemo(() => {
-    return spots.filter((s) => {
+    const result = spots.filter((s) => {
       const matchRegion = selectedRegion === 'All' || s.region === selectedRegion;
       const matchPrefecture =
         selectedPrefecture === 'All' || s.prefecture === selectedPrefecture;
@@ -146,7 +171,31 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         : getDurationBucket(s.duration) === selectedDuration;
       return matchRegion && matchPrefecture && matchCategory && matchSearch && matchSeason && matchDuration;
     });
-  }, [spots, selectedRegion, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, currentMonth]);
+
+    switch (sortBy) {
+      case 'name_asc':
+        return [...result].sort((a, b) => a.name.localeCompare(b.name));
+      case 'name_desc':
+        return [...result].sort((a, b) => b.name.localeCompare(a.name));
+      case 'duration_asc':
+        return [...result].sort((a, b) =>
+          (DURATION_RANK[getDurationBucket(a.duration) ?? 'short'] ?? 0) -
+          (DURATION_RANK[getDurationBucket(b.duration) ?? 'short'] ?? 0)
+        );
+      case 'duration_desc':
+        return [...result].sort((a, b) =>
+          (DURATION_RANK[getDurationBucket(b.duration) ?? 'short'] ?? 0) -
+          (DURATION_RANK[getDurationBucket(a.duration) ?? 'short'] ?? 0)
+        );
+      case 'region':
+        return [...result].sort((a, b) => a.region.localeCompare(b.region) || a.prefecture.localeCompare(b.prefecture));
+      default:
+        return result;
+    }
+  }, [spots, selectedRegion, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, sortBy, currentMonth]);
+
+  const visibleSpots = filtered.slice(0, page * PAGE_SIZE);
+  const hasMore = visibleSpots.length < filtered.length;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -389,14 +438,41 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
         </div>
       ) : (
         <>
-          <p className="text-sm text-stone-400 mb-6">
-            {filtered.length} spot{filtered.length !== 1 ? 's' : ''} found
-          </p>
+          {/* Results bar: count + sort */}
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-sm text-stone-400">
+              {filtered.length} spot{filtered.length !== 1 ? 's' : ''} found
+            </p>
+            <div className="flex items-center gap-2">
+              <ArrowUpDown size={14} className="text-stone-400" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="text-sm text-stone-600 bg-white border border-stone-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((spot) => (
+            {visibleSpots.map((spot) => (
               <SpotCard key={spot.id} spot={spot} isFavorited={favIds.includes(spot.id)} backHref="/spots" />
             ))}
           </div>
+
+          {hasMore && (
+            <div className="text-center mt-10">
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                className="px-8 py-3 rounded-full border border-stone-200 text-stone-600 text-sm font-medium hover:border-stone-400 hover:text-stone-900 transition-colors"
+              >
+                Load more — {filtered.length - visibleSpots.length} remaining
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>
