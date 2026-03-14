@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Search, LayoutGrid, Map, SlidersHorizontal, X } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
 import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
@@ -42,10 +42,14 @@ const DURATION_OPTIONS: { value: DurationFilter; label: string; sub?: string }[]
 
 export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const initialPrefecture = searchParams.get('prefecture') as Prefecture | null;
   const initialCategory = searchParams.get('category') as Category | null;
   const initialRegion = searchParams.get('region') as Region | null;
   const initialSearch = searchParams.get('q') ?? '';
+  const initialSeason = (searchParams.get('season') ?? 'All') as SeasonFilter;
+  const initialDuration = (searchParams.get('duration') ?? 'All') as DurationFilter;
 
   const [favIds, setFavIds] = useState<string[]>([]);
   const [search, setSearch] = useState(initialSearch);
@@ -56,12 +60,31 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
     initialCategory ?? 'All'
   );
   const [selectedRegion, setSelectedRegion] = useState<Region | 'All'>(initialRegion ?? 'All');
-  const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>('All');
-  const [selectedDuration, setSelectedDuration] = useState<DurationFilter>('All');
+  const [selectedSeason, setSelectedSeason] = useState<SeasonFilter>(initialSeason);
+  const [selectedDuration, setSelectedDuration] = useState<DurationFilter>(initialDuration);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory || initialRegion));
+  const [showFilters, setShowFilters] = useState(!!(initialPrefecture || initialCategory || initialRegion || initialSeason !== 'All' || initialDuration !== 'All'));
 
   const currentMonth = new Date().getMonth() + 1;
+
+  const syncURL = useCallback((params: {
+    q: string;
+    region: Region | 'All';
+    prefecture: Prefecture | 'All';
+    category: Category | 'All';
+    season: SeasonFilter;
+    duration: DurationFilter;
+  }) => {
+    const p = new URLSearchParams();
+    if (params.q) p.set('q', params.q);
+    if (params.region !== 'All') p.set('region', params.region);
+    if (params.prefecture !== 'All') p.set('prefecture', params.prefecture);
+    if (params.category !== 'All') p.set('category', params.category);
+    if (params.season !== 'All') p.set('season', params.season);
+    if (params.duration !== 'All') p.set('duration', params.duration);
+    const qs = p.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [router, pathname]);
 
   const activeFilterCount = [
     selectedPrefecture !== 'All',
@@ -85,6 +108,22 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
       .then((ids: string[]) => setFavIds(ids))
       .catch(() => {});
   }, []);
+
+  // Sync filter state → URL (debounce search to avoid excessive history entries)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      syncURL({
+        q: search,
+        region: selectedRegion,
+        prefecture: selectedPrefecture,
+        category: selectedCategory,
+        season: selectedSeason,
+        duration: selectedDuration,
+      });
+    }, search !== initialSearch ? 400 : 0);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, selectedRegion, selectedPrefecture, selectedCategory, selectedSeason, selectedDuration]);
 
   const filtered = useMemo(() => {
     return spots.filter((s) => {
@@ -355,7 +394,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} isFavorited={favIds.includes(spot.id)} />
+              <SpotCard key={spot.id} spot={spot} isFavorited={favIds.includes(spot.id)} backHref="/spots" />
             ))}
           </div>
         </>

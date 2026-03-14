@@ -14,24 +14,17 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { getAllSpots, getSpotById } from '@/lib/spots';
+import { REGION_META } from '@/lib/regions';
 import SpotCard from '@/components/SpotCard';
 import FavoriteButton from '@/components/FavoriteButton';
 import SpotMapWrapper from '@/components/maps/SpotMapWrapper';
 import AdBanner from '@/components/AdBanner';
-import { CATEGORY_LABELS, cn } from '@/lib/utils';
+import { CATEGORY_LABELS, CATEGORY_COLORS, cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const dynamic = 'force-dynamic';
 
-const CATEGORY_COLORS: Record<string, string> = {
-  nature: 'bg-emerald-100 text-emerald-700',
-  history: 'bg-amber-100 text-amber-700',
-  onsen: 'bg-blue-100 text-blue-700',
-  food: 'bg-orange-100 text-orange-700',
-  activity: 'bg-purple-100 text-purple-700',
-  spiritual: 'bg-rose-100 text-rose-700',
-};
 
 export async function generateStaticParams() {
   const allSpots = await getAllSpots();
@@ -92,9 +85,15 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
   const isPro = subResult.data?.status === 'active';
   const favIds = new Set((favResult.data ?? []).map((r) => r.spot_id));
   const isFavorited = favIds.has(spot.id);
-  const related = allSpots
-    .filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture)
-    .slice(0, 3);
+  const samePrefecture = allSpots.filter((s) => s.id !== spot.id && s.prefecture === spot.prefecture);
+  const related = samePrefecture.length >= 3
+    ? samePrefecture.slice(0, 3)
+    : [
+        ...samePrefecture,
+        ...allSpots
+          .filter((s) => s.id !== spot.id && s.region === spot.region && s.prefecture !== spot.prefecture)
+          .slice(0, 3 - samePrefecture.length),
+      ];
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -174,18 +173,7 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
       <div className="mb-6">
         <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
           <MapPin size={14} />
-          <span>{spot.prefecture}, {
-            spot.region === 'hokkaido'  ? 'Hokkaido' :
-            spot.region === 'tohoku'    ? 'Tohoku' :
-            spot.region === 'kanto'     ? 'Kanto' :
-            spot.region === 'hokuriku'  ? 'Hokuriku' :
-            spot.region === 'chubu'     ? 'Chubu' :
-            spot.region === 'kinki'     ? 'Kinki' :
-            spot.region === 'chugoku'   ? 'Chugoku' :
-            spot.region === 'shikoku'   ? 'Shikoku' :
-            spot.region === 'okinawa'   ? 'Okinawa' :
-            'Kyushu'
-          }</span>
+          <span>{spot.prefecture}, {REGION_META[spot.region]?.label ?? spot.region}</span>
         </div>
         <div className="flex items-start justify-between gap-4 mb-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-stone-900">
@@ -375,11 +363,13 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
       {related.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-stone-900 mb-6">
-            More in {spot.prefecture}
+            {samePrefecture.length >= 3
+              ? `More in ${spot.prefecture}`
+              : `More in ${REGION_META[spot.region]?.label ?? spot.region}`}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {related.map((s) => (
-              <SpotCard key={s.id} spot={s} isFavorited={favIds.has(s.id)} />
+              <SpotCard key={s.id} spot={s} isFavorited={favIds.has(s.id)} backHref={`/spots/${spot.id}`} />
             ))}
           </div>
         </div>

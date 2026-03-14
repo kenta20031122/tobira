@@ -15,6 +15,15 @@ export const CATEGORY_LABELS: Record<string, string> = {
   spiritual: 'Spiritual',
 };
 
+export const CATEGORY_COLORS: Record<string, string> = {
+  nature: 'bg-emerald-100 text-emerald-700',
+  history: 'bg-amber-100 text-amber-700',
+  onsen: 'bg-blue-100 text-blue-700',
+  food: 'bg-orange-100 text-orange-700',
+  activity: 'bg-purple-100 text-purple-700',
+  spiritual: 'bg-rose-100 text-rose-700',
+};
+
 export const PREFECTURE_LABELS: Record<string, string> = {
   Fukuoka: 'Fukuoka',
   Saga: 'Saga',

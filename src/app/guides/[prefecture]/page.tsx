@@ -29,16 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spots = allSpots.filter((s) => s.prefecture === prefecture);
   const heroImage = spots[0]?.image_url;
 
-  const region =
-    prefecture === 'Hokkaido' ? 'Hokkaido' :
-    ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
-    ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
-    ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'].includes(prefecture) ? 'Chubu' :
-    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
-    ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
-    ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
-    ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
-    prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
+  const regionId = PREFECTURE_TO_REGION[prefecture as Prefecture];
+  const region = regionId ? REGION_META[regionId].label : prefecture;
   return {
     title: `${prefecture} Travel Guide: Hidden Gems & Local Spots`,
     description: `Discover ${spots.length} curated spots in ${prefecture}, ${region}. Authentic local experiences, hidden gems, and off-the-beaten-path destinations — beyond the tourist trail.`,
@@ -85,16 +77,7 @@ export default async function PrefectureGuidePage({ params, searchParams }: Prop
     ? REGION_META[regionId].prefectures.filter((p) => p !== prefecture)
     : [];
   const categories = [...new Set(spots.flatMap((s) => s.categories))];
-  const region =
-    prefecture === 'Hokkaido' ? 'Hokkaido' :
-    ['Aomori', 'Iwate', 'Miyagi', 'Akita', 'Yamagata', 'Fukushima'].includes(prefecture) ? 'Tohoku' :
-    ['Osaka', 'Kyoto', 'Nara', 'Hyogo', 'Shiga', 'Wakayama', 'Mie'].includes(prefecture) ? 'Kinki' :
-    ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Yamanashi'].includes(prefecture) ? 'Chubu' :
-    ['Tokyo', 'Kanagawa', 'Saitama', 'Chiba', 'Ibaraki', 'Tochigi', 'Gunma'].includes(prefecture) ? 'Kanto' :
-    ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'].includes(prefecture) ? 'Hokuriku' :
-    ['Hiroshima', 'Yamaguchi', 'Okayama', 'Tottori', 'Shimane'].includes(prefecture) ? 'Chugoku Region' :
-    ['Ehime', 'Kochi', 'Tokushima', 'Kagawa'].includes(prefecture) ? 'Shikoku' :
-    prefecture === 'Okinawa' ? 'Ryukyu Islands' : 'Kyushu';
+  const region = regionId ? REGION_META[regionId].label : prefecture;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -223,7 +206,7 @@ export default async function PrefectureGuidePage({ params, searchParams }: Prop
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {spots.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} />
+              <SpotCard key={spot.id} spot={spot} backHref={`/guides/${slug}`} />
             ))}
           </div>
         </div>

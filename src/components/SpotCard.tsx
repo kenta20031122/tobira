@@ -2,27 +2,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock, Lock } from 'lucide-react';
 import type { Spot } from '@/types';
-import { cn, CATEGORY_LABELS, isInSeason } from '@/lib/utils';
+import { cn, CATEGORY_LABELS, CATEGORY_COLORS, isInSeason } from '@/lib/utils';
 import FavoriteButton from '@/components/FavoriteButton';
-
-const CATEGORY_COLORS: Record<string, string> = {
-  nature: 'bg-emerald-100 text-emerald-700',
-  history: 'bg-amber-100 text-amber-700',
-  onsen: 'bg-blue-100 text-blue-700',
-  food: 'bg-orange-100 text-orange-700',
-  activity: 'bg-purple-100 text-purple-700',
-  spiritual: 'bg-rose-100 text-rose-700',
-};
 
 type Props = {
   spot: Spot;
   isFavorited?: boolean;
+  backHref?: string;
 };
 
-export default function SpotCard({ spot, isFavorited = false }: Props) {
+export default function SpotCard({ spot, isFavorited = false, backHref }: Props) {
   const inSeason = isInSeason(spot.best_season, new Date().getMonth() + 1);
+  const href = backHref
+    ? `/spots/${spot.id}?back=${encodeURIComponent(backHref)}`
+    : `/spots/${spot.id}`;
   return (
-    <Link href={`/spots/${spot.id}`} className="group block h-full">
+    <Link href={href} className="group block h-full">
       <div className="rounded-2xl overflow-hidden bg-white border border-stone-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 h-full flex flex-col">
         {/* Image */}
         <div className="relative h-52 overflow-hidden bg-stone-100">
