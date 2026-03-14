@@ -322,16 +322,16 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
             </div>
 
             {/* Regions with prefectures */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {REGION_IDS.map((r) => {
                 const meta = REGION_META[r];
                 const isRegionSelected = selectedRegion === r && selectedPrefecture === 'All';
                 return (
-                  <div key={r} className="flex flex-wrap items-center gap-1.5">
-                    {/* Region label — clickable */}
+                  <div key={r} className="flex items-center gap-0">
+                    {/* Region label — fixed width */}
                     <button
                       onClick={() => { setSelectedRegion(r); setSelectedPrefecture('All'); }}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors shrink-0 ${
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors shrink-0 w-28 ${
                         isRegionSelected ? 'text-white' : 'text-stone-700 bg-stone-50 border border-stone-200 hover:border-stone-400'
                       }`}
                       style={isRegionSelected ? { backgroundColor: meta.color } : undefined}
@@ -344,23 +344,25 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
                     </button>
 
                     {/* Prefecture chips */}
-                    {meta.prefectures.map((pref) => {
-                      const isPrefSelected = selectedPrefecture === pref;
-                      return (
-                        <button
-                          key={pref}
-                          onClick={() => { setSelectedPrefecture(pref as Prefecture); setSelectedRegion('All'); }}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
-                            isPrefSelected
-                              ? 'text-white'
-                              : 'bg-stone-50 border border-stone-200 text-stone-500 hover:border-stone-400 hover:text-stone-700'
-                          }`}
-                          style={isPrefSelected ? { backgroundColor: meta.color } : undefined}
-                        >
-                          {pref}
-                        </button>
-                      );
-                    })}
+                    <div className="flex flex-wrap gap-1.5">
+                      {meta.prefectures.map((pref) => {
+                        const isPrefSelected = selectedPrefecture === pref;
+                        return (
+                          <button
+                            key={pref}
+                            onClick={() => { setSelectedPrefecture(pref as Prefecture); setSelectedRegion('All'); }}
+                            className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                              isPrefSelected
+                                ? 'text-white'
+                                : 'bg-stone-50 border border-stone-200 text-stone-500 hover:border-stone-400 hover:text-stone-700'
+                            }`}
+                            style={isPrefSelected ? { backgroundColor: meta.color } : undefined}
+                          >
+                            {pref}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}
