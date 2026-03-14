@@ -31,6 +31,7 @@ export type Spot = {
   admission?: string;
   duration?: string;
   website_url?: string;
+  google_maps_embed_url?: string;
 };
 
 export type TripDay = {
