@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -19,19 +19,17 @@ function GoogleIcon() {
 export default function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [error, setError] = useState(searchParams.get('error') ?? '')
-  const [message, setMessage] = useState(searchParams.get('message') ?? '')
+  const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
 
-  useEffect(() => {
-    setError(searchParams.get('error') ?? '')
-    setMessage(searchParams.get('message') ?? '')
-  }, [searchParams])
+  const urlError = searchParams.get('error') ?? ''
+  const message = searchParams.get('message') ?? ''
+  const error = formError || urlError
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError('')
+    setFormError('')
     setMessage('')
     setLoading(true)
 
@@ -46,7 +44,7 @@ export default function LoginPage() {
     setLoading(false)
 
     if (error) {
-      setError(error.message)
+      setFormError(error.message)
     } else {
       const next = searchParams.get('next')
       const destination = next?.startsWith('/') ? next : '/'
@@ -67,7 +65,7 @@ export default function LoginPage() {
     })
 
     if (error) {
-      setError(error.message)
+      setFormError(error.message)
       setGoogleLoading(false)
     }
   }

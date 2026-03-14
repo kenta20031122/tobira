@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
         {image ? (
           <img
             src={image}
+            alt=""
             style={{
               position: 'absolute',
               inset: 0,

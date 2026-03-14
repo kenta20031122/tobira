@@ -58,7 +58,7 @@ const QUESTIONS: QuestionDef[] = [
       { id: 'central', label: 'Tokyo & Mt. Fuji', subtitle: 'Kanto · Chubu · Japanese Alps', emoji: '🗻', filter: s => ['kanto', 'chubu', 'hokuriku'].includes(s.region) },
       { id: 'west', label: 'Kyoto & Osaka', subtitle: 'Kansai · Hiroshima · Shikoku', emoji: '⛩️', filter: s => ['kinki', 'chugoku', 'shikoku'].includes(s.region) },
       { id: 'south', label: 'Volcanoes & Tropics', subtitle: 'Kyushu · Okinawa islands', emoji: '🌺', filter: s => ['kyushu', 'okinawa'].includes(s.region) },
-      { id: 'anywhere', label: 'No preference', subtitle: 'Show me the best matches', emoji: '🤷', filter: _s => true },
+      { id: 'anywhere', label: 'No preference', subtitle: 'Show me the best matches', emoji: '🤷', filter: () => true },
     ],
   },
   {
@@ -68,7 +68,7 @@ const QUESTIONS: QuestionDef[] = [
       { id: 'short', label: 'Cram in as much as possible', emoji: '⚡', filter: s => getDurationBucket(s.duration) === 'short' },
       { id: 'medium', label: 'Mix of sightseeing and slow time', emoji: '🕐', filter: s => getDurationBucket(s.duration) === 'medium' },
       { id: 'long', label: 'Slow down and go deep', emoji: '🌅', filter: s => getDurationBucket(s.duration) === 'long' },
-      { id: 'any_duration', label: 'Not sure yet', emoji: '🤷', filter: _s => true },
+      { id: 'any_duration', label: 'Not sure yet', emoji: '🤷', filter: () => true },
     ],
   },
   {
@@ -98,7 +98,7 @@ const QUESTIONS: QuestionDef[] = [
     text: 'Your ideal crowd level?',
     options: [
       { id: 'hidden', label: 'Hidden gems only', emoji: '🗺️', filter: s => s.is_premium || s.tags.some(t => /hidden|secret|remote|local|off.beaten/i.test(t)) },
-      { id: 'any', label: "Whatever's best", emoji: '✨', filter: _s => true },
+      { id: 'any', label: "Whatever's best", emoji: '✨', filter: () => true },
       { id: 'iconic', label: 'Iconic landmarks', emoji: '📸', filter: s => s.tags.some(t => /unesco|iconic|famous|landmark|must.see/i.test(t)) || !s.is_premium },
     ],
   },

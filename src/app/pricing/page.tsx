@@ -294,7 +294,7 @@ export default async function PricingPage({
 
       {/* Preview links */}
       <div className="bg-stone-50 rounded-xl p-5 text-center">
-        <p className="text-stone-500 text-sm mb-3">Want to see what's inside first?</p>
+        <p className="text-stone-500 text-sm mb-3">Want to see what&apos;s inside first?</p>
         <div className="flex items-center justify-center gap-4 text-sm">
           <Link
             href="/spots"

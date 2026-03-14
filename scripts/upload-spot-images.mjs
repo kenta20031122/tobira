@@ -15,7 +15,6 @@
 import { readdir, readFile } from 'fs/promises';
 import { join, basename, extname } from 'path';
 import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
 import { config } from 'dotenv';
 import sharp from 'sharp';
 import { createClient } from '@supabase/supabase-js';

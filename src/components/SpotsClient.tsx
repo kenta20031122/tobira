@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Search, LayoutGrid, Map, SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
 import SpotCard from '@/components/SpotCard';
-import { CATEGORY_LABELS, PREFECTURE_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
+import { CATEGORY_LABELS, isInSeason, isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import type { Category, Prefecture, Region, Spot } from '@/types';
 import { REGION_META, REGION_IDS } from '@/lib/regions';
 
@@ -19,7 +19,6 @@ const SpotsMapView = dynamic(() => import('@/components/maps/SpotsMapView'), {
 });
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as Category[];
-const PREFECTURES = Object.keys(PREFECTURE_LABELS) as Prefecture[];
 const PAGE_SIZE = 30;
 
 type SeasonFilter = 'All' | 'now' | 'spring' | 'summer' | 'autumn' | 'winter';

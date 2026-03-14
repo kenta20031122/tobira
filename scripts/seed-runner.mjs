@@ -71,4 +71,3 @@ for (const spot of spots) {
 }
 
 console.log(`\nDone: ${success} inserted, ${skipped} skipped, ${errors} errors`);
-EOF
