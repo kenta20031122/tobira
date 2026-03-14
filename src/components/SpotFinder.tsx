@@ -7,6 +7,7 @@ import type { Spot } from '@/types';
 import { isGoodInSeason, getDurationBucket } from '@/lib/utils';
 import SpotCard from '@/components/SpotCard';
 import SpotEmailGate from '@/components/SpotEmailGate';
+import DiscoverPageHero from '@/components/DiscoverPageHero';
 import { createClient } from '@/lib/supabase/client';
 
 // ─── Question definitions ──────────────────────────────────────────────────────
@@ -152,6 +153,7 @@ function getNextQuestion(
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function SpotFinder({ spots }: { spots: Spot[] }) {
+  const [started, setStarted] = useState(false);
   const [pool, setPool] = useState<Spot[]>(spots);
   const [askedIds, setAskedIds] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -203,6 +205,7 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
   }
 
   function restart() {
+    setStarted(false);
     setPool(spots);
     setAskedIds([]);
     setAnswers({});
@@ -298,6 +301,11 @@ export default function SpotFinder({ spots }: { spots: Spot[] }) {
         )}
       </div>
     );
+  }
+
+  // ── Pre-quiz hero ──
+  if (!started) {
+    return <DiscoverPageHero onStart={() => setStarted(true)} totalSpots={spots.length} />;
   }
 
   // ── Question ──

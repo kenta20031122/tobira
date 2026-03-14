@@ -17,12 +17,7 @@ export default async function DiscoverPage() {
 
   return (
     <main className="min-h-screen">
-      <div className="max-w-xl mx-auto px-4 pt-24 pb-4 text-center">
-        <p className="text-xs text-red-600 font-semibold uppercase tracking-widest mb-3">Discover</p>
-        <h1 className="text-3xl font-bold text-stone-900 mb-2">What are you looking for?</h1>
-        <p className="text-stone-500">Answer a few questions and we&apos;ll find your perfect match.</p>
-      </div>
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 pt-16 pb-16">
         <SpotFinder spots={spots} />
       </div>
     </main>
