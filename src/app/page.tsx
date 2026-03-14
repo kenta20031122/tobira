@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sparkles, MapPin, Compass } from 'lucide-react';
+import { ArrowRight, Sparkles, MapPin, Compass, Clock } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
+import { getAllArticles } from '@/lib/articles';
+import { createAdminClient } from '@/lib/supabase/admin';
 import SpotCard from '@/components/SpotCard';
 import HomeSearchBar from '@/components/HomeSearchBar';
 import SpotFinder from '@/components/SpotFinder';
@@ -30,7 +32,27 @@ const FEATURES = [
 ];
 
 export default async function HomePage() {
-  const spots = await getAllSpots();
+  const supabase = createAdminClient();
+  const [spots, allArticles] = await Promise.all([getAllSpots(), getAllArticles()]);
+  const recentArticles = allArticles.slice(0, 3);
+
+  // coverImage がない記事はスポット画像をフォールバックとして取得
+  const articleThumbnails: Record<string, string> = {};
+  await Promise.all(
+    recentArticles
+      .filter((a) => !a.coverImage)
+      .map(async (a) => {
+        const firstQuery = a.sections.find((s) => s.spot_query)?.spot_query;
+        if (!firstQuery) return;
+        let builder = supabase.from('spots').select('image_url');
+        if (firstQuery.address_contains) builder = builder.ilike('address', `%${firstQuery.address_contains}%`);
+        if (firstQuery.prefecture) builder = builder.eq('prefecture', firstQuery.prefecture);
+        if (firstQuery.categories?.length) builder = builder.contains('categories', firstQuery.categories);
+        builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(1);
+        const { data } = await builder;
+        if (data?.[0]?.image_url) articleThumbnails[a.slug] = data[0].image_url;
+      })
+  );
 
   // Pick 1 non-premium spot from each of 3 geographically diverse regions (north / central / south)
   const FEATURED_REGIONS = ['hokkaido', 'kinki', 'kyushu'] as const;
@@ -296,27 +318,86 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── Final CTA ────────────────────────────────────────── */}
-      <section className="bg-stone-50 border-t border-stone-100">
-        <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-          <p className="text-xs font-semibold text-red-600 uppercase tracking-widest mb-4">Ready to explore?</p>
-          <h2 className="text-4xl font-bold text-stone-900 mb-4">
-            Your Japan trip starts here.
-          </h2>
-          <p className="text-stone-500 text-lg mb-10">
-            No queues. No crowds. Just the Japan most visitors never find.
-          </p>
-          <Link
-            href="/discover"
-            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-10 py-4 rounded-full transition-colors text-lg"
-          >
-            <Sparkles size={20} />
-            Find My Match
-          </Link>
-          <div className="mt-5">
-            <Link href="/guides" className="text-sm text-stone-400 hover:text-stone-600 transition-colors flex items-center justify-center gap-1">
-              Browse by Region <ArrowRight size={13} />
+      {/* ─── Blog ─────────────────────────────────────────────── */}
+      <section className="bg-stone-50 border-t border-stone-100 py-20">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <span className="inline-block text-xs font-semibold text-red-600 uppercase tracking-widest mb-3">
+                ✦ From the Blog
+              </span>
+              <h2 className="text-3xl font-bold text-stone-900 mb-2">
+                Tips &amp; Guides
+              </h2>
+              <p className="text-stone-500">
+                In-depth guides for independent travellers going beyond the tourist trail.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              className="flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors shrink-0 ml-4"
+            >
+              View all
+              <ArrowRight size={14} />
             </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentArticles.map((article) => (
+              <Link
+                key={article.slug}
+                href={`/blog/${article.slug}`}
+                className="group bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md hover:border-stone-300 transition-all flex flex-col"
+              >
+                {(article.coverImage ?? articleThumbnails[article.slug]) && (
+                  <div className="relative h-44 bg-stone-100 overflow-hidden shrink-0">
+                    <Image
+                      src={(article.coverImage ?? articleThumbnails[article.slug])!}
+                      alt={article.title}
+                      fill
+                      unoptimized
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <div className="px-5 py-5 flex flex-col flex-1">
+                  <h3 className="font-semibold text-stone-900 group-hover:text-red-600 transition-colors leading-snug mb-1">
+                    {article.title}
+                  </h3>
+                  <p className="text-sm text-stone-500 line-clamp-2 leading-relaxed flex-1">
+                    {article.description}
+                  </p>
+                  <span className="flex items-center gap-1 text-xs text-stone-400 mt-3">
+                    <Clock size={11} />
+                    {article.readMinutes} min read
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Integrated CTA */}
+          <div className="mt-14 text-center">
+            <p className="text-xs font-semibold text-red-600 uppercase tracking-widest mb-3">Ready to explore?</p>
+            <h2 className="text-2xl font-bold text-stone-900 mb-3">
+              Your Japan trip starts here.
+            </h2>
+            <p className="text-stone-500 text-sm mb-7 max-w-sm mx-auto leading-relaxed">
+              No queues. No crowds. Just the Japan most visitors never find.
+            </p>
+            <Link
+              href="/discover"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3.5 rounded-full transition-colors"
+            >
+              <Sparkles size={16} />
+              Find My Match
+            </Link>
+            <div className="mt-4">
+              <Link href="/guides" className="text-sm text-stone-400 hover:text-stone-600 transition-colors flex items-center justify-center gap-1">
+                Browse by Region <ArrowRight size={13} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
