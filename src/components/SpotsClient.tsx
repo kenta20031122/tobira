@@ -51,6 +51,10 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 const DURATION_RANK: Record<string, number> = { short: 0, medium: 1, long: 2 };
+const REGION_ORDER: Record<string, number> = {
+  hokkaido: 0, tohoku: 1, kanto: 2, hokuriku: 3, chubu: 4,
+  kinki: 5, chugoku: 6, shikoku: 7, kyushu: 8, okinawa: 9,
+};
 
 export default function SpotsClient({ spots }: { spots: Spot[] }) {
   const searchParams = useSearchParams();
@@ -187,7 +191,10 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
           (DURATION_RANK[getDurationBucket(a.duration) ?? 'short'] ?? 0)
         );
       default:
-        return [...result].sort((a, b) => a.region.localeCompare(b.region) || a.prefecture.localeCompare(b.prefecture));
+        return [...result].sort((a, b) =>
+          (REGION_ORDER[a.region] ?? 99) - (REGION_ORDER[b.region] ?? 99) ||
+          a.prefecture.localeCompare(b.prefecture)
+        );
     }
   }, [spots, selectedRegion, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, sortBy, currentMonth]);
 
