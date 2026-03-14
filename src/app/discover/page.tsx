@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getAllSpots } from '@/lib/spots';
-import SpotFinder from '@/components/SpotFinder';
+import DiscoverClient from './DiscoverClient';
 
 export const metadata: Metadata = {
   title: 'Find Your Perfect Japan Spot',
@@ -18,7 +18,7 @@ export default async function DiscoverPage() {
   return (
     <main className="min-h-screen">
       <div className="max-w-3xl mx-auto px-4 pt-16 pb-16">
-        <SpotFinder spots={spots} />
+        <DiscoverClient spots={spots} />
       </div>
     </main>
   );
