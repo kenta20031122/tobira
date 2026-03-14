@@ -293,43 +293,77 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
       {/* Filter panel */}
       {showFilters && (
         <div className="bg-white border border-stone-200 rounded-2xl p-5 mb-6 space-y-5">
-          {/* Region */}
+          {/* Where — Region + Prefecture unified */}
           <div>
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Region</p>
-            <div className="flex flex-wrap gap-2">
-              {(['All', ...REGION_IDS] as const).map((r) => (
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Where</p>
+              {(selectedRegion !== 'All' || selectedPrefecture !== 'All') && (
                 <button
-                  key={r}
-                  onClick={() => setSelectedRegion(r)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    selectedRegion === r
-                      ? 'bg-stone-900 text-white'
-                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
-                  }`}
+                  onClick={() => { setSelectedRegion('All'); setSelectedPrefecture('All'); }}
+                  className="text-xs text-stone-400 hover:text-stone-700 transition-colors"
                 >
-                  {r === 'All' ? 'All Regions' : REGION_META[r].label}
+                  Clear
                 </button>
-              ))}
+              )}
             </div>
-          </div>
 
-          {/* Prefecture */}
-          <div>
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Prefecture</p>
-            <div className="flex flex-wrap gap-2">
-              {(['All', ...PREFECTURES] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setSelectedPrefecture(p)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    selectedPrefecture === p
-                      ? 'bg-stone-900 text-white'
-                      : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
-                  }`}
-                >
-                  {p === 'All' ? 'All' : p}
-                </button>
-              ))}
+            {/* All button */}
+            <div className="mb-3">
+              <button
+                onClick={() => { setSelectedRegion('All'); setSelectedPrefecture('All'); }}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  selectedRegion === 'All' && selectedPrefecture === 'All'
+                    ? 'bg-stone-900 text-white'
+                    : 'bg-stone-50 border border-stone-200 text-stone-600 hover:border-stone-400'
+                }`}
+              >
+                All Japan
+              </button>
+            </div>
+
+            {/* Regions with prefectures */}
+            <div className="space-y-2">
+              {REGION_IDS.map((r) => {
+                const meta = REGION_META[r];
+                const isRegionSelected = selectedRegion === r && selectedPrefecture === 'All';
+                return (
+                  <div key={r} className="flex flex-wrap items-center gap-1.5">
+                    {/* Region label — clickable */}
+                    <button
+                      onClick={() => { setSelectedRegion(r); setSelectedPrefecture('All'); }}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors shrink-0 ${
+                        isRegionSelected ? 'text-white' : 'text-stone-700 bg-stone-50 border border-stone-200 hover:border-stone-400'
+                      }`}
+                      style={isRegionSelected ? { backgroundColor: meta.color } : undefined}
+                    >
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: isRegionSelected ? 'rgba(255,255,255,0.7)' : meta.color }}
+                      />
+                      {meta.label}
+                    </button>
+
+                    {/* Prefecture chips */}
+                    {meta.prefectures.map((pref) => {
+                      const isPrefSelected = selectedPrefecture === pref;
+                      return (
+                        <button
+                          key={pref}
+                          onClick={() => { setSelectedPrefecture(pref as Prefecture); setSelectedRegion('All'); }}
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                            isPrefSelected
+                              ? 'text-white'
+                              : 'bg-stone-50 border border-stone-200 text-stone-500 hover:border-stone-400 hover:text-stone-700'
+                          }`}
+                          style={isPrefSelected ? { backgroundColor: meta.color } : undefined}
+                        >
+                          {pref}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
