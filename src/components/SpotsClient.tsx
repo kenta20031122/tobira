@@ -24,7 +24,7 @@ const PAGE_SIZE = 30;
 
 type SeasonFilter = 'All' | 'now' | 'spring' | 'summer' | 'autumn' | 'winter';
 type DurationFilter = 'All' | 'short' | 'medium' | 'long';
-type SortOption = 'default' | 'name_asc' | 'name_desc' | 'duration_asc' | 'duration_desc' | 'region';
+type SortOption = 'default' | 'name_asc' | 'name_desc' | 'duration_asc' | 'duration_desc';
 
 const SEASON_OPTIONS: { value: SeasonFilter; label: string; sub?: string }[] = [
   { value: 'All', label: 'All Seasons' },
@@ -43,12 +43,11 @@ const DURATION_OPTIONS: { value: DurationFilter; label: string; sub?: string }[]
 ];
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: 'default', label: 'Default' },
+  { value: 'default', label: 'Region' },
   { value: 'name_asc', label: 'Name A–Z' },
   { value: 'name_desc', label: 'Name Z–A' },
   { value: 'duration_asc', label: 'Duration: Short first' },
   { value: 'duration_desc', label: 'Duration: Long first' },
-  { value: 'region', label: 'Region' },
 ];
 
 const DURATION_RANK: Record<string, number> = { short: 0, medium: 1, long: 2 };
@@ -187,10 +186,8 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
           (DURATION_RANK[getDurationBucket(b.duration) ?? 'short'] ?? 0) -
           (DURATION_RANK[getDurationBucket(a.duration) ?? 'short'] ?? 0)
         );
-      case 'region':
-        return [...result].sort((a, b) => a.region.localeCompare(b.region) || a.prefecture.localeCompare(b.prefecture));
       default:
-        return result;
+        return [...result].sort((a, b) => a.region.localeCompare(b.region) || a.prefecture.localeCompare(b.prefecture));
     }
   }, [spots, selectedRegion, selectedPrefecture, selectedCategory, search, selectedSeason, selectedDuration, sortBy, currentMonth]);
 
