@@ -38,12 +38,3 @@ export type TripDay = {
   spots: Spot[];
   notes?: string;
 };
-
-export type Trip = {
-  id: string;
-  user_id: string;
-  title: string;
-  days: TripDay[];
-  prefecture: Prefecture;
-  created_at: string;
-};

@@ -10,10 +10,6 @@ export interface PrefillData {
   region: string;
 }
 
-interface Props {
-  onStart: (prefill?: PrefillData) => void;
-}
-
 // ── Section 1: Hero ───────────────────────────────────────────────────────────
 
 function HeroSection({ onStart }: { onStart: (prefill?: PrefillData) => void }) {

@@ -43,7 +43,7 @@ function rowToArticle(row: any): Article {
     description: row.description,
     publishedAt: row.published_at ? row.published_at.slice(0, 10) : '',
     readMinutes: row.read_minutes,
-    coverImage: row.cover_image ?? undefined,
+    coverImage: row.cover_image || undefined,
     intro: row.intro,
     sections: Array.isArray(row.sections) ? (row.sections as ArticleSection[]) : [],
     ctaHeading: row.cta_heading,

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { MapPin, Sparkles, Lock } from 'lucide-react';
+import { MapPin, Sparkles, Lock, ArrowLeft } from 'lucide-react';
 import { getAllSpots } from '@/lib/spots';
 import { CATEGORY_LABELS, PREFECTURE_MAP } from '@/lib/utils';
 import { PREFECTURE_INTRO } from '@/lib/prefectures';
@@ -18,7 +18,7 @@ export async function generateStaticParams() {
   return Object.keys(PREFECTURE_MAP).map((slug) => ({ prefecture: slug }));
 }
 
-type Props = { params: Promise<{ prefecture: string }> };
+type Props = { params: Promise<{ prefecture: string }>; searchParams: Promise<{ back?: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { prefecture: slug } = await params;
@@ -56,8 +56,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function PrefectureGuidePage({ params }: Props) {
+export default async function PrefectureGuidePage({ params, searchParams }: Props) {
   const { prefecture: slug } = await params;
+  const { back } = await searchParams;
+  const backHref = back ? decodeURIComponent(back) : null;
   const prefecture = PREFECTURE_MAP[slug];
   if (!prefecture) notFound();
 
@@ -170,6 +172,19 @@ export default async function PrefectureGuidePage({ params }: Props) {
       </section>
 
       <div className="max-w-6xl mx-auto px-4 py-14">
+
+        {/* Back to article */}
+        {backHref && (
+          <div className="mb-8">
+            <Link
+              href={backHref}
+              className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors"
+            >
+              <ArrowLeft size={15} />
+              Back to article
+            </Link>
+          </div>
+        )}
 
         {/* Prefecture intro */}
         {PREFECTURE_INTRO[prefecture as Prefecture] && (

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Clock, Sparkles } from 'lucide-react';
 import { getAllArticles } from '@/lib/articles';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
   title: 'Japan Travel Blog | Tobira',
@@ -13,6 +14,25 @@ export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
   const articles = await getAllArticles();
+
+  // coverImage がない記事は最初のセクションのスポット画像をフォールバックとして取得
+  const supabase = createAdminClient();
+  const thumbnails: Record<string, string> = {};
+  await Promise.all(
+    articles
+      .filter(a => !a.coverImage)
+      .map(async (a) => {
+        const firstQuery = a.sections.find(s => s.spot_query)?.spot_query;
+        if (!firstQuery) return;
+        let builder = supabase.from('spots').select('image_url');
+        if (firstQuery.address_contains) builder = builder.ilike('address', `%${firstQuery.address_contains}%`);
+        if (firstQuery.prefecture) builder = builder.eq('prefecture', firstQuery.prefecture);
+        if (firstQuery.categories?.length) builder = builder.contains('categories', firstQuery.categories);
+        builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(1);
+        const { data } = await builder;
+        if (data?.[0]?.image_url) thumbnails[a.slug] = data[0].image_url;
+      })
+  );
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
@@ -34,10 +54,10 @@ export default async function BlogPage() {
             className="group block bg-white border border-stone-200 rounded-2xl overflow-hidden hover:shadow-md hover:border-stone-300 transition-all"
           >
             {/* Cover image */}
-            {article.coverImage && (
+            {(article.coverImage ?? thumbnails[article.slug]) && (
               <div className="relative h-44 bg-stone-100 overflow-hidden">
                 <Image
-                  src={article.coverImage}
+                  src={(article.coverImage ?? thumbnails[article.slug])!}
                   alt={article.title}
                   fill
                   unoptimized

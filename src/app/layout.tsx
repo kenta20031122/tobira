@@ -5,6 +5,7 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { createClient } from '@/lib/supabase/server';
 
 const geist = Geist({
   variable: '--font-geist-sans',
@@ -56,11 +57,23 @@ const websiteJsonLd = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  let isPro = false;
+  if (user) {
+    const { data } = await supabase
+      .from('subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .single();
+    isPro = data?.status === 'active';
+  }
+
   return (
     <html lang="en">
       <body className={`${geist.variable} antialiased bg-stone-50 font-sans`}>
@@ -74,7 +87,7 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}
-        {process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
+        {!isPro && process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
           <Script
             async
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}

@@ -72,7 +72,7 @@ export default async function ArticlePage({
     if (q.address_contains) builder = builder.ilike('address', `%${q.address_contains}%`);
     if (q.prefecture)       builder = builder.eq('prefecture', q.prefecture);
     if (q.categories?.length) builder = builder.contains('categories', q.categories);
-    builder = builder.limit(q.limit ?? 3);
+    builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(q.limit ?? 3);
     const { data } = await builder;
     queryCache[key] = (data ?? []) as Spot[];
     return queryCache[key];
@@ -93,11 +93,11 @@ export default async function ArticlePage({
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16">
-      {/* Cover image */}
-      {article.coverImage && (
+      {/* Cover image: article.coverImage → fallback to first section's first spot */}
+      {(article.coverImage ?? sectionSpots[0]?.[0]?.image_url) && (
         <div className="relative h-64 sm:h-80 rounded-2xl overflow-hidden bg-stone-100 mb-10">
           <Image
-            src={article.coverImage}
+            src={(article.coverImage ?? sectionSpots[0]?.[0]?.image_url)!}
             alt={article.title}
             fill
             unoptimized
@@ -204,24 +204,13 @@ export default async function ArticlePage({
                 <p key={j} className="text-stone-600 leading-relaxed mb-3">{para}</p>
               ))}
 
-              {/* セクションリンク（任意） */}
-              {section.section_link && (
-                <Link
-                  href={section.section_link.href}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors mt-2 mb-1"
-                >
-                  {section.section_link.text}
-                  <ArrowRight size={13} />
-                </Link>
-              )}
-
               {/* Spot カード（spot_ids / spot_query どちらでも表示） */}
               {sectionSpots[i].length > 0 && (
                 <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {sectionSpots[i].map(spot => (
                     <Link
                       key={spot.id}
-                      href={`/spots/${spot.id}`}
+                      href={`/spots/${spot.id}?back=${encodeURIComponent(`/blog/${slug}#section-${i}`)}`}
                       className="group relative rounded-xl overflow-hidden bg-stone-100 aspect-[4/3] block"
                     >
                       {spot.image_url && (
@@ -245,6 +234,17 @@ export default async function ArticlePage({
                     </Link>
                   ))}
                 </div>
+              )}
+
+              {/* セクションリンク（スポットカードの下） */}
+              {section.section_link && (
+                <Link
+                  href={`${section.section_link.href}?back=${encodeURIComponent(`/blog/${slug}#section-${i}`)}`}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-red-600 hover:text-red-700 transition-colors mt-4"
+                >
+                  {section.section_link.text}
+                  <ArrowRight size={13} />
+                </Link>
               )}
             </section>
           ))}

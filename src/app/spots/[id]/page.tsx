@@ -134,7 +134,9 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors mb-6"
       >
         <ArrowLeft size={15} />
-        {backHref ? 'Back to spot picker' : `Back to ${spot.prefecture} Guide`}
+        {backHref
+          ? backHref.startsWith('/blog/') ? 'Back to article' : 'Back to spot picker'
+          : `Back to ${spot.prefecture} Guide`}
       </Link>
 
       {/* Hero Image */}
