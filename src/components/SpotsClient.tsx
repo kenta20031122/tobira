@@ -163,7 +163,7 @@ export default function SpotsClient({ spots }: { spots: Spot[] }) {
       const matchSearch =
         q === '' ||
         s.name.toLowerCase().includes(q) ||
-        s.description.toLowerCase().includes(q) ||
+        s.prefecture.toLowerCase().includes(q) ||
         s.address.toLowerCase().includes(q) ||
         s.tags.some((t) => t.toLowerCase().includes(q));
       const matchSeason =
