@@ -29,14 +29,12 @@ type ItineraryResult = {
 };
 
 const INTEREST_OPTIONS = [
-  'Nature & Hiking',
-  'Onsen & Wellness',
-  'Culture & History',
-  'Food & Local Cuisine',
-  'Spiritual & Shrines',
-  'Adventure',
-  'Photography',
-  'Off-the-beaten-path',
+  { value: 'nature',    label: 'Nature & Hiking' },
+  { value: 'onsen',     label: 'Onsen & Wellness' },
+  { value: 'history',   label: 'Culture & History' },
+  { value: 'food',      label: 'Food & Local Cuisine' },
+  { value: 'spiritual', label: 'Spiritual & Shrines' },
+  { value: 'activity',  label: 'Adventure' },
 ];
 
 const PACE_OPTIONS = [
@@ -313,17 +311,17 @@ export default function PlanPage() {
             What do you love? (select all that apply)
           </label>
           <div className="flex flex-wrap gap-2">
-            {INTEREST_OPTIONS.map((interest) => (
+            {INTEREST_OPTIONS.map((opt) => (
               <button
-                key={interest}
-                onClick={() => toggleInterest(interest)}
+                key={opt.value}
+                onClick={() => toggleInterest(opt.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  interests.includes(interest)
+                  interests.includes(opt.value)
                     ? 'bg-red-600 text-white'
                     : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                 }`}
               >
-                {interest}
+                {opt.label}
               </button>
             ))}
           </div>

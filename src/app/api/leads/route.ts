@@ -25,6 +25,18 @@ function getPersonalitySummary(answers: Record<string, string>): string {
   return 'authentic, off-the-beaten-path Japan';
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_RE  = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 type SpotRow = { id: string; name: string; prefecture: string; description: string; image_url: string };
 
 function buildEmailHtml(personality: string, spots: SpotRow[]): string {
@@ -35,13 +47,13 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
           <tr>
             ${s.image_url ? `
             <td width="88" style="vertical-align:top;padding-right:14px;">
-              <img src="${s.image_url}" width="88" height="66" alt="${s.name}"
+              <img src="${escapeHtml(s.image_url)}" width="88" height="66" alt="${escapeHtml(s.name)}"
                 style="display:block;border-radius:8px;object-fit:cover;width:88px;height:66px;" />
             </td>` : ''}
             <td style="vertical-align:top;">
-              <p style="margin:0 0 3px 0;font-size:16px;font-weight:600;color:#1c1917;">${s.name}</p>
-              <p style="margin:0 0 6px 0;font-size:13px;color:#78716c;">${s.prefecture}</p>
-              <p style="margin:0;font-size:14px;color:#44403c;line-height:1.5;">${s.description.slice(0, 110)}…</p>
+              <p style="margin:0 0 3px 0;font-size:16px;font-weight:600;color:#1c1917;">${escapeHtml(s.name)}</p>
+              <p style="margin:0 0 6px 0;font-size:13px;color:#78716c;">${escapeHtml(s.prefecture)}</p>
+              <p style="margin:0;font-size:14px;color:#44403c;line-height:1.5;">${escapeHtml(s.description.slice(0, 110))}…</p>
             </td>
           </tr>
         </table>
@@ -153,8 +165,20 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
 export async function POST(req: NextRequest) {
   const { email, answers, matchedSpotIds } = await req.json();
 
-  if (!email || !Array.isArray(matchedSpotIds)) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  if (!email || !EMAIL_RE.test(email)) {
+    return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+  }
+
+  if (!Array.isArray(matchedSpotIds) || matchedSpotIds.length > 50) {
+    return NextResponse.json({ error: 'Invalid spot IDs' }, { status: 400 });
+  }
+
+  const validatedSpotIds = matchedSpotIds.filter((id: unknown) =>
+    typeof id === 'string' && UUID_RE.test(id)
+  );
+
+  if (validatedSpotIds.length === 0) {
+    return NextResponse.json({ error: 'No valid spot IDs provided' }, { status: 400 });
   }
 
   const admin = createAdminClient();
@@ -162,13 +186,13 @@ export async function POST(req: NextRequest) {
   // Save lead (upsert — idempotent on duplicate email)
   await admin
     .from('leads')
-    .upsert({ email, answers, matched_spot_ids: matchedSpotIds }, { onConflict: 'email' });
+    .upsert({ email, answers, matched_spot_ids: validatedSpotIds }, { onConflict: 'email' });
 
   // Fetch spot details for email (top 10)
   const { data: spots } = await admin
     .from('spots')
     .select('id, name, prefecture, description, image_url')
-    .in('id', matchedSpotIds.slice(0, 10));
+    .in('id', validatedSpotIds.slice(0, 10));
 
   const personality = getPersonalitySummary(answers ?? {});
 

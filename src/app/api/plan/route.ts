@@ -62,7 +62,45 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { days, interests, pace, groupType, region, spotId, spotIds } = await req.json();
+  const body = await req.json();
+
+  // --- Input validation (prompt injection / DoS prevention) ---
+  const VALID_INTERESTS = ['nature', 'history', 'onsen', 'food', 'activity', 'spiritual'];
+  const VALID_PACES     = ['relaxed', 'moderate', 'packed'];
+  const VALID_GROUPS    = ['solo', 'couple', 'family', 'friends'];
+  const VALID_REGIONS   = ['all', 'hokkaido', 'tohoku', 'kanto', 'hokuriku', 'chubu', 'kinki', 'chugoku', 'shikoku', 'kyushu', 'okinawa'];
+  const UUID_RE         = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  const days      = Number(body.days);
+  const interests = Array.isArray(body.interests) ? body.interests : [];
+  const pace      = body.pace;
+  const groupType = body.groupType ?? 'solo';
+  const region    = body.region ?? 'all';
+  const spotId    = body.spotId;
+  const spotIds   = Array.isArray(body.spotIds) ? body.spotIds.slice(0, 10) : [];
+
+  if (!Number.isInteger(days) || days < 1 || days > 14) {
+    return NextResponse.json({ error: 'days must be an integer between 1 and 14.' }, { status: 400 });
+  }
+  if (!interests.every((i: unknown) => typeof i === 'string' && VALID_INTERESTS.includes(i))) {
+    return NextResponse.json({ error: 'Invalid interests value.' }, { status: 400 });
+  }
+  if (!VALID_PACES.includes(pace)) {
+    return NextResponse.json({ error: 'Invalid pace value.' }, { status: 400 });
+  }
+  if (!VALID_GROUPS.includes(groupType)) {
+    return NextResponse.json({ error: 'Invalid groupType value.' }, { status: 400 });
+  }
+  if (!VALID_REGIONS.includes(region)) {
+    return NextResponse.json({ error: 'Invalid region value.' }, { status: 400 });
+  }
+  if (spotId !== undefined && (typeof spotId !== 'string' || !UUID_RE.test(spotId))) {
+    return NextResponse.json({ error: 'Invalid spotId.' }, { status: 400 });
+  }
+  if (!spotIds.every((id: unknown) => typeof id === 'string' && UUID_RE.test(id))) {
+    return NextResponse.json({ error: 'Invalid spotIds.' }, { status: 400 });
+  }
+  // --- End validation ---
 
   const spots = await getAllSpots();
 

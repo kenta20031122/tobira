@@ -162,19 +162,19 @@ const USE_CASES: { emoji: string; title: string; tags: string[]; prefill: Prefil
     emoji: '♨️',
     title: 'Solo Onsen Retreat',
     tags: ['5 days', 'Solo', 'Onsen & Wellness', 'Tohoku'],
-    prefill: { days: 5, groupType: 'solo', interests: ['Onsen & Wellness'], region: 'tohoku' },
+    prefill: { days: 5, groupType: 'solo', interests: ['onsen'], region: 'tohoku' },
   },
   {
     emoji: '🏯',
     title: 'Culture & Food Weekend',
     tags: ['3 days', 'Couple', 'Culture & Food', 'Kansai'],
-    prefill: { days: 3, groupType: 'couple', interests: ['Culture & History', 'Food & Local Cuisine'], region: 'kinki' },
+    prefill: { days: 3, groupType: 'couple', interests: ['history', 'food'], region: 'kinki' },
   },
   {
     emoji: '🌋',
     title: 'Family Adventure',
     tags: ['7 days', 'Family', 'Nature & Adventure', 'Kyushu'],
-    prefill: { days: 7, groupType: 'family', interests: ['Nature & Hiking', 'Adventure'], region: 'kyushu' },
+    prefill: { days: 7, groupType: 'family', interests: ['nature', 'activity'], region: 'kyushu' },
   },
 ];
 
