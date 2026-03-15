@@ -1,7 +1,6 @@
 import type { Spot } from '@/types/index'
 import type { ThemeSpec } from '@/types/instagram'
 
-const SITE_URL = 'https://tobira.travel'
 const MAX_CAPTION_LENGTH = 2200
 
 export function generateThemeCaption(theme: ThemeSpec, spots: Spot[]): string {
@@ -13,6 +12,8 @@ export function generateThemeCaption(theme: ThemeSpec, spots: Spot[]): string {
     .join('\n')
 
   const lines = [
+    theme.tagline,
+    '',
     `✨ ${theme.theme_title_en}`,
     '',
     spotList,

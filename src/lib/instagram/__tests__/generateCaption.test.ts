@@ -26,6 +26,7 @@ const theme: ThemeSpec = {
   theme_key: 'kanto-nature',
   theme_title_ja: '関東の自然スポット5選',
   theme_title_en: 'Top 5 Nature Spots in Kanto',
+  tagline: 'The Kanto spots most itineraries skip.',
   type: 'regional',
   region: 'kanto',
   maxCount: 5,

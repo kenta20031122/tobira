@@ -6,10 +6,18 @@ import type { Spot } from '@/types/index'
 const mockInsert = vi.fn()
 const mockSelect = vi.fn()
 const mockFrom = vi.fn()
+const mockUpload = vi.fn()
+const mockGetPublicUrl = vi.fn()
 
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: mockFrom,
+    storage: {
+      from: () => ({
+        upload: mockUpload,
+        getPublicUrl: mockGetPublicUrl,
+      }),
+    },
   }),
 }))
 
@@ -25,6 +33,7 @@ const theme: ThemeSpec = {
   theme_key: 'test-theme',
   theme_title_ja: 'テストテーマ',
   theme_title_en: 'Test Theme',
+  tagline: 'For those who want to explore.',
   type: 'regional',
   region: 'hokkaido',
   maxCount: 3,
@@ -51,13 +60,23 @@ const makeSpot = (id: string): Spot => ({
 beforeEach(() => {
   vi.clearAllMocks()
 
-  // Default: no existing draft for this week (maybeSingle returns null when not found)
+  // Default: no existing draft for this week
   mockSelect.mockResolvedValue({ data: null, error: null })
   mockInsert.mockResolvedValue({ data: [{ id: 'new-draft-id' }], error: null })
   mockFrom.mockReturnValue({
     select: () => ({ gte: () => ({ eq: () => ({ maybeSingle: () => mockSelect() }) }) }),
     insert: () => ({ select: () => mockInsert() }),
   })
+
+  // Mock storage: upload succeeds, getPublicUrl returns a static URL
+  mockUpload.mockResolvedValue({ error: null })
+  mockGetPublicUrl.mockReturnValue({ data: { publicUrl: 'https://example.supabase.co/storage/v1/object/public/spot-images/instagram-assets/test-theme/cover.png' } })
+
+  // Mock fetch for OG image generation
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+    ok: true,
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
+  }))
 })
 
 describe('buildDraft', () => {
@@ -70,10 +89,12 @@ describe('buildDraft', () => {
   })
 
   it('スライドが2枚未満ならエラーを throw する', async () => {
-    // All spots have invalid image URLs
     vi.mocked(getAllSpots).mockResolvedValue([
       { ...makeSpot('1'), image_url: 'http://invalid.com/img.jpg' },
     ])
+
+    // All uploads fail
+    mockUpload.mockResolvedValue({ error: { message: 'upload failed' } })
 
     await expect(buildDraft(theme)).rejects.toThrow()
   })
@@ -81,9 +102,7 @@ describe('buildDraft', () => {
   it('同一 theme_key が同週内に存在する場合は重複挿入しない', async () => {
     vi.mocked(getAllSpots).mockResolvedValue([makeSpot('1'), makeSpot('2'), makeSpot('3')])
 
-    // Simulate existing draft this week (maybeSingle returns the record)
     mockSelect.mockResolvedValue({ data: { id: 'existing' }, error: null })
-    mockInsert.mockResolvedValue({ data: null, error: null })
     mockFrom.mockReturnValue({
       select: () => ({ gte: () => ({ eq: () => ({ maybeSingle: () => mockSelect() }) }) }),
       insert: () => ({ select: () => mockInsert() }),

@@ -8,6 +8,7 @@ export type ThemeSpec = {
   theme_key: string
   theme_title_ja: string
   theme_title_en: string
+  tagline: string
   type: ThemeType
   region?: Region
   category?: Category
@@ -60,6 +61,10 @@ export type InstagramDraft = {
   scheduled_for?: string | null
   approved_by?: string | null
   approved_at?: string | null
+
+  rendered_asset_urls?: string[] | null
+  template_id?: string | null
+  template_version?: string | null
 }
 
 export type PublishResult = {
