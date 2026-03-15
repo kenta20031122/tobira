@@ -157,6 +157,39 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
     }
   }
 
+  async function handleRetry() {
+    if (!selected || selected.status !== 'failed') return
+    if (!confirm('再試行しますか？')) return
+    setActionLoading(true)
+    setMessage('')
+    try {
+      // Reset to approved
+      const resetRes = await fetch(`/api/instagram/drafts/${selected.id}`, {
+        method: 'PATCH',
+        headers: apiHeaders,
+        body: JSON.stringify({ status: 'approved' }),
+      })
+      const resetJson = await resetRes.json() as { ok?: boolean; error?: string }
+      if (!resetRes.ok) throw new Error(resetJson.error)
+
+      // Immediately publish
+      const pubRes = await fetch('/api/instagram/publish', {
+        method: 'POST',
+        headers: apiHeaders,
+        body: JSON.stringify({ id: selected.id }),
+      })
+      const pubJson = await pubRes.json() as { ok?: boolean; error?: string; ig_permalink?: string }
+      if (!pubRes.ok) throw new Error(pubJson.error)
+      setMessage(`投稿完了: ${pubJson.ig_permalink}`)
+      router.refresh()
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'エラー')
+      router.refresh()
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   const statusFilters = ['', 'draft', 'approved', 'published', 'failed'] as const
 
   return (
@@ -320,6 +353,15 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
                     className="flex-1 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                   >
                     Instagram に投稿 ↑
+                  </button>
+                )}
+                {selected.status === 'failed' && (
+                  <button
+                    onClick={handleRetry}
+                    disabled={actionLoading}
+                    className="flex-1 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 disabled:opacity-50"
+                  >
+                    {actionLoading ? '再試行中…' : '再試行 ↑'}
                   </button>
                 )}
                 {selected.ig_permalink && (
