@@ -71,6 +71,7 @@ export async function buildDraft(theme: ThemeSpec): Promise<string> {
   // Upload each slide to Supabase Storage → get static URLs for Instagram
   const uploadedSlides: SlideData[] = []
   const renderedAssetUrls: string[] = []
+  const version = Date.now().toString()
 
   for (const slide of rawSlides) {
     const isSpotSlide = slide.spot_id !== 'cover'
@@ -85,7 +86,7 @@ export async function buildDraft(theme: ThemeSpec): Promise<string> {
       }
     }
 
-    const storagePath = `instagram-assets/${theme.theme_key}/${slide.spot_id}.png`
+    const storagePath = `instagram-assets/${theme.theme_key}/${version}-${slide.spot_id}.png`
     try {
       const staticUrl = await uploadSlideImage(slide.image_url, storagePath)
       uploadedSlides.push({ ...slide, image_url: staticUrl })

@@ -4,7 +4,7 @@ import type { SlideData } from '@/types/instagram'
 const MAX_SPOT_SLIDES = 9 // 1 cover + up to 9 spot slides = 10 total (Instagram limit)
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
-function toInstagramAspectRatio(url: string): string {
+function toInstagramAspectRatio(url: string, cacheBust?: string): string {
   try {
     const parsed = new URL(url)
     if (parsed.hostname.includes('unsplash.com')) {
@@ -16,6 +16,8 @@ function toInstagramAspectRatio(url: string): string {
       parsed.searchParams.set('width', '1080')
       parsed.searchParams.set('height', '1440')
       parsed.searchParams.set('resize', 'cover')
+      // Bust Supabase CDN cache so updated photos are always fetched fresh
+      if (cacheBust) parsed.searchParams.set('t', cacheBust)
     }
     return parsed.toString()
   } catch {
@@ -24,9 +26,10 @@ function toInstagramAspectRatio(url: string): string {
 }
 
 export function generateCarouselSlides(spots: Spot[], themeTitle?: string, tagline?: string): SlideData[] {
+  const cacheBust = Date.now().toString()
   const spotSlides = spots.slice(0, MAX_SPOT_SLIDES).map((spot, index) => {
     const highlight = spot.highlights[0] ?? ''
-    const bgUrl = toInstagramAspectRatio(spot.image_url)
+    const bgUrl = toInstagramAspectRatio(spot.image_url, cacheBust)
     const params = new URLSearchParams({
       img: bgUrl,
       name: spot.name,
@@ -44,7 +47,7 @@ export function generateCarouselSlides(spots: Spot[], themeTitle?: string, tagli
 
   if (!themeTitle) return spotSlides.map((s, i) => ({ ...s, order: i }))
 
-  const bgUrl = spots[0]?.image_url ? toInstagramAspectRatio(spots[0].image_url) : ''
+  const bgUrl = spots[0]?.image_url ? toInstagramAspectRatio(spots[0].image_url, cacheBust) : ''
   const coverParams = new URLSearchParams({
     title: themeTitle,
     ...(tagline ? { tagline } : {}),
