@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   const img = searchParams.get('img') ?? ''
   const name = truncate(searchParams.get('name') ?? '', 42)
   const prefecture = truncate(searchParams.get('prefecture') ?? '', 30)
-  const highlight = truncate(searchParams.get('highlight') ?? '', 100)
+  const highlight = truncate(searchParams.get('highlight') ?? '', 120)
   const index = searchParams.get('index') ?? ''
 
   return new ImageResponse(
