@@ -1,6 +1,6 @@
 import type { Category, Region } from './index'
 
-export type ThemeType = 'regional' | 'seasonal' | 'category' | 'access'
+export type ThemeType = 'regional' | 'seasonal' | 'monthly' | 'category' | 'access'
 
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter'
 
@@ -13,8 +13,10 @@ export type ThemeSpec = {
   region?: Region
   category?: Category
   season?: Season
+  months?: number[]             // 月次テーマ用 e.g. [4] = 4月, [3,4,5] = 春
   accessKeywords?: string[]
-  preferCategories?: Category[]
+  requireCategories?: Category[] // ハード除外: いずれか1つを持たないと弾く
+  excludeCategories?: Category[] // ハード除外: 該当カテゴリを持っていたら弾く
   maxCount: number
 }
 

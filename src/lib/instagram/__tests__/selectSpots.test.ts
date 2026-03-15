@@ -27,6 +27,7 @@ const theme = (overrides: Partial<ThemeSpec>): ThemeSpec => ({
   theme_key: 'test',
   theme_title_ja: 'テスト',
   theme_title_en: 'Test',
+  tagline: 'Test tagline.',
   type: 'regional',
   maxCount: 5,
   ...overrides,
@@ -79,13 +80,42 @@ describe('selectSpotsForTheme', () => {
     expect(result.length).toBeLessThanOrEqual(3)
   })
 
-  it('highlights が多いスポットを優先する', () => {
+  it('instagram_priority が高いスポットを優先する', () => {
     const spots = [
-      makeSpot({ id: 'low', highlights: ['h1'] }),
-      makeSpot({ id: 'high', highlights: ['h1', 'h2', 'h3', 'h4'] }),
+      makeSpot({ id: 'low', instagram_priority: 0 }),
+      makeSpot({ id: 'high', instagram_priority: 2 }),
     ]
     const result = selectSpotsForTheme(spots, theme({ maxCount: 1 }))
     expect(result[0].id).toBe('high')
+  })
+
+  it('requireCategories に一致しないスポットを除外する', () => {
+    const spots = [
+      makeSpot({ id: '1', categories: ['nature'] }),
+      makeSpot({ id: '2', categories: ['activity'] }),
+    ]
+    const result = selectSpotsForTheme(spots, theme({ requireCategories: ['nature'] }))
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('1')
+  })
+
+  it('excludeCategories に一致するスポットを除外する', () => {
+    const spots = [
+      makeSpot({ id: '1', categories: ['nature'] }),
+      makeSpot({ id: '2', categories: ['activity'] }),
+    ]
+    const result = selectSpotsForTheme(spots, theme({ excludeCategories: ['activity'] }))
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('1')
+  })
+
+  it('完全一致カテゴリのスポットにボーナスを与える', () => {
+    const spots = [
+      makeSpot({ id: 'exact', categories: ['nature'] }),
+      makeSpot({ id: 'mixed', categories: ['nature', 'activity'] }),
+    ]
+    const result = selectSpotsForTheme(spots, theme({ requireCategories: ['nature'], maxCount: 2 }))
+    expect(result[0].id).toBe('exact')
   })
 
   it('入力配列を変更しない', () => {

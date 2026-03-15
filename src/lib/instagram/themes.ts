@@ -9,7 +9,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'For those who want Hokkaido beyond the postcard.',
     type: 'regional',
     region: 'hokkaido',
-    preferCategories: ['nature'],
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -19,7 +19,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Tohoku, seen without a tour bus.',
     type: 'regional',
     region: 'tohoku',
-    preferCategories: ['nature'],
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -38,6 +38,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Kansai history beyond the Kyoto crowds.',
     type: 'regional',
     region: 'kinki',
+    requireCategories: ['history'],
     maxCount: 5,
   },
   {
@@ -47,7 +48,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Kyushu, for travellers who stayed curious.',
     type: 'regional',
     region: 'kyushu',
-    preferCategories: ['nature'],
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -57,7 +58,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Okinawa beyond the all-inclusive resort.',
     type: 'regional',
     region: 'okinawa',
-    preferCategories: ['nature'],
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -76,6 +77,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Where pilgrims walk and tourists rarely follow.',
     type: 'regional',
     region: 'shikoku',
+    requireCategories: ['spiritual'],
     maxCount: 5,
   },
 
@@ -87,6 +89,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Spring in Japan, beyond the cherry blossom forecast.',
     type: 'seasonal',
     season: 'spring',
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -96,6 +99,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Where to be in Japan when summer actually hits.',
     type: 'seasonal',
     season: 'summer',
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -105,6 +109,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Autumn colour, away from the photo crowds.',
     type: 'seasonal',
     season: 'autumn',
+    requireCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -114,6 +119,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Japan in winter — the version worth braving the cold for.',
     type: 'seasonal',
     season: 'winter',
+    requireCategories: ['onsen'],
     maxCount: 5,
   },
 

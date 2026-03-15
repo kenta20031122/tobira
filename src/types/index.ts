@@ -25,6 +25,7 @@ export type Spot = {
   image_url: string;
   tags: string[];
   is_premium: boolean;
+  instagram_priority?: number;
   highlights: string[];
   best_season: string;
   access: string;
