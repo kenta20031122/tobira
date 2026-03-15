@@ -6,12 +6,16 @@ export const runtime = 'edge'
 const W = 1080
 const H = 1440
 
+function truncate(text: string, maxLen: number): string {
+  return text.length > maxLen ? text.slice(0, maxLen - 1) + '…' : text
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const img = searchParams.get('img') ?? ''
-  const name = searchParams.get('name') ?? ''
-  const prefecture = searchParams.get('prefecture') ?? ''
-  const highlight = searchParams.get('highlight') ?? ''
+  const name = truncate(searchParams.get('name') ?? '', 42)
+  const prefecture = truncate(searchParams.get('prefecture') ?? '', 30)
+  const highlight = truncate(searchParams.get('highlight') ?? '', 100)
   const index = searchParams.get('index') ?? ''
 
   return new ImageResponse(
@@ -52,7 +56,7 @@ export async function GET(req: NextRequest) {
             width: W,
             height: H,
             background:
-              'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.75) 70%, rgba(0,0,0,0.92) 100%)',
+              'linear-gradient(to bottom, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.08) 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,0.8) 100%)',
           }}
         />
 
@@ -108,31 +112,34 @@ export async function GET(req: NextRequest) {
             <span>{prefecture}</span>
           </div>
 
-          {/* Spot name */}
+          {/* Spot name — max 2 lines */}
           <div
             style={{
-              fontSize: name.length > 20 ? '62px' : '72px',
+              fontSize: '68px',
               fontWeight: 800,
               color: '#ffffff',
-              lineHeight: 1.15,
+              lineHeight: 1.2,
               letterSpacing: '-0.01em',
+              maxWidth: '952px',
+              wordBreak: 'break-word',
             }}
           >
             {name}
           </div>
 
-          {/* Highlight */}
+          {/* Description — max 2 lines */}
           {highlight && (
             <div
               style={{
                 fontSize: '28px',
-                color: 'rgba(255,255,255,0.65)',
-                lineHeight: 1.5,
+                color: 'rgba(255,255,255,0.7)',
+                lineHeight: 1.55,
                 borderLeft: '3px solid #dc2626',
                 paddingLeft: '20px',
+                maxWidth: '920px',
               }}
             >
-              {highlight.length > 80 ? highlight.slice(0, 80) + '…' : highlight}
+              {highlight}
             </div>
           )}
 

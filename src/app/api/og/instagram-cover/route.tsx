@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
             width: W,
             height: H,
             background: bg
-              ? 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%)'
+              ? 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)'
               : 'linear-gradient(160deg, #0f172a 0%, #1a0a0a 50%, #0f172a 100%)',
           }}
         />
@@ -123,24 +123,6 @@ export async function GET(req: NextRequest) {
           )}
         </div>
 
-        {/* Bottom strip */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            width: W,
-            padding: '28px 64px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(0,0,0,0.4)',
-          }}
-        >
-          <div style={{ fontSize: '26px', color: 'rgba(255,255,255,0.55)', letterSpacing: '0.05em' }}>
-            @tobira_japan_beyond_tokyo
-          </div>
-        </div>
       </div>
     ),
     { width: W, height: H }
