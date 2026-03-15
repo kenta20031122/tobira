@@ -1,4 +1,4 @@
-import type { ThemeSpec } from '@/types/instagram'
+import type { ThemeSpec, SlideData } from '@/types/instagram'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAllSpots } from '@/lib/spots'
 import { selectSpotsForTheme } from './selectSpots'
@@ -8,6 +8,30 @@ import { generateThemeCaption } from './generateCaption'
 import { generateHashtags } from './generateHashtags'
 
 const MIN_SLIDES = 2
+
+/**
+ * Fetches the OG cover image from our own endpoint and uploads it to
+ * Supabase Storage so Instagram can fetch it as a plain image URL.
+ */
+async function uploadCoverImage(ogUrl: string, themeKey: string): Promise<string> {
+  const supabase = createAdminClient()
+
+  const res = await fetch(ogUrl)
+  if (!res.ok) throw new Error(`Failed to fetch cover image: ${res.status}`)
+  const buffer = await res.arrayBuffer()
+
+  const path = `instagram-covers/${themeKey}.png`
+  const { error } = await supabase.storage
+    .from('spot-images')
+    .upload(path, buffer, {
+      contentType: 'image/png',
+      upsert: true,
+    })
+  if (error) throw new Error(`Cover upload failed: ${error.message}`)
+
+  const { data } = supabase.storage.from('spot-images').getPublicUrl(path)
+  return data.publicUrl
+}
 
 /** Returns start of the current ISO week (Monday 00:00:00 UTC) */
 function getWeekStart(): string {
@@ -42,8 +66,22 @@ export async function buildDraft(theme: ThemeSpec): Promise<string> {
 
   // Generate slides, filtering out invalid image URLs
   const rawSlides = generateCarouselSlides(selectedSpots, theme.theme_title_en)
-  const validSlides = rawSlides.filter(slide => {
-    // Cover slide (spot_id='cover') uses an OG image URL — skip URL validation for it
+
+  // Upload cover slide to Supabase Storage so Instagram can fetch it
+  const slidesWithCover: SlideData[] = await Promise.all(
+    rawSlides.map(async slide => {
+      if (slide.spot_id !== 'cover') return slide
+      try {
+        const staticUrl = await uploadCoverImage(slide.image_url, theme.theme_key)
+        return { ...slide, image_url: staticUrl }
+      } catch (err) {
+        console.warn('[draftBuilder] Cover upload failed, skipping cover slide:', err)
+        return null
+      }
+    })
+  ).then(slides => slides.filter((s): s is SlideData => s !== null))
+
+  const validSlides = slidesWithCover.filter(slide => {
     if (slide.spot_id === 'cover') return true
     const ok = validateImageUrl(slide.image_url)
     if (!ok) console.warn(`[draftBuilder] Skipping invalid image URL: ${slide.image_url}`)
