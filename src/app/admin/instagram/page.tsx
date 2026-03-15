@@ -1,7 +1,12 @@
 import { redirect } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { InstagramDraft } from '@/types/instagram'
+import type { Metadata } from 'next'
 import InstagramAdminClient from './InstagramAdminClient'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 type Props = {
   searchParams: Promise<{ secret?: string; status?: string }>
