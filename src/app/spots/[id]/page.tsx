@@ -12,6 +12,8 @@ import {
   Lock,
   Sparkles,
   ExternalLink,
+  DoorOpen,
+  Lightbulb,
 } from 'lucide-react';
 import { getAllSpots, getSpotById } from '@/lib/spots';
 import { REGION_META } from '@/lib/regions';
@@ -190,7 +192,7 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
       <div className="relative mb-10">
         {spot.is_premium && !isPro ? (
           <div className="relative">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="bg-stone-100 rounded-xl p-4 border border-stone-200 h-[72px]">
                   <div className="flex items-center gap-1.5 mb-2">
@@ -212,7 +214,7 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {spot.duration && (
               <div className="bg-white rounded-xl p-4 border border-stone-200">
                 <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
@@ -229,6 +231,15 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
                   Admission
                 </div>
                 <p className="text-stone-800 text-sm font-medium">{spot.admission}</p>
+              </div>
+            )}
+            {spot.opening_hours && (
+              <div className="bg-white rounded-xl p-4 border border-stone-200">
+                <div className="flex items-center gap-1.5 text-stone-500 text-xs mb-1">
+                  <DoorOpen size={13} />
+                  Hours
+                </div>
+                <p className="text-stone-800 text-sm font-medium">{spot.opening_hours}</p>
               </div>
             )}
             <div className="bg-white rounded-xl p-4 border border-stone-200">
@@ -321,6 +332,17 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Local Tips */}
+      {spot.tips && (
+        <div className="mb-10">
+          <h2 className="text-xl font-semibold text-stone-900 mb-3 flex items-center gap-2">
+            <Lightbulb size={18} className="text-amber-500" />
+            Local Tips
+          </h2>
+          <p className="text-stone-700 leading-relaxed">{spot.tips}</p>
         </div>
       )}
 
