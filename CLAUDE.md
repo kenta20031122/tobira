@@ -232,6 +232,92 @@ node scripts/import-photo.mjs <spot-id> ~/Downloads/pixta_xxxxx.jpg
 
 ---
 
+## スポット ファクトチェック
+
+スポットの **admission（入場料）・access（アクセス）・opening_hours（営業時間）・tips（アドバイス）** の4項目を、公式・一次情報で検証し、誤りを DB に反映する運用。
+
+- **取得:** `node scripts/fetch-unchecked-spots.mjs <region>` で未チェック（`fact_checked_at IS NULL`）のスポットを地域別に取得。取得 JSON には上記4項目を含む。
+- **検証:** japan-tourism-fact-checker に JSON を渡し、4項目をまとめて検証。報告書に「## SQL更新候補」表（id | field | 修正後の値）を出力させる。
+- **適用:** `node scripts/extract-factcheck-sql.mjs scripts/spot-factcheck-report-<region>.md` で報告書から UPDATE 文を生成し、`apply-factcheck-<region>.sql` の末尾に `fact_checked_at = NOW()` を足して Supabase で実行。
+
+詳細は **scripts/FACTCHECK-WORKFLOW.md** と **docs/ファクトチェックマニュアル.md** を参照。
+
+---
+
+## Instagram 半自動投稿システム
+
+テーマ型カルーセル投稿（例:「北海道の絶景5選」）を半自動化するシステム。AI不使用・テンプレートエンジンのみでコストゼロ生成。
+
+### ファイル構成
+
+```
+src/lib/instagram/
+  themes.ts           — テーマ定義（静的配列、17テーマ）
+  selectSpots.ts      — スポット選択ロジック（ハードフィルター + スコアリング）
+  validateImageUrl.ts — 画像URLバリデーション
+  generateSlides.ts   — スライドデータ生成（OGエンドポイントURL組み立て）
+  generateCaption.ts  — キャプション生成
+  generateHashtags.ts — ハッシュタグ生成（≤30タグ）
+  instagramClient.ts  — Instagram Graph API ラッパー
+  draftBuilder.ts     — オーケストレーター（スライド生成→Storage保存→DB INSERT）
+
+src/app/api/og/
+  instagram-cover/route.tsx  — 表紙スライド画像生成（1080×1440）
+  instagram-spot/route.tsx   — スポットスライド画像生成（1080×1440）
+
+src/app/api/instagram/
+  generate/route.ts    — POST: ドラフト生成
+  preview/route.ts     — POST: 選出スポット確認（ドラフト未作成）
+  publish/route.ts     — POST: Instagram 投稿
+  insights/route.ts    — POST: Insights 取得
+  drafts/route.ts      — GET: 一覧
+  drafts/[id]/route.ts — GET/PATCH: 単件・承認・ステータスリセット
+
+src/app/admin/instagram/
+  page.tsx                   — 管理画面（Server Component）
+  InstagramAdminClient.tsx   — 操作UI（プレビュー・生成・承認・投稿・再試行）
+  CarouselPreview.tsx        — スライドビューア
+```
+
+### スポット選択アルゴリズム
+
+**フェーズ1: ハードフィルター**
+- `region` — 地域一致
+- `category` — カテゴリ完全一致
+- `requireCategories` — いずれか1つを持たないと除外
+- `excludeCategories` — 該当カテゴリを持つと除外
+- `season` — `isGoodInSeason()` で季節一致
+- `months` — 月次テーマ用
+- `accessKeywords` — access フィールドにキーワードが含まれるか
+
+**フェーズ2: スコアリング → sort → slice**
+- `instagram_priority` (0/1/2) × 3 = 主スコア（0/3/6点）
+- `requireCategories` に全カテゴリ一致 → +2ボーナス
+
+### `instagram_priority` スコア基準
+| 値 | 意味 | 例 |
+|---|---|---|
+| 2 | SNS映え最高 | 青い池、高千穂峡、桜島 |
+| 1 | 良いスポット | 城、温泉街、文化施設 |
+| 0 | SNS不向き | 食市場、ラーメン街、港 |
+
+### 環境変数
+```
+INSTAGRAM_ACCESS_TOKEN=...         # 長期トークン（60日で失効、要更新）
+INSTAGRAM_BUSINESS_ACCOUNT_ID=... # IG Business Account ID
+INSTAGRAM_ADMIN_SECRET=...         # 管理UI/API保護
+```
+
+### トークン更新
+```bash
+curl "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_id=APP_ID&client_secret=APP_SECRET&access_token=SHORT_TOKEN"
+```
+Vercel 環境変数 `INSTAGRAM_ACCESS_TOKEN` を更新 → Redeploy。
+
+詳細は **docs/Instagram投稿マニュアル.md** を参照。
+
+---
+
 ## よくある落とし穴
 
 - Hokkaido は TopoJSON で `"Hokkai Do"` — 正規化を忘れずに
