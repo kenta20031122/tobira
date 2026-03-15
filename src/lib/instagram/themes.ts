@@ -9,6 +9,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'For those who want Hokkaido beyond the postcard.',
     type: 'regional',
     region: 'hokkaido',
+    preferCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -18,6 +19,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Tohoku, seen without a tour bus.',
     type: 'regional',
     region: 'tohoku',
+    preferCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -45,6 +47,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Kyushu, for travellers who stayed curious.',
     type: 'regional',
     region: 'kyushu',
+    preferCategories: ['nature'],
     maxCount: 5,
   },
   {
@@ -54,6 +57,7 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Okinawa beyond the all-inclusive resort.',
     type: 'regional',
     region: 'okinawa',
+    preferCategories: ['nature'],
     maxCount: 5,
   },
   {

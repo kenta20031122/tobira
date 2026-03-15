@@ -2,11 +2,12 @@ import type { Spot } from '@/types/index'
 import type { ThemeSpec } from '@/types/instagram'
 import { isGoodInSeason } from '@/lib/utils'
 
-function scoreSpot(spot: Spot): number {
+function scoreSpot(spot: Spot, preferCategories?: string[]): number {
   let score = 0
   if (spot.highlights.length > 2) score += 2
   if (!spot.is_premium) score += 1
   if (spot.image_url) score += 1
+  if (preferCategories && preferCategories.some(c => spot.categories.includes(c as never))) score += 2
   return score
 }
 
@@ -33,6 +34,6 @@ export function selectSpotsForTheme(spots: Spot[], theme: ThemeSpec): Spot[] {
   }
 
   return filtered
-    .sort((a, b) => scoreSpot(b) - scoreSpot(a))
+    .sort((a, b) => scoreSpot(b, theme.preferCategories) - scoreSpot(a, theme.preferCategories))
     .slice(0, theme.maxCount)
 }

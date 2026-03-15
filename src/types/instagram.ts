@@ -14,6 +14,7 @@ export type ThemeSpec = {
   category?: Category
   season?: Season
   accessKeywords?: string[]
+  preferCategories?: Category[]
   maxCount: number
 }
 

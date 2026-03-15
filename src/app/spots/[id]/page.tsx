@@ -156,6 +156,11 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
             Pro Spot
           </div>
         )}
+        {spot.photo_credit && (
+          <div className="absolute bottom-2 right-3 text-white/60 text-[11px]">
+            {spot.photo_credit}
+          </div>
+        )}
         <div className="absolute top-4 left-4 flex gap-1.5 flex-wrap max-w-[60%]">
           {spot.categories.map((cat) => (
             <span

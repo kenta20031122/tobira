@@ -13,6 +13,8 @@
     "fetch-candidates": "node scripts/fetch-candidate-photos.mjs",
     "approve-photo": "node scripts/approve-photo.mjs",
     "auto-select": "node scripts/auto-select-photos.mjs",
+    "review-photos": "node scripts/review-photos.mjs",
+    "batch-import": "node scripts/batch-import.mjs",
     "check-urls": "node scripts/check-urls.mjs",
     "seed-kinki-chubu": "node scripts/seed-kinki-chubu.mjs",
     "seed-chubu-extra": "node scripts/seed-chubu-extra.mjs",

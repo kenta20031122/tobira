@@ -6,6 +6,23 @@ import type { InstagramDraft, SlideData } from '@/types/instagram'
 import CarouselPreview from './CarouselPreview'
 import { THEMES } from '@/lib/instagram/themes'
 
+type PreviewSpot = {
+  id: string
+  name: string
+  prefecture: string
+  categories: string[]
+  highlights: string
+  image_url: string
+}
+
+type PreviewResult = {
+  theme_key: string
+  theme_title_ja: string
+  theme_title_en: string
+  tagline: string
+  spots: PreviewSpot[]
+}
+
 type Props = {
   drafts: InstagramDraft[]
   secret: string
@@ -27,6 +44,8 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
   const [themeKey, setThemeKey] = useState(THEMES[0].theme_key)
   const [actionLoading, setActionLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [preview, setPreview] = useState<PreviewResult | null>(null)
+  const [previewing, setPreviewing] = useState(false)
 
   const apiHeaders = { 'Content-Type': 'application/json', 'x-instagram-secret': secret }
 
@@ -36,9 +55,30 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
     setMessage('')
   }
 
+  async function handlePreview() {
+    setPreviewing(true)
+    setMessage('')
+    setPreview(null)
+    try {
+      const res = await fetch('/api/instagram/preview', {
+        method: 'POST',
+        headers: apiHeaders,
+        body: JSON.stringify({ theme_key: themeKey }),
+      })
+      const json = await res.json() as PreviewResult & { error?: string }
+      if (!res.ok) throw new Error(json.error ?? 'Preview failed')
+      setPreview(json)
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'エラーが発生しました')
+    } finally {
+      setPreviewing(false)
+    }
+  }
+
   async function handleGenerate() {
     setGenerating(true)
     setMessage('')
+    setPreview(null)
     try {
       const res = await fetch('/api/instagram/generate', {
         method: 'POST',
@@ -127,7 +167,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
         <div className="flex gap-2 items-center">
           <select
             value={themeKey}
-            onChange={e => setThemeKey(e.target.value)}
+            onChange={e => { setThemeKey(e.target.value); setPreview(null) }}
             className="text-sm border rounded px-2 py-1.5 bg-white"
           >
             {THEMES.map(t => (
@@ -135,12 +175,21 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
             ))}
           </select>
           <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="px-4 py-1.5 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700 disabled:opacity-50"
+            onClick={handlePreview}
+            disabled={previewing || generating}
+            className="px-4 py-1.5 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 disabled:opacity-50"
           >
-            {generating ? '生成中…' : '+ 生成'}
+            {previewing ? '確認中…' : 'プレビュー'}
           </button>
+          {preview && (
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="px-4 py-1.5 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {generating ? '生成中…' : '✓ 生成'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -159,6 +208,30 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
 
       {message && (
         <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded text-sm">{message}</div>
+      )}
+
+      {preview && (
+        <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">{preview.theme_title_en}</p>
+              <p className="text-xs text-gray-500 mt-0.5 italic">{preview.tagline}</p>
+            </div>
+            <button onClick={() => setPreview(null)} className="text-gray-400 hover:text-gray-600 text-xs">✕</button>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {preview.spots.map((s, i) => (
+              <div key={s.id} className="flex items-center gap-2 text-sm">
+                <span className="text-gray-400 w-4">{i + 1}.</span>
+                <span className="font-medium text-gray-800">{s.name}</span>
+                <span className="text-gray-400">—</span>
+                <span className="text-gray-500">{s.prefecture}</span>
+                <span className="text-xs text-gray-400">[{s.categories.join(', ')}]</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-amber-700 mt-3">このスポット構成で生成しますか？ →「✓ 生成」ボタンで確定</p>
+        </div>
       )}
 
       <div className="grid grid-cols-5 gap-4">

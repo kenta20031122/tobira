@@ -32,15 +32,16 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const PEXELS_KEY = process.env.PEXELS_API_KEY;
 const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY;
+const FLICKR_KEY = process.env.FLICKR_API_KEY;
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   console.error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local');
   process.exit(1);
 }
 
+// Pexels/Unsplash はオプション。未設定でも Wikimedia Commons にフォールバック
 if (!PEXELS_KEY && !UNSPLASH_KEY) {
-  console.error('PEXELS_API_KEY か UNSPLASH_ACCESS_KEY のどちらか（または両方）を .env.local に設定してください');
-  process.exit(1);
+  console.log('ℹ️  PEXELS_API_KEY / UNSPLASH_ACCESS_KEY 未設定 → Wikimedia Commons のみで検索します');
 }
 
 const REVIEW_DIR = join(__dirname, 'review');
@@ -51,9 +52,16 @@ const REQUEST_DELAY_MS = 2500; // レートリミット対策
 // ─── CLI args ─────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
-const limitArg = args[args.indexOf('--limit') + 1];
-const spotIdArg = args[args.indexOf('--spot-id') + 1] ?? null;
-const regionArg = args[args.indexOf('--region') + 1] ?? null;
+
+function getArg(name) {
+  const i = args.indexOf(`--${name}`);
+  if (i === -1 || !args[i + 1] || args[i + 1].startsWith('--')) return null;
+  return args[i + 1];
+}
+
+const limitArg = getArg('limit');
+const spotIdArg = getArg('spot-id');
+const regionArg = getArg('region');
 const limit = limitArg ? parseInt(limitArg, 10) : null;
 
 // ─── Supabase ─────────────────────────────────────────────────────────────────
@@ -101,6 +109,49 @@ try {
   manifest = JSON.parse(raw);
 } catch {
   // 新規作成
+}
+
+// ─── Flickr search (CC license, Japan content が圧倒的に多い) ─────────────────
+
+const FLICKR_LICENSE_LABELS = { '4': 'CC BY', '5': 'CC BY-SA', '6': 'CC BY-ND', '9': 'CC0', '10': 'Public Domain' };
+
+async function searchFlickr(queries) {
+  if (!FLICKR_KEY) return [];
+  // 商用利用可能なライセンスのみ (CC BY / CC BY-SA / CC BY-ND / CC0 / PD)
+  const licenses = '4,5,6,9,10';
+  for (const q of queries) {
+    try {
+      const res = await fetch(
+        `https://api.flickr.com/services/rest/?method=flickr.photos.search` +
+        `&api_key=${FLICKR_KEY}&text=${encodeURIComponent(q)}&license=${licenses}` +
+        `&sort=relevance&content_type=1&media=photos&per_page=${CANDIDATES_PER_SPOT}` +
+        `&extras=url_l,url_c,url_m,owner_name,license&format=json&nojsoncallback=1`
+      );
+      if (!res.ok) continue;
+      const json = await res.json();
+      const photos = json.photos?.photo ?? [];
+      if (photos.length === 0) continue;
+
+      return photos
+        .filter((p) => p.url_l || p.url_c || p.url_m)
+        .map((p) => {
+          const licenseLabel = FLICKR_LICENSE_LABELS[p.license] ?? 'CC';
+          return {
+            source: 'flickr',
+            id: p.id,
+            query: q,
+            downloadUrl: p.url_l || p.url_c || p.url_m,
+            thumbUrl: p.url_m,
+            photographer: p.ownername,
+            pageUrl: `https://www.flickr.com/photos/${p.owner}/${p.id}`,
+            credit: `Photo by ${p.ownername} (Flickr) / ${licenseLabel}`,
+          };
+        });
+    } catch {
+      // 次のクエリにフォールバック
+    }
+  }
+  return [];
 }
 
 // ─── Pexels search ────────────────────────────────────────────────────────────
@@ -164,19 +215,100 @@ async function searchUnsplash(queries) {
   return [];
 }
 
+// ─── Wikimedia Commons search (no API key required) ───────────────────────────
+
+// 商用利用NGのライセンスキーワード
+const WIKIMEDIA_NC_LICENSES = ['NC', 'NonCommercial', 'by-nc'];
+
+function isCommercialOk(licenseShortName) {
+  if (!licenseShortName) return false;
+  return !WIKIMEDIA_NC_LICENSES.some((kw) => licenseShortName.includes(kw));
+}
+
+async function searchWikimedia(queries) {
+  for (const q of queries) {
+    try {
+      // Step 1: search for image files
+      const searchRes = await fetch(
+        `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&srnamespace=6&srlimit=10&format=json&origin=*`
+      );
+      if (!searchRes.ok) continue;
+      const searchJson = await searchRes.json();
+      const hits = (searchJson.query?.search ?? []).filter((h) => /\.(jpg|jpeg|png)$/i.test(h.title));
+      if (hits.length === 0) continue;
+
+      // Step 2: get image URLs + license info
+      const titles = hits.slice(0, 8).map((h) => h.title).join('|');
+      const infoRes = await fetch(
+        `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(titles)}&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200&format=json&origin=*`
+      );
+      if (!infoRes.ok) continue;
+      const infoJson = await infoRes.json();
+      const pages = Object.values(infoJson.query?.pages ?? {});
+
+      const results = pages
+        .filter((p) => {
+          if (!p.imageinfo?.[0]?.url) return false;
+          // 商用NGを除外
+          const license = p.imageinfo[0].extmetadata?.LicenseShortName?.value ?? '';
+          return isCommercialOk(license);
+        })
+        .slice(0, CANDIDATES_PER_SPOT)
+        .map((p) => {
+          const info = p.imageinfo[0];
+          const artist = info.extmetadata?.Artist?.value?.replace(/<[^>]*>/g, '') ?? 'Wikimedia';
+          const license = info.extmetadata?.LicenseShortName?.value ?? 'CC';
+          return {
+            source: 'wikimedia',
+            id: String(p.pageid),
+            query: q,
+            downloadUrl: info.thumburl || info.url,
+            thumbUrl: info.thumburl || info.url,
+            photographer: artist.slice(0, 40),
+            pageUrl: `https://commons.wikimedia.org/wiki/${encodeURIComponent(p.title)}`,
+            credit: `Photo by ${artist.slice(0, 40)} (Wikimedia Commons / ${license})`,
+          };
+        });
+
+      if (results.length > 0) return results;
+    } catch {
+      // 次のクエリにフォールバック
+    }
+  }
+  return [];
+}
+
+// ─── Prefecture Japanese names (Wikimedia 検索ヒット率向上) ──────────────────
+
+const PREF_JA = {
+  Hokkaido:'北海道', Aomori:'青森', Iwate:'岩手', Miyagi:'宮城', Akita:'秋田',
+  Yamagata:'山形', Fukushima:'福島', Tokyo:'東京', Kanagawa:'神奈川', Saitama:'埼玉',
+  Chiba:'千葉', Ibaraki:'茨城', Tochigi:'栃木', Gunma:'群馬', Yamanashi:'山梨',
+  Niigata:'新潟', Toyama:'富山', Ishikawa:'石川', Fukui:'福井', Nagano:'長野',
+  Shizuoka:'静岡', Aichi:'愛知', Gifu:'岐阜', Mie:'三重', Osaka:'大阪',
+  Kyoto:'京都', Hyogo:'兵庫', Nara:'奈良', Shiga:'滋賀', Wakayama:'和歌山',
+  Tottori:'鳥取', Shimane:'島根', Okayama:'岡山', Hiroshima:'広島', Yamaguchi:'山口',
+  Tokushima:'徳島', Kagawa:'香川', Ehime:'愛媛', Kochi:'高知', Fukuoka:'福岡',
+  Saga:'佐賀', Nagasaki:'長崎', Kumamoto:'熊本', Oita:'大分', Miyazaki:'宮崎',
+  Kagoshima:'鹿児島', Okinawa:'沖縄',
+};
+
 // ─── Build search queries with fallback ───────────────────────────────────────
 
 function buildQueries(spot) {
   const name = spot.name;
   const pref = spot.prefecture;
+  const prefJa = PREF_JA[pref] ?? '';
   const tag = (spot.tags ?? [])[0] ?? '';
   const cat = (spot.categories ?? [])[0] ?? '';
 
   return [
-    `${name} ${pref} Japan`,    // 最も具体的
-    `${name} Japan`,            // 地名のみ
-    `${tag} Japan`,             // タグベース
-    `${cat} Japan`,             // カテゴリベース
+    `${name} ${pref} Japan`,    // 英語・最も具体的
+    `${name} Japan`,            // 英語・地名のみ
+    prefJa ? `${name} ${prefJa}` : null,  // 日本語・都道府県付き（Wikimedia向け）
+    prefJa ? `${prefJa} ${tag}` : null,   // 日本語・タグベース
+    `${tag} Japan`,             // 英語・タグベース
+    `${cat} Japan`,             // 英語・カテゴリベース
   ].filter(Boolean);
 }
 
@@ -209,14 +341,14 @@ for (const spot of spots) {
 
   const queries = buildQueries(spot);
 
-  // Pexels と Unsplash を並列検索
-  const [pexelsResults, unsplashResults] = await Promise.all([
+  // Pexels + Wikimedia を並列検索
+  const [pexelsResults, wikimediaResults] = await Promise.all([
     searchPexels(queries),
-    searchUnsplash(queries),
+    searchWikimedia(queries),
   ]);
 
-  // 結果をマージ（Pexels優先、最大5件）
-  const combined = [...pexelsResults, ...unsplashResults].slice(0, CANDIDATES_PER_SPOT);
+  // 結果をマージ（Pexels優先 > Wikimedia、最大5件）
+  const combined = [...pexelsResults, ...wikimediaResults].slice(0, CANDIDATES_PER_SPOT);
 
   if (combined.length === 0) {
     console.log(`  ⚠️  候補なし → Pixtaキューに追加`);
@@ -248,6 +380,7 @@ for (const spot of spots) {
         query: c.query,
         photographer: c.photographer,
         pageUrl: c.pageUrl,
+        credit: c.credit ?? null,
         filename,
       });
       process.stdout.write(`  ${i + 1}✓ `);

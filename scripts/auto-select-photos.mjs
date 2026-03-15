@@ -54,8 +54,15 @@ const MODEL = 'claude-haiku-4-5-20251001';
 // ─── CLI args ─────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
-const limitArg = args[args.indexOf('--limit') + 1];
-const spotIdArg = args[args.indexOf('--spot-id') + 1] ?? null;
+
+function getArg(name) {
+  const i = args.indexOf(`--${name}`);
+  if (i === -1 || !args[i + 1] || args[i + 1].startsWith('--')) return null;
+  return args[i + 1];
+}
+
+const limitArg = getArg('limit');
+const spotIdArg = getArg('spot-id');
 const dryRun = args.includes('--dry-run');
 const limit = limitArg ? parseInt(limitArg, 10) : null;
 

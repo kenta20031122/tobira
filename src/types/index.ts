@@ -34,6 +34,7 @@ export type Spot = {
   google_maps_embed_url?: string;
   opening_hours?: string;
   tips?: string;
+  photo_credit?: string;
 };
 
 export type TripDay = {

@@ -77,20 +77,33 @@ for (const s of spots) {
   (byRegion[r] ??= []).push(s);
 }
 
-console.log(`\n📷  写真未設定スポット: ${spots.length}件\n`);
+// Pixtaキュー情報を manifest から読み込む
+let pixtaSet = new Set();
+try {
+  const { readFileSync } = await import('fs');
+  const { join: j, dirname: d } = await import('path');
+  const { fileURLToPath: f } = await import('url');
+  const dir = d(f(import.meta.url));
+  const raw = readFileSync(j(dir, 'review', 'manifest.json'), 'utf8');
+  const mf = JSON.parse(raw);
+  pixtaSet = new Set(Object.entries(mf).filter(([, v]) => v.status === 'pixta_needed').map(([id]) => id));
+} catch { /* manifest なければ無視 */ }
+
+console.log(`\n📷  写真未設定スポット: ${spots.length}件${pixtaSet.size > 0 ? ` (うちPixtaキュー: ${pixtaSet.size}件)` : ''}\n`);
 
 for (const [region, list] of Object.entries(byRegion)) {
   console.log(`── ${region.toUpperCase()} (${list.length}件) ${'─'.repeat(40)}`);
   for (const s of list) {
     const premium = s.is_premium ? ' ⭐' : '';
+    const pixta = pixtaSet.has(s.id) ? ' 🔴Pixta' : '';
     const tags = (s.tags ?? []).slice(0, 3).join(', ');
     const cats = (s.categories ?? []).slice(0, 2).join('/');
     console.log(
-      `  ${s.id.padEnd(36)} [${s.prefecture.padEnd(12)}] ${cats.padEnd(20)} ${tags}${premium}`
+      `  ${s.id.padEnd(36)} [${s.prefecture.padEnd(12)}] ${cats.padEnd(20)} ${tags}${premium}${pixta}`
     );
   }
   console.log();
 }
 
 console.log('💡 ヒント: --json フラグでJSON出力できます（他スクリプトへのパイプ用）');
-console.log(`   node scripts/fetch-candidate-photos.mjs でPexels/Unsplash候補を自動取得\n`);
+console.log(`   npm run fetch-candidates → npm run review-photos -- --upload\n`);

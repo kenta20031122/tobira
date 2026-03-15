@@ -134,6 +134,104 @@ type の種類: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
 
 ---
 
+## スポット追加ルール
+
+新しいスポットを追加するときは **必ず全フィールドを埋める**。既存スクリプトにないからといって省略しない。
+
+### 必須フィールド（全件）
+
+| フィールド | 内容 |
+|-----------|------|
+| `id` | kebab-case スラッグ（英語） |
+| `name` | 英語名 |
+| `prefecture` | `src/types/index.ts` の Prefecture 型に合わせる |
+| `region` | `hokkaido` / `tohoku` / `kanto` / `hokuriku` / `chubu` / `kinki` / `chugoku` / `shikoku` / `kyushu` / `okinawa` |
+| `categories` | `nature` / `history` / `onsen` / `food` / `activity` / `spiritual` から複数可 |
+| `description` | 3〜5文の英語説明 |
+| `address` | 英語住所 |
+| `lat` / `lng` | 座標（小数点4桁以上） |
+| `image_url` | Unsplash プレースホルダー可 |
+| `tags` | 5〜7個 |
+| `is_premium` | `true` / `false` |
+| `highlights` | 4項目 |
+| `best_season` | 例: `'June–October'` |
+| `access` | 最寄り駅・バスなどのアクセス方法 |
+| `admission` | 入場料（無料なら `'Free'`） |
+| `duration` | 例: `'2–3 hours'` |
+| `opening_hours` | 営業時間（例: `'9:00–17:00 (Apr–Oct), 9:00–16:00 (Nov–Mar)'`） |
+| `tips` | 現地での注意点・おすすめの過ごし方（1〜3文） |
+
+### よくあるミス
+
+- **既存シードスクリプトを参考にすると `opening_hours` / `tips` が抜ける** — 古いスクリプトにはこれらがないが、DB には列が存在し UI にも表示される。必ず入れること。
+- `opening_hours` と `tips` を後から UPDATE するのは手間が倍になるため、INSERT 時点で必ず含める。
+
+### SQL テンプレート
+
+```sql
+INSERT INTO spots (
+  id, name, prefecture, region, categories, description,
+  address, lat, lng, image_url, tags, is_premium,
+  highlights, best_season, access, admission, duration,
+  opening_hours, tips
+) VALUES (
+  'spot-id',
+  'Spot Name',
+  'Prefecture',
+  'region',
+  ARRAY['nature'],
+  'Description text.',
+  'Address, City, Prefecture',
+  35.0000, 135.0000,
+  'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&auto=format&fit=crop&q=80',
+  ARRAY['tag1', 'tag2'],
+  false,
+  ARRAY['Highlight 1', 'Highlight 2', 'Highlight 3', 'Highlight 4'],
+  'April–October',
+  'Access description.',
+  'Free',
+  '2–3 hours',
+  '9:00–17:00 (closed Mondays)',
+  'Tips for visitors.'
+);
+```
+
+---
+
+## 写真追加ワークフロー
+
+### 通常フロー
+```bash
+npm run list-unimaged          # 写真未設定スポット確認
+npm run fetch-candidates       # Pexels + Wikimedia から候補を自動取得
+npm run review-photos -- --upload  # キー1つで承認・アップロード
+# 操作: [1-5]=承認  [p]=Pixtaキュー  [s]=スキップ  [o]=Finder  [q]=終了
+```
+
+### Pixta（手動）フロー
+```bash
+# Pixtaでまとめてダウンロード → ~/Downloads/pixta-import/ に移動
+npm run batch-import -- ~/Downloads/pixta-import/
+rm -rf ~/Downloads/pixta-import/
+
+# 1枚だけの場合
+node scripts/import-photo.mjs <spot-id> ~/Downloads/pixta_xxxxx.jpg
+```
+
+### 写真ソース
+| ソース | APIキー | クレジット | 用途 |
+|---|---|---|---|
+| Pexels | `PEXELS_API_KEY`（無料） | 不要 | 自動取得メイン |
+| Wikimedia Commons | 不要 | CC BY系は必要（自動保存） | 自動取得サブ |
+| Pixta | なし（手動DL） | 不要 | 品質重視・ニッチなスポット |
+
+### photo_credit
+- Wikimedia 写真は承認時に `spots.photo_credit` へ自動保存
+- スポット詳細ページの画像右下に表示
+- Pixta / Pexels は不要（ライセンス上クレジット不要）
+
+---
+
 ## よくある落とし穴
 
 - Hokkaido は TopoJSON で `"Hokkai Do"` — 正規化を忘れずに

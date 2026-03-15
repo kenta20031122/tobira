@@ -34,10 +34,13 @@ const supabase = createClient(url, key);
 const REGIONS = {
   kanto: ['Kanagawa', 'Saitama', 'Tochigi', 'Tokyo'],
   hokuriku: ['Niigata', 'Toyama', 'Ishikawa', 'Fukui'],
-  chubu: ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Mie'],
+  chubu: ['Aichi', 'Shizuoka', 'Nagano', 'Gifu', 'Mie', 'Yamanashi'],
   kansai: ['Osaka', 'Kyoto', 'Hyogo', 'Nara', 'Shiga', 'Wakayama'],
   chugoku: ['Hiroshima', 'Okayama', 'Tottori', 'Shimane', 'Yamaguchi'],
   shikoku: ['Kagawa', 'Ehime', 'Kochi', 'Tokushima'],
+  kyushu: ['Fukuoka', 'Saga', 'Nagasaki', 'Kumamoto', 'Oita', 'Miyazaki', 'Kagoshima'],
+  okinawa: ['Okinawa'],
+  hokkaido: ['Hokkaido'],
 };
 const regionArg = process.argv[2];
 const PREFECTURES = REGIONS[regionArg] ?? REGIONS.kanto;
@@ -60,7 +63,7 @@ if (error) {
 }
 
 const spots = data ?? [];
-const out = (['hokuriku', 'chubu', 'kansai', 'chugoku', 'shikoku'].includes(regionArg)) ? regionArg : process.argv[3] ?? process.argv[2];
+const out = (['hokuriku', 'chubu', 'kansai', 'chugoku', 'shikoku', 'kyushu', 'okinawa', 'hokkaido'].includes(regionArg)) ? regionArg : process.argv[3] ?? process.argv[2];
 if (out === 'batch1') {
   const b1 = spots.filter(s => s.prefecture === 'Kanagawa' || s.prefecture === 'Saitama');
   fs.writeFileSync(resolve(__dirname, 'factcheck-batch1.json'), JSON.stringify(b1, null, 2));
@@ -88,6 +91,18 @@ if (out === 'batch1') {
 } else if (out === 'shikoku' || regionArg === 'shikoku') {
   fs.writeFileSync(resolve(__dirname, 'factcheck-shikoku.json'), JSON.stringify(spots, null, 2));
   console.error(`四国: ${spots.length} 件 → factcheck-shikoku.json`);
+  console.log(JSON.stringify(spots, null, 2));
+} else if (out === 'kyushu' || regionArg === 'kyushu') {
+  fs.writeFileSync(resolve(__dirname, 'factcheck-kyushu.json'), JSON.stringify(spots, null, 2));
+  console.error(`九州: ${spots.length} 件 → factcheck-kyushu.json`);
+  console.log(JSON.stringify(spots, null, 2));
+} else if (out === 'okinawa' || regionArg === 'okinawa') {
+  fs.writeFileSync(resolve(__dirname, 'factcheck-okinawa.json'), JSON.stringify(spots, null, 2));
+  console.error(`沖縄: ${spots.length} 件 → factcheck-okinawa.json`);
+  console.log(JSON.stringify(spots, null, 2));
+} else if (out === 'hokkaido' || regionArg === 'hokkaido') {
+  fs.writeFileSync(resolve(__dirname, 'factcheck-hokkaido.json'), JSON.stringify(spots, null, 2));
+  console.error(`北海道: ${spots.length} 件 → factcheck-hokkaido.json`);
   console.log(JSON.stringify(spots, null, 2));
 } else {
   console.log(JSON.stringify(spots, null, 2));
