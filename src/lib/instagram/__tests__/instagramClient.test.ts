@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { publishCarousel, publishStory, fetchInsights } from '../instagramClient'
 import type { SlideData } from '@/types/instagram'
 
@@ -12,6 +12,12 @@ const slides: SlideData[] = [
 ]
 
 beforeEach(() => {
+  vi.unstubAllGlobals()
+  // Make setTimeout resolve immediately so publish tests don't wait 5s
+  vi.stubGlobal('setTimeout', (fn: () => void) => { fn(); return 0 })
+})
+
+afterEach(() => {
   vi.unstubAllGlobals()
 })
 

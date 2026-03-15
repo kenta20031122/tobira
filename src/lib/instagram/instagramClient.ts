@@ -41,6 +41,9 @@ export async function publishCarousel(
     access_token: token,
   })
 
+  // Wait for Instagram to process the carousel container
+  await new Promise(resolve => setTimeout(resolve, 5000))
+
   // Step 3: publish
   const published = await graphPost<{ id: string }>(`${GRAPH_BASE}/${userId}/media_publish`, {
     creation_id: carousel.id,
