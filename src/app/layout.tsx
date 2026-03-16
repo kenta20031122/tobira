@@ -38,6 +38,13 @@ export const metadata: Metadata = {
       "Go beyond Tokyo. Japan's authentic travel guide covering all 47 prefectures — curated by locals, powered by AI.",
     images: [OG_IMAGE],
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 const websiteJsonLd = {
