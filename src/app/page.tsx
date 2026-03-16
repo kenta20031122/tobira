@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sparkles, MapPin, Compass, Clock } from 'lucide-react';

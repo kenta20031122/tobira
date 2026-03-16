@@ -21,6 +21,12 @@ export interface ArticleSection {
   best_season?: string;   // ベストシーズン上書き（例: "Jul for lavender / Feb for skiing"）
 }
 
+export interface QuickFacts {
+  access?: string;
+  best_season?: string;
+  vibe_tags?: string[];
+}
+
 export interface Article {
   slug: string;
   title: string;
@@ -33,6 +39,10 @@ export interface Article {
   ctaHeading: string;
   ctaBody: string;
   relatedRegion?: string;
+  articleType: 'generic' | 'prefecture';
+  character?: string;
+  quickFacts?: QuickFacts;
+  howToGetThere?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,6 +59,10 @@ function rowToArticle(row: any): Article {
     ctaHeading: row.cta_heading,
     ctaBody: row.cta_body,
     relatedRegion: row.related_region ?? undefined,
+    articleType: row.article_type === 'prefecture' ? 'prefecture' : 'generic',
+    character: row.character ?? undefined,
+    quickFacts: row.quick_facts ?? undefined,
+    howToGetThere: row.how_to_get_there ?? undefined,
   };
 }
 
@@ -71,6 +85,19 @@ export async function getArticle(slug: string): Promise<Article | undefined> {
     .eq('status', 'published')
     .single();
   return data ? rowToArticle(data) : undefined;
+}
+
+export async function getPrefectureArticles(excludeSlug?: string): Promise<Article[]> {
+  const supabase = createAdminClient();
+  let query = supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('status', 'published')
+    .eq('article_type', 'prefecture')
+    .order('published_at', { ascending: false });
+  if (excludeSlug) query = query.neq('slug', excludeSlug);
+  const { data } = await query;
+  return (data ?? []).map(rowToArticle);
 }
 
 export async function getRelatedArticles(currentSlug: string, count = 2): Promise<Article[]> {

@@ -198,6 +198,44 @@ INSERT INTO spots (
 
 ---
 
+## ブログ記事作成ワークフロー
+
+詳細は **docs/ブログ記事作成マニュアル.md** を参照。
+
+### 記事タイプ
+
+| `article_type` | 内容 | 追加フィールド |
+|---|---|---|
+| `generic` | 複数エリア横断のリスト系記事 | なし |
+| `prefecture` | 特定都道府県を深掘りするガイド記事 | `character` / `quick_facts` / `how_to_get_there` |
+
+### 作成フロー
+
+```
+STEP 1  場所・構成をユーザーに確認
+STEP 2  SQL INSERT 文を生成（cover_image は必ず null）
+STEP 3  Supabase SQL Editor で実行
+STEP 4  カバー画像を Storage (spot-images/blog/) にアップロード
+STEP 5  cover_image を UPDATE
+STEP 6  本番で確認（tobira-travel.com/blog/{slug}）
+STEP 7  docs/blog-article-prompt.md の既存記事リストを更新
+```
+
+### prefecture タイプの追加フィールド
+
+- **`character`**: その都道府県の「性格」を語る文章（3〜5文、観光情報でなく空気感・文化感）
+- **`quick_facts`**: `{ access, best_season, vibe_tags }` の JSONB
+- **`how_to_get_there`**: 飛行機・新幹線・フェリーなど主要アクセス手段の詳細テキスト
+
+### ライティングルール（必ず守ること）
+
+- British English（travelling, colour, favour）
+- **禁止ワード:** nestled / breathtaking / must-visit / hidden gem
+- セクション見出しは場所名 + 視点・角度を込める（例: "Beppu — Where the Earth Is Still Boiling"）
+- INSERT 時 `cover_image = null`（後で UPDATE する）
+
+---
+
 ## 写真追加ワークフロー
 
 ### 通常フロー
