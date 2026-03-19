@@ -111,3 +111,35 @@ export async function getRelatedArticles(currentSlug: string, count = 2): Promis
     .limit(count);
   return (data ?? []).map(rowToArticle);
 }
+
+type AdminSupabase = ReturnType<typeof createAdminClient>;
+
+/**
+ * cover_image 未設定時のサムネイル／ヒーロー用。
+ * セクションを先頭から走査し、記事ページの sectionSpots と同じ優先度で
+ * 最初に得られる「そのセクションの先頭スポット」の image_url を返す。
+ * （spot_ids は配列順の先頭から存在する行を、spot_query は [slug]/page.tsx の resolveQuery と同じ）
+ */
+export async function getFallbackCoverImageUrlFromSections(
+  sections: ArticleSection[],
+  supabase: AdminSupabase,
+): Promise<string | undefined> {
+  for (const s of sections) {
+    if (s.spot_ids?.length) {
+      for (const id of s.spot_ids) {
+        const { data } = await supabase.from('spots').select('image_url').eq('id', id).maybeSingle();
+        if (data?.image_url) return data.image_url;
+      }
+    } else if (s.spot_query) {
+      const q = s.spot_query;
+      let builder = supabase.from('spots').select('image_url');
+      if (q.address_contains) builder = builder.ilike('address', `%${q.address_contains}%`);
+      if (q.prefecture) builder = builder.eq('prefecture', q.prefecture);
+      if (q.categories?.length) builder = builder.contains('categories', q.categories);
+      builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(q.limit ?? 3);
+      const { data } = await builder;
+      if (data?.[0]?.image_url) return data[0].image_url;
+    }
+  }
+  return undefined;
+}

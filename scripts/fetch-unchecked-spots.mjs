@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * 東京エリア（神奈川・埼玉・栃木・東京）の未チェックスポットを取得する。
+ * 未チェック（fact_checked_at IS NULL）のスポットを地域別に取得する。
  * 出力は japan-tourism-fact-checker エージェントに渡す用のJSON。
+ * 取得項目: admission, access, opening_hours, tips を含む（ファクトチェックは4項目まとめて実施）。
  *
- * 使い方: node scripts/fetch-unchecked-spots.mjs
+ * 使い方: node scripts/fetch-unchecked-spots.mjs <region>
  * 環境変数: .env.local を読むか、NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
 import { createClient } from '@supabase/supabase-js';
@@ -44,7 +45,7 @@ const REGIONS = {
 };
 const regionArg = process.argv[2];
 const PREFECTURES = REGIONS[regionArg] ?? REGIONS.kanto;
-const COLS = 'id, name, prefecture, address, access, admission, best_season, website_url, description';
+const COLS = 'id, name, prefecture, address, access, admission, opening_hours, tips, best_season, website_url, description';
 
 const { data, error } = await supabase
   .from('spots')

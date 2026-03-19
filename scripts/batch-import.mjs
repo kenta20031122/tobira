@@ -133,7 +133,7 @@ async function uploadFile(spotId, filePath) {
 
   const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${storagePath}`;
   const { error: updateErr } = await supabase
-    .from('spots').update({ image_url: publicUrl }).eq('id', spotId);
+    .from('spots').update({ image_url: publicUrl, is_published: true }).eq('id', spotId);
   if (updateErr) throw updateErr;
 
   return publicUrl;

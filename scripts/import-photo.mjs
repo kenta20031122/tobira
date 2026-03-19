@@ -128,7 +128,7 @@ console.log(`✓  Uploaded to: spot-images/${storagePath}`);
 const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${storagePath}`;
 const { error: updateErr } = await supabase
   .from('spots')
-  .update({ image_url: publicUrl })
+  .update({ image_url: publicUrl, is_published: true })
   .eq('id', spotId);
 
 if (updateErr) {

@@ -78,6 +78,13 @@ BRIEF には以下を含めると出力が安定する:
 | Best Hidden Gems in Kyushu | hidden-gems-kyushu | Nagasaki, Yufuin, Takachiho, Arita, Amakusa, Kirishima, Yanagawa |
 | Best Hidden Gems in Tohoku | hidden-gems-tohoku | Hiraizumi, Matsushima, Ginzan Onsen, Nyuto Onsen, Towada, Kitakata |
 | Best Places in Japan Without a Car | best-places-japan-without-car | Hakone, Kinosaki Onsen, Naoshima, Hiroshima, Kagoshima, Morioka |
+| Fukuoka: Where Japan Eats, Breathes, and Gets On With It | fukuoka-travel-guide | Fukuoka/Hakata, Dazaifu, Itoshima, Kitakyushu/Mojiko, Munakata, Sasaguri/Nanzoin, Akizuki, Uminonakamichi |
+| Oita: Where the Earth Still Boils | oita-travel-guide | Beppu, Yufuin, Kokonoe/Kuju, Taketa/Oka Castle, Kunisaki/Usa, Usuki, Nakatsu/Yabakei |
+| Nagasaki: Where Every Century Left Something Behind | nagasaki-travel-guide | Nagasaki City, Peace Park, Shinchi/Chinatown, Hashima/Gunkanjima, Unzen, Goto Islands, Sasebo/Huis Ten Bosch |
+| Saga: Older Than You Think, Quieter Than Most | saga-travel-guide | Karatsu, Arita/Imari, Yoshinogari, Takeo, Saga City, Kashima/Ariake Coast |
+| Kumamoto: Where the Volcano Is the Point | kumamoto-travel-guide | Kumamoto City, Mt. Aso, Minami-Aso/Kamishikimi, Kurokawa Onsen, Kikuchi Gorge, Amakusa, Hitoyoshi/Kuma River |
+| Miyazaki: Where the Sun God Hid and the Horses Run Wild | miyazaki-travel-guide | Takachiho, Miyazaki City/Aoshima, Nichinan, Ebino/Aya, Cape Toi/Hyuga |
+| Kagoshima: Where the Mainland Finally Runs Out of Land | kagoshima-travel-guide | Kagoshima City, Sakurajima, Ibusuki, Chiran, Kirishima, Yakushima, Amami Oshima |
 
 ---
 

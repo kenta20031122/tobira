@@ -8,6 +8,7 @@ export const getAllSpots = cache(async (): Promise<Spot[]> => {
   const { data, error } = await adminClient
     .from('spots')
     .select('*')
+    .eq('is_published', true)
     .order('name');
   if (error) throw new Error(error.message);
   return (data ?? []) as Spot[];

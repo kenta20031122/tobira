@@ -45,3 +45,4 @@ scripts/images/*.jpg
 scripts/images/*.jpeg
 scripts/images/*.png
 scripts/images/*.webp
+scripts/output/

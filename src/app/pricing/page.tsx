@@ -102,6 +102,7 @@ export default async function PricingPage({
     .from('spots')
     .select('id, name, prefecture, image_url', { count: 'exact' })
     .eq('is_premium', true)
+    .eq('is_published', true)
     .limit(8);
 
   return (

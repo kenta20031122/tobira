@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Clock, Sparkles } from 'lucide-react';
-import { getAllArticles } from '@/lib/articles';
+import { getAllArticles, getFallbackCoverImageUrlFromSections } from '@/lib/articles';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export const metadata: Metadata = {
@@ -22,15 +22,8 @@ export default async function BlogPage() {
     articles
       .filter(a => !a.coverImage)
       .map(async (a) => {
-        const firstQuery = a.sections.find(s => s.spot_query)?.spot_query;
-        if (!firstQuery) return;
-        let builder = supabase.from('spots').select('image_url');
-        if (firstQuery.address_contains) builder = builder.ilike('address', `%${firstQuery.address_contains}%`);
-        if (firstQuery.prefecture) builder = builder.eq('prefecture', firstQuery.prefecture);
-        if (firstQuery.categories?.length) builder = builder.contains('categories', firstQuery.categories);
-        builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(1);
-        const { data } = await builder;
-        if (data?.[0]?.image_url) thumbnails[a.slug] = data[0].image_url;
+        const url = await getFallbackCoverImageUrlFromSections(a.sections, supabase);
+        if (url) thumbnails[a.slug] = url;
       })
   );
 
