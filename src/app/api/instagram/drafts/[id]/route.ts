@@ -33,6 +33,7 @@ export async function PATCH(
     caption?: string
     hashtags?: string[]
     status?: 'approved' | 'draft'
+    scheduled_for?: string | null
   } | null
 
   if (!body) return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
@@ -45,6 +46,9 @@ export async function PATCH(
     if (body.status === 'approved') {
       updates.approved_at = new Date().toISOString()
     }
+  }
+  if ('scheduled_for' in body) {
+    updates.scheduled_for = body.scheduled_for ?? null
   }
 
   if (Object.keys(updates).length === 0) {

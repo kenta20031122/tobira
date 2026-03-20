@@ -46,6 +46,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
   const [message, setMessage] = useState('')
   const [preview, setPreview] = useState<PreviewResult | null>(null)
   const [previewing, setPreviewing] = useState(false)
+  const [scheduledFor, setScheduledFor] = useState('')
 
   const apiHeaders = { 'Content-Type': 'application/json', 'x-instagram-secret': secret }
 
@@ -53,6 +54,16 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
     setSelected(draft)
     setCaption(draft.caption)
     setMessage('')
+    // scheduled_for を datetime-local 形式に変換（ローカル時刻）
+    if (draft.scheduled_for) {
+      const d = new Date(draft.scheduled_for)
+      const pad = (n: number) => String(n).padStart(2, '0')
+      setScheduledFor(
+        `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+      )
+    } else {
+      setScheduledFor('')
+    }
   }
 
   async function handlePreview() {
@@ -120,14 +131,18 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
     if (!selected) return
     setActionLoading(true)
     try {
+      const payload: Record<string, unknown> = { status: 'approved' }
+      if (scheduledFor) {
+        payload.scheduled_for = new Date(scheduledFor).toISOString()
+      }
       const res = await fetch(`/api/instagram/drafts/${selected.id}`, {
         method: 'PATCH',
         headers: apiHeaders,
-        body: JSON.stringify({ status: 'approved' }),
+        body: JSON.stringify(payload),
       })
       const json = await res.json() as { ok?: boolean; error?: string }
       if (!res.ok) throw new Error(json.error)
-      setMessage('承認しました')
+      setMessage(scheduledFor ? `承認・予約完了: ${new Date(scheduledFor).toLocaleString('ja-JP')}` : '承認しました')
       router.refresh()
     } catch (err) {
       setMessage(err instanceof Error ? err.message : 'エラー')
@@ -289,6 +304,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
               </div>
               <div className="text-xs text-gray-400 mt-1">
                 {(draft.slide_data as SlideData[]).length}枚
+                {draft.scheduled_for && ` · 🕐 ${new Date(draft.scheduled_for).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
                 {draft.likes_count != null && ` · ❤${draft.likes_count} 💬${draft.comments_count ?? 0}`}
               </div>
             </button>
@@ -338,13 +354,24 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
 
               <div className="flex gap-2 pt-2 border-t">
                 {selected.status === 'draft' && (
-                  <button
-                    onClick={handleApprove}
-                    disabled={actionLoading}
-                    className="flex-1 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    承認
-                  </button>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-500 whitespace-nowrap">投稿日時</label>
+                      <input
+                        type="datetime-local"
+                        value={scheduledFor}
+                        onChange={e => setScheduledFor(e.target.value)}
+                        className="flex-1 text-xs border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                      />
+                    </div>
+                    <button
+                      onClick={handleApprove}
+                      disabled={actionLoading}
+                      className="py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {scheduledFor ? `${new Date(scheduledFor).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })} に予約して承認` : '承認（即時投稿）'}
+                    </button>
+                  </div>
                 )}
                 {selected.status === 'approved' && (
                   <button
