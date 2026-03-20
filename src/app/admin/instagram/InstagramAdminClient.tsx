@@ -374,13 +374,48 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
                   </div>
                 )}
                 {selected.status === 'approved' && (
-                  <button
-                    onClick={handlePublish}
-                    disabled={actionLoading}
-                    className="flex-1 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50"
-                  >
-                    Instagram に投稿 ↑
-                  </button>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-gray-500 whitespace-nowrap">投稿日時</label>
+                      <input
+                        type="datetime-local"
+                        value={scheduledFor}
+                        onChange={e => setScheduledFor(e.target.value)}
+                        className="flex-1 text-xs border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      />
+                      <button
+                        onClick={async () => {
+                          setActionLoading(true)
+                          try {
+                            const res = await fetch(`/api/instagram/drafts/${selected.id}`, {
+                              method: 'PATCH',
+                              headers: apiHeaders,
+                              body: JSON.stringify({ scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null }),
+                            })
+                            const json = await res.json() as { ok?: boolean; error?: string }
+                            if (!res.ok) throw new Error(json.error)
+                            setMessage(scheduledFor ? `予約設定: ${new Date(scheduledFor).toLocaleString('ja-JP')}` : '予約解除しました')
+                            router.refresh()
+                          } catch (err) {
+                            setMessage(err instanceof Error ? err.message : 'エラー')
+                          } finally {
+                            setActionLoading(false)
+                          }
+                        }}
+                        disabled={actionLoading}
+                        className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded whitespace-nowrap"
+                      >
+                        設定
+                      </button>
+                    </div>
+                    <button
+                      onClick={handlePublish}
+                      disabled={actionLoading || !!scheduledFor}
+                      className="py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                      {scheduledFor ? `🕐 ${new Date(scheduledFor).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })} に自動投稿` : 'Instagram に投稿 ↑'}
+                    </button>
+                  </div>
                 )}
                 {selected.status === 'failed' && (
                   <button
