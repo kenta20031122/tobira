@@ -356,6 +356,16 @@ Vercel 環境変数 `INSTAGRAM_ACCESS_TOKEN` を更新 → Redeploy。
 
 ---
 
+## デプロイ
+
+```bash
+git push
+```
+
+`main` ブランチへの push で Vercel が自動デプロイ。追加作業不要。
+
+---
+
 ## よくある落とし穴
 
 - Hokkaido は TopoJSON で `"Hokkai Do"` — 正規化を忘れずに
