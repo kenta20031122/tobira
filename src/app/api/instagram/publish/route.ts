@@ -38,7 +38,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const hashtags = (draft.hashtags as string[] ?? []).join(' ')
+    const hashtags = (draft.hashtags as string[] ?? [])
+      .map(t => t.startsWith('#') ? t : `#${t}`)
+      .join(' ')
     const fullCaption = hashtags ? `${draft.caption}\n\n${hashtags}` : draft.caption
 
     const { ig_media_id, ig_permalink } = await publishCarousel(

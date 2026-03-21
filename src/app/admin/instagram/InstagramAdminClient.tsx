@@ -47,6 +47,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
   const [preview, setPreview] = useState<PreviewResult | null>(null)
   const [previewing, setPreviewing] = useState(false)
   const [scheduledFor, setScheduledFor] = useState('')
+  const [hashtags, setHashtags] = useState<string[]>(selected?.hashtags ?? [])
 
   const apiHeaders = { 'Content-Type': 'application/json', 'x-instagram-secret': secret }
 
@@ -54,6 +55,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
     setSelected(draft)
     setCaption(draft.caption)
     setMessage('')
+    setHashtags(draft.hashtags ?? [])
     // scheduled_for を datetime-local 形式に変換（ローカル時刻）
     if (draft.scheduled_for) {
       const d = new Date(draft.scheduled_for)
@@ -343,12 +345,39 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
 
               <div>
                 <label className="text-xs font-medium text-gray-500 block mb-1">Hashtags</label>
-                <div className="flex flex-wrap gap-1">
-                  {(selected.hashtags ?? []).map(tag => (
-                    <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                      {tag}
-                    </span>
-                  ))}
+                <textarea
+                  value={hashtags.join(' ')}
+                  onChange={e => setHashtags(e.target.value.trim().split(/\s+/).filter(Boolean))}
+                  rows={3}
+                  placeholder="japantravel hiddenjapan ..."
+                  className="w-full text-sm border rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+                <div className="flex justify-end mt-1">
+                  <button
+                    onClick={async () => {
+                      if (!selected) return
+                      setActionLoading(true)
+                      try {
+                        const res = await fetch(`/api/instagram/drafts/${selected.id}`, {
+                          method: 'PATCH',
+                          headers: apiHeaders,
+                          body: JSON.stringify({ hashtags }),
+                        })
+                        const json = await res.json() as { ok?: boolean; error?: string }
+                        if (!res.ok) throw new Error(json.error)
+                        setMessage('ハッシュタグ保存完了')
+                        router.refresh()
+                      } catch (err) {
+                        setMessage(err instanceof Error ? err.message : 'エラー')
+                      } finally {
+                        setActionLoading(false)
+                      }
+                    }}
+                    disabled={actionLoading}
+                    className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
+                  >
+                    保存
+                  </button>
                 </div>
               </div>
 

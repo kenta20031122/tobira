@@ -40,7 +40,9 @@ export async function GET(req: NextRequest) {
 
   for (const draft of drafts) {
     try {
-      const hashtags = (draft.hashtags as string[] ?? []).join(' ')
+      const hashtags = (draft.hashtags as string[] ?? [])
+        .map((t: string) => t.startsWith('#') ? t : `#${t}`)
+        .join(' ')
       const fullCaption = hashtags ? `${draft.caption}\n\n${hashtags}` : draft.caption
 
       const { ig_media_id, ig_permalink } = await publishCarousel(
