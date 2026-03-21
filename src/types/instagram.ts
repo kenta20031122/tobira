@@ -17,6 +17,7 @@ export type ThemeSpec = {
   accessKeywords?: string[]
   requireCategories?: Category[] // ハード除外: いずれか1つを持たないと弾く
   excludeCategories?: Category[] // ハード除外: 該当カテゴリを持っていたら弾く
+  spotIds?: string[]             // 固定スポット指定（指定した場合は他フィルターを無視）
   maxCount: number
 }
 

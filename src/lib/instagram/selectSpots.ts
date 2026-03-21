@@ -61,6 +61,13 @@ function scoreSpot(spot: Spot, requireCategories?: string[]): number {
 }
 
 export function selectSpotsForTheme(spots: Spot[], theme: ThemeSpec): Spot[] {
+  // --- spotIds 固定指定 ---
+  if (theme.spotIds && theme.spotIds.length > 0) {
+    return theme.spotIds
+      .map(id => spots.find(s => s.id === id))
+      .filter((s): s is Spot => s !== undefined)
+  }
+
   let filtered = [...spots]
 
   // --- Phase 1: Hard filters ---
