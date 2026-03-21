@@ -193,6 +193,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Hot springs that justify the journey.',
     type: 'category',
     category: 'onsen',
+    spotIds: [
+      'ginzan-onsen',
+      'beppu-hells',
+      'kusatsu-onsen',
+      'arima-onsen',
+      'yamanaka-onsen',
+    ],
     maxCount: 5,
   },
   {
@@ -202,6 +209,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: "Japan's power spots — the ones guidebooks don't index.",
     type: 'category',
     category: 'spiritual',
+    spotIds: [
+      'osorezan',
+      'dewa-sanzan',
+      'kumano-kodo',
+      'eiheiji-temple',
+      'nachi-falls',
+    ],
     maxCount: 5,
   },
   {
@@ -220,6 +234,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: "Japan's history, beyond the obvious stops.",
     type: 'category',
     category: 'history',
+    spotIds: [
+      'hiroshima-peace-memorial',
+      'himeji-castle',
+      'shirakawa-go',
+      'nikko-toshogu',
+      'hashima-island',
+    ],
     maxCount: 5,
   },
 
