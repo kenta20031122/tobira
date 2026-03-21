@@ -19,7 +19,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Tohoku, seen without a tour bus.',
     type: 'regional',
     region: 'tohoku',
-    requireCategories: ['nature'],
+    spotIds: [
+      'zao-okama-crater',
+      'oirase-gorge',
+      'goshikinuma-lakes',
+      'matsushima-bay',
+      'naruko-gorge',
+    ],
     maxCount: 5,
   },
   {
@@ -29,6 +35,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'The Kanto spots that most itineraries skip.',
     type: 'regional',
     region: 'kanto',
+    spotIds: [
+      'hitachi-seaside-park',
+      'ashikaga-flower-park',
+      'oarai-isosaki-shrine',
+      'nagatoro-gorge',
+      'fukuroda-falls',
+    ],
     maxCount: 5,
   },
   {
@@ -38,7 +51,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Kansai history beyond the Kyoto crowds.',
     type: 'regional',
     region: 'kinki',
-    requireCategories: ['history'],
+    spotIds: [
+      'himeji-castle',
+      'koyasan',
+      'takeda-castle-ruins',
+      'hikone-castle',
+      'ise-jingu',
+    ],
     maxCount: 5,
   },
   {
@@ -48,7 +67,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Kyushu, for travellers who stayed curious.',
     type: 'regional',
     region: 'kyushu',
-    requireCategories: ['nature'],
+    spotIds: [
+      'takachiho-gorge',
+      'yakushima-island',
+      'aso-caldera',
+      'yufuin-valley',
+      'kokonoe-dream-bridge',
+    ],
     maxCount: 5,
   },
   {
@@ -74,6 +99,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'A slower Japan, still waiting to be found.',
     type: 'regional',
     region: 'chugoku',
+    spotIds: [
+      'motonosumi-shrine',
+      'tottori-sand-dunes',
+      'shimanami-kaido',
+      'tsunoshima-bridge',
+      'adachi-museum',
+    ],
     maxCount: 5,
   },
   {
@@ -95,7 +127,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Spring in Japan, beyond the cherry blossom forecast.',
     type: 'seasonal',
     season: 'spring',
-    requireCategories: ['nature'],
+    spotIds: [
+      'yoshino-cherry',
+      'hanamiyama-park',
+      'ashikaga-flower-park',
+      'philosophers-path',
+      'hirosaki-castle',
+    ],
     maxCount: 5,
   },
   {
@@ -105,7 +143,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Where to be in Japan when summer actually hits.',
     type: 'seasonal',
     season: 'summer',
-    requireCategories: ['nature'],
+    spotIds: [
+      'furano-lavender-farm',
+      'yonaha-maehama',
+      'fujisan-world-heritage',
+      'niyodo-river',
+      'nikko-national-park-hiking',
+    ],
     maxCount: 5,
   },
   {
@@ -115,7 +159,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Autumn colour, away from the photo crowds.',
     type: 'seasonal',
     season: 'autumn',
-    requireCategories: ['nature'],
+    spotIds: [
+      'naruko-gorge',
+      'oirase-gorge',
+      'takeda-castle-ruins',
+      'metasequoia-avenue',
+      'yufuin-valley',
+    ],
     maxCount: 5,
   },
   {
@@ -125,7 +175,13 @@ export const THEMES: ThemeSpec[] = [
     tagline: 'Japan in winter — the version worth braving the cold for.',
     type: 'seasonal',
     season: 'winter',
-    requireCategories: ['onsen'],
+    spotIds: [
+      'ginzan-onsen',
+      'noboribetsu-jigokudani',
+      'beppu-hells',
+      'jigokudani-monkey-park',
+      'myoko-kogen',
+    ],
     maxCount: 5,
   },
 
