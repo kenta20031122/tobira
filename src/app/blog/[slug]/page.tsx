@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowRight, Calendar, Clock, Sparkles, ChevronRight, MapPin, Train } from 'lucide-react';
-import { getArticle, getAllArticles, getRelatedArticles, getPrefectureArticles } from '@/lib/articles';
+import { getArticle, getAllArticles, getRelatedArticles, getPrefectureArticles, getFallbackCoverImageUrlFromSections } from '@/lib/articles';
 import type { SpotQuery } from '@/lib/articles';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { Spot } from '@/types';
@@ -57,21 +57,14 @@ export default async function ArticlePage({
   // spot_ids（手動指定）と spot_query（自動取得）をまとめて解決する
   const supabase = createAdminClient();
 
-  // 都道府県記事のサムネイル（coverImage がない場合は最初の spot_query から取得）
+  // 都道府県記事のサムネイル（coverImage がない場合はブログ一覧と同じロジックで先頭スポット画像）
   const prefThumbnails: Record<string, string> = {};
   await Promise.all(
     prefectureArticles
       .filter((a) => !a.coverImage)
       .map(async (a) => {
-        const q = a.sections.find((s) => s.spot_query)?.spot_query;
-        if (!q) return;
-        let builder = supabase.from('spots').select('image_url');
-        if (q.address_contains) builder = builder.ilike('address', `%${q.address_contains}%`);
-        if (q.prefecture) builder = builder.eq('prefecture', q.prefecture);
-        if (q.categories?.length) builder = builder.contains('categories', q.categories);
-        builder = builder.order('image_url', { ascending: false, nullsFirst: false }).limit(1);
-        const { data } = await builder;
-        if (data?.[0]?.image_url) prefThumbnails[a.slug] = data[0].image_url;
+        const url = await getFallbackCoverImageUrlFromSections(a.sections, supabase);
+        if (url) prefThumbnails[a.slug] = url;
       })
   );
 

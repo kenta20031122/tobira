@@ -85,6 +85,7 @@ BRIEF には以下を含めると出力が安定する:
 | Kumamoto: Where the Volcano Is the Point | kumamoto-travel-guide | Kumamoto City, Mt. Aso, Minami-Aso/Kamishikimi, Kurokawa Onsen, Kikuchi Gorge, Amakusa, Hitoyoshi/Kuma River |
 | Miyazaki: Where the Sun God Hid and the Horses Run Wild | miyazaki-travel-guide | Takachiho, Miyazaki City/Aoshima, Nichinan, Ebino/Aya, Cape Toi/Hyuga |
 | Kagoshima: Where the Mainland Finally Runs Out of Land | kagoshima-travel-guide | Kagoshima City, Sakurajima, Ibusuki, Chiran, Kirishima, Yakushima, Amami Oshima |
+| Aomori: Where Winter Invented Its Own Festival | aomori-travel-guide | Aomori City, Hirosaki, Towada/Oirase, Juniko, Hakkoda, Shimokita, Asamushi/Museum |
 
 ---
 

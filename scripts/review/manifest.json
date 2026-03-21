@@ -541,5 +541,300 @@
       }
     ],
     "pixtaSuggestedQuery": "Sapporo Beer Garden & Museum Hokkaido"
+  },
+  "aomori-furukawa-fish-market": {
+    "spotName": "Aomori Gyosai Center (Furukawa Fish Market)",
+    "prefecture": "Aomori",
+    "region": "tohoku",
+    "status": "uploaded",
+    "candidates": [
+      {
+        "number": 1,
+        "source": "pexels",
+        "sourceId": "5220047",
+        "query": "Aomori Gyosai Center (Furukawa Fish Market) Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/local-asian-street-shops-with-showcases-in-city-5220047/",
+        "credit": null,
+        "filename": "1.jpg"
+      },
+      {
+        "number": 2,
+        "source": "pexels",
+        "sourceId": "5905728",
+        "query": "Aomori Gyosai Center (Furukawa Fish Market) Aomori Japan",
+        "photographer": "Imani Williams",
+        "pageUrl": "https://www.pexels.com/photo/fresh-seafood-on-market-5905728/",
+        "credit": null,
+        "filename": "2.jpg"
+      },
+      {
+        "number": 3,
+        "source": "pexels",
+        "sourceId": "2982653",
+        "query": "Aomori Gyosai Center (Furukawa Fish Market) Aomori Japan",
+        "photographer": "Vincent M.A. Janssen",
+        "pageUrl": "https://www.pexels.com/photo/man-riding-on-a-yellow-cart-2982653/",
+        "credit": null,
+        "filename": "3.jpg"
+      },
+      {
+        "number": 4,
+        "source": "pexels",
+        "sourceId": "6249462",
+        "query": "Aomori Gyosai Center (Furukawa Fish Market) Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/bike-parked-near-asian-street-cafe-6249462/",
+        "credit": null,
+        "filename": "4.jpg"
+      },
+      {
+        "number": 5,
+        "source": "pexels",
+        "sourceId": "36313378",
+        "query": "Aomori Gyosai Center (Furukawa Fish Market) Aomori Japan",
+        "photographer": "Guohua Song",
+        "pageUrl": "https://www.pexels.com/photo/modern-skyscrapers-in-urban-tokyo-36313378/",
+        "credit": null,
+        "filename": "5.jpg"
+      }
+    ],
+    "pixtaSuggestedQuery": "Aomori Gyosai Center (Furukawa Fish Market) Aomori"
+  },
+  "aomori-museum-of-art": {
+    "spotName": "Aomori Museum of Art",
+    "prefecture": "Aomori",
+    "region": "tohoku",
+    "status": "uploaded",
+    "candidates": [
+      {
+        "number": 1,
+        "source": "pexels",
+        "sourceId": "15925248",
+        "query": "Aomori Museum of Art Aomori Japan",
+        "photographer": "Willian Justen de Vasconcellos",
+        "pageUrl": "https://www.pexels.com/photo/urban-illuminated-nebuta-15925248/",
+        "credit": null,
+        "filename": "1.jpg"
+      },
+      {
+        "number": 2,
+        "source": "pexels",
+        "sourceId": "5595929",
+        "query": "Aomori Museum of Art Aomori Japan",
+        "photographer": "Erika Augusto",
+        "pageUrl": "https://www.pexels.com/photo/brown-wooden-tiles-on-gray-background-5595929/",
+        "credit": null,
+        "filename": "2.jpg"
+      },
+      {
+        "number": 3,
+        "source": "pexels",
+        "sourceId": "7605917",
+        "query": "Aomori Museum of Art Aomori Japan",
+        "photographer": "RDNE Stock project",
+        "pageUrl": "https://www.pexels.com/photo/apple-girl-writing-painting-7605917/",
+        "credit": null,
+        "filename": "3.jpg"
+      },
+      {
+        "number": 4,
+        "source": "pexels",
+        "sourceId": "36005478",
+        "query": "Aomori Museum of Art Aomori Japan",
+        "photographer": "Every Stuff",
+        "pageUrl": "https://www.pexels.com/photo/red-traffic-sign-in-fukuoka-japan-scenic-background-36005478/",
+        "credit": null,
+        "filename": "4.jpg"
+      },
+      {
+        "number": 5,
+        "source": "pexels",
+        "sourceId": "5418307",
+        "query": "Aomori Museum of Art Aomori Japan",
+        "photographer": "Arina Krasnikova",
+        "pageUrl": "https://www.pexels.com/photo/yellow-books-on-brown-wooden-surface-5418307/",
+        "credit": null,
+        "filename": "5.jpg"
+      }
+    ],
+    "pixtaSuggestedQuery": "Aomori Museum of Art Aomori"
+  },
+  "asamushi-onsen": {
+    "spotName": "Asamushi Onsen",
+    "prefecture": "Aomori",
+    "region": "tohoku",
+    "status": "uploaded",
+    "candidates": [
+      {
+        "number": 1,
+        "source": "pexels",
+        "sourceId": "36352757",
+        "query": "Asamushi Onsen Aomori Japan",
+        "photographer": "Saroj Surkheti",
+        "pageUrl": "https://www.pexels.com/photo/interior-of-japanese-onsen-spa-reception-area-36352757/",
+        "credit": null,
+        "filename": "1.jpg"
+      },
+      {
+        "number": 2,
+        "source": "pexels",
+        "sourceId": "5220047",
+        "query": "Asamushi Onsen Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/local-asian-street-shops-with-showcases-in-city-5220047/",
+        "credit": null,
+        "filename": "2.jpg"
+      },
+      {
+        "number": 3,
+        "source": "pexels",
+        "sourceId": "1464815",
+        "query": "Asamushi Onsen Aomori Japan",
+        "photographer": "Bagus Pangestu",
+        "pageUrl": "https://www.pexels.com/photo/four-girl-s-sitting-on-gray-concrete-floor-under-blue-sky-1464815/",
+        "credit": null,
+        "filename": "3.jpg"
+      },
+      {
+        "number": 4,
+        "source": "pexels",
+        "sourceId": "36005478",
+        "query": "Asamushi Onsen Aomori Japan",
+        "photographer": "Every Stuff",
+        "pageUrl": "https://www.pexels.com/photo/red-traffic-sign-in-fukuoka-japan-scenic-background-36005478/",
+        "credit": null,
+        "filename": "4.jpg"
+      },
+      {
+        "number": 5,
+        "source": "pexels",
+        "sourceId": "6488232",
+        "query": "Asamushi Onsen Aomori Japan",
+        "photographer": "Vivien",
+        "pageUrl": "https://www.pexels.com/photo/a-cherry-blossom-tree-with-white-flowers-beside-a-house-6488232/",
+        "credit": null,
+        "filename": "5.jpg"
+      }
+    ],
+    "pixtaSuggestedQuery": "Asamushi Onsen Aomori"
+  },
+  "hakkoda-ropeway-sukayu": {
+    "spotName": "Hakkoda Ropeway & Sukayu Onsen",
+    "prefecture": "Aomori",
+    "region": "tohoku",
+    "status": "uploaded",
+    "candidates": [
+      {
+        "number": 1,
+        "source": "pexels",
+        "sourceId": "2890017",
+        "query": "Hakkoda Ropeway & Sukayu Onsen Aomori Japan",
+        "photographer": "Satoshi Hirayama",
+        "pageUrl": "https://www.pexels.com/photo/women-walking-on-alley-2890017/",
+        "credit": null,
+        "filename": "1.jpg"
+      },
+      {
+        "number": 2,
+        "source": "pexels",
+        "sourceId": "5220047",
+        "query": "Hakkoda Ropeway & Sukayu Onsen Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/local-asian-street-shops-with-showcases-in-city-5220047/",
+        "credit": null,
+        "filename": "2.jpg"
+      },
+      {
+        "number": 3,
+        "source": "pexels",
+        "sourceId": "36005478",
+        "query": "Hakkoda Ropeway & Sukayu Onsen Aomori Japan",
+        "photographer": "Every Stuff",
+        "pageUrl": "https://www.pexels.com/photo/red-traffic-sign-in-fukuoka-japan-scenic-background-36005478/",
+        "credit": null,
+        "filename": "3.jpg"
+      },
+      {
+        "number": 4,
+        "source": "pexels",
+        "sourceId": "5746255",
+        "query": "Hakkoda Ropeway & Sukayu Onsen Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/traditional-japanese-souvenirs-placed-on-wooden-table-5746255/",
+        "credit": null,
+        "filename": "4.jpg"
+      },
+      {
+        "number": 5,
+        "source": "pexels",
+        "sourceId": "1270210",
+        "query": "Hakkoda Ropeway & Sukayu Onsen Aomori Japan",
+        "photographer": "Satoshi Hirayama",
+        "pageUrl": "https://www.pexels.com/photo/two-woman-wearing-kimono-dress-walking-beside-sidewalk-1270210/",
+        "credit": null,
+        "filename": "5.jpg"
+      }
+    ],
+    "pixtaSuggestedQuery": "Hakkoda Ropeway & Sukayu Onsen Aomori"
+  },
+  "towada-art-center": {
+    "spotName": "Towada Art Center",
+    "prefecture": "Aomori",
+    "region": "tohoku",
+    "status": "uploaded",
+    "candidates": [
+      {
+        "number": 1,
+        "source": "pexels",
+        "sourceId": "7548132",
+        "query": "Towada Art Center Aomori Japan",
+        "photographer": "BERK OZDEMIR",
+        "pageUrl": "https://www.pexels.com/photo/a-modern-architecture-in-japan-7548132/",
+        "credit": null,
+        "filename": "1.jpg"
+      },
+      {
+        "number": 2,
+        "source": "pexels",
+        "sourceId": "36313378",
+        "query": "Towada Art Center Aomori Japan",
+        "photographer": "Guohua Song",
+        "pageUrl": "https://www.pexels.com/photo/modern-skyscrapers-in-urban-tokyo-36313378/",
+        "credit": null,
+        "filename": "2.jpg"
+      },
+      {
+        "number": 3,
+        "source": "pexels",
+        "sourceId": "6488232",
+        "query": "Towada Art Center Aomori Japan",
+        "photographer": "Vivien",
+        "pageUrl": "https://www.pexels.com/photo/a-cherry-blossom-tree-with-white-flowers-beside-a-house-6488232/",
+        "credit": null,
+        "filename": "3.jpg"
+      },
+      {
+        "number": 4,
+        "source": "pexels",
+        "sourceId": "36005478",
+        "query": "Towada Art Center Aomori Japan",
+        "photographer": "Every Stuff",
+        "pageUrl": "https://www.pexels.com/photo/red-traffic-sign-in-fukuoka-japan-scenic-background-36005478/",
+        "credit": null,
+        "filename": "4.jpg"
+      },
+      {
+        "number": 5,
+        "source": "pexels",
+        "sourceId": "5746255",
+        "query": "Towada Art Center Aomori Japan",
+        "photographer": "Ryutaro Tsukata",
+        "pageUrl": "https://www.pexels.com/photo/traditional-japanese-souvenirs-placed-on-wooden-table-5746255/",
+        "credit": null,
+        "filename": "5.jpg"
+      }
+    ],
+    "pixtaSuggestedQuery": "Towada Art Center Aomori"
   }
 }
