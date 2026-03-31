@@ -27,19 +27,11 @@ export async function generateMetadata({
   const article = await getArticle(slug);
   if (!article) return {};
 
-  // OG画像: coverImage がなければセクション内の最初のスポット画像を使用
+  // OG画像: coverImage があればそれを使用、なければセクション内の最初のスポット画像を使用
   let imageUrl = article.coverImage;
-  if (!imageUrl && article.sections?.[0]) {
-    // セクションにspot_idsがあれば、そのスポットの画像を取得
+  if (!imageUrl && article.sections?.length) {
     const adminClient = createAdminClient();
-    if (article.sections[0].spot_ids?.length) {
-      const { data: spots } = await adminClient
-        .from('spots')
-        .select('image_url')
-        .in('id', [article.sections[0].spot_ids[0]])
-        .single();
-      imageUrl = spots?.image_url;
-    }
+    imageUrl = await getFallbackCoverImageUrlFromSections(article.sections, adminClient);
   }
   // フォールバック
   imageUrl = imageUrl || 'https://tobira-travel.com/og.jpg';

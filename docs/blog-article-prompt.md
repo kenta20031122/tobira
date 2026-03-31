@@ -91,6 +91,7 @@ BRIEF には以下を含めると出力が安定する:
 | Yamagata: Cherries, Sacred Mountains, and Snow That Eats the Trees | yamagata-travel-guide | Yamagata City, Yamadera, Zao/Kaminoyama, Ginzan, Dewa Sanzan, Mogami Gorge, Sakata, Tendo |
 | Akita: Snow Country, Rice Country, and Monsters on New Year's Eve | akita-travel-guide | Akita City, Kakunodate/Tazawa/Inaniwa, Nyuto/Dakigaeri, Towada/Hachimantai, Moriyoshi, Shirakami, Oga, Yokote |
 | Fukushima: Three Regions, One Prefecture, No Simple Story | fukushima-travel-guide | Fukushima City/Iizaka, Bandai/Goshikinuma, Aizu-Wakamatsu, Ouchi-juku, Kitakata, Iwaki, Abukuma Cave, Miharu |
+| Ehime: Islands, Castles, and the Road That Goes Between | ehime-travel-guide | Matsuyama/Dogo, Shimanami Kaido, Uchiko, Ozu, Uwajima, Besshi/Niihama, Shikoku Karst, Cape Sada/Omishima |
 
 ---
 
