@@ -25,9 +25,6 @@ import { CATEGORY_LABELS, CATEGORY_COLORS, cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
-export const dynamic = 'force-dynamic';
-
-
 export async function generateStaticParams() {
   const allSpots = await getAllSpots();
   return allSpots.map((s) => ({ id: s.id }));
