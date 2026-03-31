@@ -13,8 +13,6 @@ import ArticleSpotMapWrapper from '@/components/blog/ArticleSpotMapWrapper';
 import JapanContextMapWrapper from '@/components/blog/JapanContextMapWrapper';
 import HowToGetThere from '@/components/blog/HowToGetThere';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateStaticParams() {
   const articles = await getAllArticles();
   return articles.map(a => ({ slug: a.slug }));
@@ -28,14 +26,33 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = await getArticle(slug);
   if (!article) return {};
+
+  const imageUrl = article.coverImage || 'https://tobira-travel.com/og.jpg';
+
   return {
     title: `${article.title} | Tobira Japan`,
     description: article.description,
+    alternates: {
+      canonical: `https://tobira-travel.com/blog/${slug}`,
+    },
     openGraph: {
       title: article.title,
       description: article.description,
+      images: [{
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: article.title,
+      }],
       type: 'article',
       publishedTime: article.publishedAt,
+      url: `https://tobira-travel.com/blog/${slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.description,
+      images: [imageUrl],
     },
   };
 }
@@ -122,9 +139,57 @@ export default async function ArticlePage({
 
   const heroImage = article.coverImage ?? sectionSpots[0]?.[0]?.image_url;
 
+  // JSON-LD Schema
+  const blogPostingJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.description,
+    image: heroImage || 'https://tobira-travel.com/og.jpg',
+    datePublished: article.publishedAt,
+    author: {
+      '@type': 'Organization',
+      name: 'Tobira',
+      url: 'https://tobira-travel.com',
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tobira-travel.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://tobira-travel.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: `https://tobira-travel.com/blog/${slug}`,
+      },
+    ],
+  };
+
   if (article.articleType === 'prefecture') {
     return (
       <div>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
         {/* HERO — full-bleed */}
         {heroImage && (
           <section className="relative h-[55vh] min-h-[360px] flex items-end overflow-hidden">

@@ -8,6 +8,55 @@
 
 ---
 
+## タスク委任ルール（Codex 連携）
+
+コスト最適化のため、タスクの種類によって担当を分ける。
+
+### コード実装フロー（必ず守ること）
+
+```
+STEP 1  実装方針をユーザーに確認（大きなタスクの場合）
+STEP 2  Codex に実装を委任
+        npx @openai/codex --approval-mode auto-edit "<詳細な指示。ファイルパス・期待する動作を含める>"
+STEP 3  Claude が変更ファイルを読んでレビュー
+        - CLAUDE.md のコーディングスタイル・アーキテクチャルールに違反していないか
+        - バグ・セキュリティリスク・型安全性の問題がないか
+        - 不要なコード・コメントがないか
+STEP 4  問題があれば Codex に修正指示（STEP 2 に戻る）、なければユーザーに報告
+        報告内容: 変更ファイル一覧 / 変更概要 / レビュー結果
+```
+
+### 調べ物・リサーチフロー
+
+```bash
+npx @openai/codex --approval-mode auto-edit "<調査タスクの詳細>"
+```
+
+Codex の調査結果を Claude が要約してユーザーに報告する。
+
+### スポット追加フロー
+
+```
+STEP 1  Codex にスポット候補のリサーチを委任
+        npx @openai/codex --approval-mode auto-edit "日本の<都道府県>で観光スポットを追加したい。現在のスポット一覧: <一覧>。カバーできていないカテゴリ・エリアを考慮して5件程度の追加候補を提案してください。"
+STEP 2  Claude がリストをユーザーに提示して確認
+STEP 3  Claude が seed SQL ファイルを作成（scripts/seed-{地域}-extra.sql）
+STEP 4  Claude が Supabase MCP で SQL を実行
+STEP 5  Codex にファクトチェックを委任
+        npx @openai/codex --approval-mode auto-edit "以下のスポットデータのファクトチェックをしてください。admission・access・opening_hours・tips の4フィールドを日本語の公式・一次情報源（公式サイト、観光協会、自治体サイト等）で検証し、誤りを特定してください。結果を scripts/spot-factcheck-report-{地域}.md に保存し、末尾に ## SQL更新候補 として id | field | 修正後の値 の表を出力してください。対象スポット: <スポット一覧>"
+STEP 6  Claude がファクトチェック結果を apply-factcheck-{地域}.sql に反映して Supabase で実行
+STEP 7  ユーザーが写真を追加して公開
+```
+
+### Claude Code が直接行うタスク
+- 計画・設計・アーキテクチャの提案
+- コードレビュー（Codex 実装後の STEP 3）
+- ユーザーとの会話・質問回答
+- SQL 作成・Supabase MCP 実行
+- ファクトチェック結果の適用（apply SQL 作成・実行）
+
+---
+
 ## アーキテクチャ上のルール
 
 ### Next.js App Router

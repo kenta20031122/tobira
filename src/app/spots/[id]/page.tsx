@@ -119,11 +119,46 @@ export default async function SpotDetailPage({ params, searchParams }: Props) {
     touristType: spot.categories,
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tobira-travel.com',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Guides',
+        item: 'https://tobira-travel.com/guides',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: spot.prefecture,
+        item: `https://tobira-travel.com/guides/${spot.prefecture.toLowerCase()}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: spot.name,
+        item: `https://tobira-travel.com/spots/${spot.id}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Back */}

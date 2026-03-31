@@ -86,6 +86,11 @@ BRIEF には以下を含めると出力が安定する:
 | Miyazaki: Where the Sun God Hid and the Horses Run Wild | miyazaki-travel-guide | Takachiho, Miyazaki City/Aoshima, Nichinan, Ebino/Aya, Cape Toi/Hyuga |
 | Kagoshima: Where the Mainland Finally Runs Out of Land | kagoshima-travel-guide | Kagoshima City, Sakurajima, Ibusuki, Chiran, Kirishima, Yakushima, Amami Oshima |
 | Aomori: Where Winter Invented Its Own Festival | aomori-travel-guide | Aomori City, Hirosaki, Towada/Oirase, Juniko, Hakkoda, Shimokita, Asamushi/Museum |
+| Iwate: Where the Mountains Lean Against the Pacific | iwate-travel-guide | Morioka/Koiwai, Hiraizumi, Sanriku coast, Geibikei, Hanamaki, Tono, Hachimantai/Iwate-san, Ryusendo |
+| Miyagi: The Coast, the Castle, and Sendai Between Them | miyagi-travel-guide | Sendai, Akiu Onsen, Matsushima, Shiogama, Kinkasan, Naruko, Shiroishi |
+| Yamagata: Cherries, Sacred Mountains, and Snow That Eats the Trees | yamagata-travel-guide | Yamagata City, Yamadera, Zao/Kaminoyama, Ginzan, Dewa Sanzan, Mogami Gorge, Sakata, Tendo |
+| Akita: Snow Country, Rice Country, and Monsters on New Year's Eve | akita-travel-guide | Akita City, Kakunodate/Tazawa/Inaniwa, Nyuto/Dakigaeri, Towada/Hachimantai, Moriyoshi, Shirakami, Oga, Yokote |
+| Fukushima: Three Regions, One Prefecture, No Simple Story | fukushima-travel-guide | Fukushima City/Iizaka, Bandai/Goshikinuma, Aizu-Wakamatsu, Ouchi-juku, Kitakata, Iwaki, Abukuma Cave, Miharu |
 
 ---
 
