@@ -57,7 +57,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function SpotDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { back } = await searchParams;
-  const backHref = back ? decodeURIComponent(back) : null;
+
+  // Validate back parameter to prevent open redirect
+  const isValidBackUrl = (url: string): boolean => {
+    if (!url) return false;
+    // Only allow relative URLs starting with single /
+    if (!url.startsWith('/') || url.startsWith('//')) return false;
+    // Basic check for invalid characters
+    return /^\/[^?#]*$/.test(url);
+  };
+
+  const backHref = back && isValidBackUrl(decodeURIComponent(back)) ? decodeURIComponent(back) : null;
 
   // Fetch spot and auth in parallel
   const supabase = await createClient();
