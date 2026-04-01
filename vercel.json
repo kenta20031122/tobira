@@ -3,6 +3,10 @@
     {
       "path": "/api/instagram/cron",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/instagram/insights/cron",
+      "schedule": "0 0 * * 1"
     }
   ]
 }

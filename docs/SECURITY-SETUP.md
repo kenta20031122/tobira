@@ -34,9 +34,10 @@ GEMINI_API_KEY
 RESEND_API_KEY
 INSTAGRAM_ACCESS_TOKEN
 INSTAGRAM_BUSINESS_ACCOUNT_ID
-INSTAGRAM_ADMIN_SECRET（非推奨 — 廃止予定）
 ADMIN_USER_IDS（カンマ区切りのSupabase user IDs）
 CRON_SECRET
+UPSTASH_REDIS_REST_URL（レート制限用）
+UPSTASH_REDIS_REST_TOKEN（レート制限用）
 NEXT_PUBLIC_SITE_URL
 NEXT_PUBLIC_GA_ID
 NEXT_PUBLIC_ADSENSE_CLIENT
@@ -62,39 +63,59 @@ Instagram 自動投稿の cron `/api/instagram/cron` を保護しています：
    - Supabase ダッシュボード → Authentication → Users から user ID を確認できます。
 2. Supabase auth provider （メール/パスワード、OAuth等）で admin ユーザーでログインしてからアクセスしてください。
 
-### 5. API 認証・レート制限（実装予定）
+### 5. API 認証・レート制限
 
-現在、以下の API エンドポイントにはレート制限がありません。高トラフィック運用時は `@upstash/ratelimit` 導入を検討してください：
+レート制限は `@upstash/ratelimit` を使用して実装されています。本番環境では以下の環境変数を設定してください：
 
-- `POST /api/leads` — リード送信
-- `POST /api/plan` — AI プランナー（Gemini API 呼び出し）
-- `POST /api/spots` — スポット一覧取得（プレミアム情報漏洩のため要注意）
-- `POST /api/user/trips` — トリップ保存
-- `POST /api/user/favorites` — お気に入り操作
+```
+UPSTASH_REDIS_REST_URL     # Upstash Redis REST API URL
+UPSTASH_REDIS_REST_TOKEN   # Upstash Redis REST API トークン
+```
 
-### 6. セキュリティヘッダー設定（実装予定）
+#### レート制限の設定値
 
-現在、`next.config.ts` にセキュリティヘッダーが設定されていません。本番環境では以下の設定を追加してください：
+| エンドポイント | 制限 | 理由 |
+|--|--|--|
+| `POST /api/user/favorites` | 5 req/min/user | お気に入り操作 |
+| `POST /api/user/trips` | 3 req/hour/user | トリップ保存（リソース集約的） |
+| `POST /api/leads` | 1 req/5min/IP | リード送信（スパム対策） |
+| `POST /api/plan` | 10 req/hour/user | AI プランナー（Gemini API 利用） |
+| `POST /api/instagram/*` | 10 req/hour/IP | Instagram API 連携 |
 
-```typescript
-// next.config.ts の headers() 関数で設定
-async headers() {
-  return [
-    {
-      source: '/:path*',
-      headers: [
-        {
-          key: 'Content-Security-Policy',
-          value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com ...",
-        },
-        { key: 'X-Frame-Options', value: 'DENY' },
-        { key: 'X-Content-Type-Options', value: 'nosniff' },
-        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        { key: 'Permissions-Policy', value: 'geolocation=(), microphone=()' },
-      ],
-    },
-  ]
-}
+**設定方法:**
+1. [Upstash コンソール](https://console.upstash.com) で Redis データベースを作成
+2. `UPSTASH_REDIS_REST_URL` と `UPSTASH_REDIS_REST_TOKEN` をコピー
+3. Vercel Environment Variables に登録
+4. デプロイ後、`curl -I https://tobira-travel.com` でレート制限が動作していることを確認
+
+**開発環境:** 環境変数が設定されていない場合、レート制限はスキップされます（fail open）
+
+### 5.5 入力検証とオープンリダイレクト対策
+
+以下のエンドポイントに入力検証が実装されています：
+
+| エンドポイント | 検証内容 |
+|--|--|
+| `GET /spots/[id]` | `back` パラメータが相対 URL（`/` 始まり）のみ許可、プロトコル相対 URL（`//` 始まり）は拒否 |
+| `POST /api/user/trips` | title（1-200文字）、overview（最大1000文字）、days 配列（1-30）、各dayのオブジェクト構造を検証 |
+
+これらの検証により、オープンリダイレクト攻撃と入力ベースのインジェクション攻撃を防止します。
+
+### 6. セキュリティヘッダー設定
+
+`next.config.ts` にセキュリティヘッダーが実装されています。以下のヘッダーがすべての応答に含まれます：
+
+| ヘッダー | 値 | 目的 |
+|---|---|---|
+| Content-Security-Policy | `default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; ...` | XSS 対策 |
+| X-Frame-Options | SAMEORIGIN | クリックジャッキング対策 |
+| X-Content-Type-Options | nosniff | MIME type スニッフィング対策 |
+| Referrer-Policy | strict-origin-when-cross-origin | 情報漏洩対策 |
+| Permissions-Policy | `geolocation=(), microphone=(), camera=()` | ブラウザ機能の悪用防止 |
+
+**検証方法:**
+```bash
+curl -I https://tobira-travel.com | grep -E "Content-Security-Policy|X-Frame-Options|X-Content-Type-Options"
 ```
 
 ### 7. ローカル開発での注意
@@ -105,15 +126,19 @@ async headers() {
 
 ## 既知の脆弱性と対応状況
 
-| CVE | パッケージ | 重要度 | 状態 |
-|-----|-----------|--------|------|
-| GHSA-mq59-m269-xvcx | next@16.1.6 | 高 | アップグレード推奨 |
-| GHSA-jcc7-9wpm-mj36 | next@16.1.6 | 中 | アップグレード推奨 |
-| GHSA-36jr-mh4h-2g58 | d3-color | 中 | react-simple-maps アップグレード |
+| CVE | パッケージ | 重要度 | 状態 | 対応 |
+|-----|-----------|--------|------|------|
+| GHSA-mq59-m269-xvcx | next | 高 | ✅ 修正済み | next@16.2.2 へアップグレード |
+| GHSA-36jr-mh4h-2g58 | d3-color v2.x | 中 | ⏳ 追跡中 | v3.x で解決、react-simple-maps の更新待ち |
+
+**CVE トラッキング:** d3-color v2.x に ReDoS（Regular Expression Denial of Service）脆弱性が存在します。react-simple-maps が d3-color v3.x にアップグレードされるまで、本フレームワークは影響を受けます。月次で `npm audit` を実行し、アップグレード機会を検証してください。
 
 ```bash
-npm install next@latest
-npm audit fix
+# 脆弱性確認
+npm audit | grep d3-color
+
+# アップグレード（d3-color v3がリリースされたら）
+npm install react-simple-maps@latest
 ```
 
 ## インシデント対応フロー
