@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net; connect-src 'self' https://khgpsvnrorfigvubxhmd.supabase.co https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google; frame-src https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net https://www.googletagmanager.com https://ep2.adtrafficquality.google; connect-src 'self' https://khgpsvnrorfigvubxhmd.supabase.co https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://www.googletagmanager.com; frame-src https://www.google.com https://*.google.com https://*.googleapis.com https://*.googlesyndication.com https://*.doubleclick.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
           },
           {
             key: 'X-Frame-Options',
