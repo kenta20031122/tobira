@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { REGION_META } from '@/lib/regions';
 import { UUID_RE } from '@/lib/validation';
+import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limit';
 import type { Region } from '@/types';
 
 export const maxDuration = 60;
@@ -29,6 +30,11 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
   }
+
+  // Rate limiting: 10 requests per hour per user
+  const rateLimitKey = getRateLimitKey(user.id, req);
+  const rateLimitError = await checkRateLimit(rateLimitKey, 10, 3600);
+  if (rateLimitError) return rateLimitError;
 
   // Check subscription
   const { data: sub } = await supabase

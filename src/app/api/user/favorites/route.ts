@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isValidUUID } from '@/lib/validation';
+import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limit';
 
 // GET /api/user/favorites — returns string[] of favorited spot_ids
 export async function GET() {
@@ -29,6 +30,11 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  // Rate limiting: 5 requests per minute per user/IP
+  const rateLimitKey = getRateLimitKey(user?.id || null, req);
+  const rateLimitError = await checkRateLimit(rateLimitKey, 5, 60);
+  if (rateLimitError) return rateLimitError;
 
   if (!user) {
     return NextResponse.json({ error: 'Sign in to save favorites.' }, { status: 401 });

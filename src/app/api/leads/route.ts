@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { UUID_RE } from '@/lib/validation';
+import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -163,6 +164,11 @@ function buildEmailHtml(personality: string, spots: SpotRow[]): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limiting: 1 request per 5 minutes per IP
+  const rateLimitKey = getRateLimitKey(null, req);
+  const rateLimitError = await checkRateLimit(rateLimitKey, 1, 300);
+  if (rateLimitError) return rateLimitError;
+
   const { email, answers, matchedSpotIds } = await req.json();
 
   if (!email || !EMAIL_RE.test(email)) {

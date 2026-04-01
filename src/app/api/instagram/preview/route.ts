@@ -3,10 +3,16 @@ import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { getAllSpots } from '@/lib/spots'
 import { selectSpotsForTheme } from '@/lib/instagram/selectSpots'
 import { getThemeByKey } from '@/lib/instagram/themes'
+import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   const authError = await checkInstagramAdmin(req)
   if (authError) return authError
+
+  // Rate limiting: 10 requests per hour per IP
+  const rateLimitKey = getRateLimitKey(null, req)
+  const rateLimitError = await checkRateLimit(rateLimitKey, 10, 3600)
+  if (rateLimitError) return rateLimitError
 
   const body = await req.json().catch(() => null) as { theme_key?: string } | null
   if (!body?.theme_key) return NextResponse.json({ error: 'Missing theme_key' }, { status: 400 })

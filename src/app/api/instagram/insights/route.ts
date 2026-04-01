@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { fetchInsights } from '@/lib/instagram/instagramClient'
+import { checkRateLimit, getRateLimitKey } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   const authError = await checkInstagramAdmin(req)
   if (authError) return authError
+
+  // Rate limiting: 10 requests per hour per IP
+  const rateLimitKey = getRateLimitKey(null, req)
+  const rateLimitError = await checkRateLimit(rateLimitKey, 10, 3600)
+  if (rateLimitError) return rateLimitError
 
   const body = await req.json().catch(() => null) as { id?: string } | null
   if (!body?.id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
