@@ -25,7 +25,6 @@ type PreviewResult = {
 
 type Props = {
   drafts: InstagramDraft[]
-  secret: string
   currentStatus?: string
 }
 
@@ -36,7 +35,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: 'bg-red-100 text-red-700',
 }
 
-export default function InstagramAdminClient({ drafts, secret, currentStatus }: Props) {
+export default function InstagramAdminClient({ drafts, currentStatus }: Props) {
   const router = useRouter()
   const [selected, setSelected] = useState<InstagramDraft | null>(drafts[0] ?? null)
   const [caption, setCaption] = useState(selected?.caption ?? '')
@@ -49,7 +48,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
   const [scheduledFor, setScheduledFor] = useState('')
   const [hashtags, setHashtags] = useState<string[]>(selected?.hashtags ?? [])
 
-  const apiHeaders = { 'Content-Type': 'application/json', 'x-instagram-secret': secret }
+  const apiHeaders = { 'Content-Type': 'application/json' }
 
   function selectDraft(draft: InstagramDraft) {
     setSelected(draft)
@@ -248,7 +247,7 @@ export default function InstagramAdminClient({ drafts, secret, currentStatus }: 
         {statusFilters.map(s => (
           <a
             key={s}
-            href={`?secret=${secret}${s ? `&status=${s}` : ''}`}
+            href={`?${s ? `status=${s}` : ''}`}
             className={`px-3 py-1 text-sm rounded ${currentStatus === s || (!currentStatus && !s) ? 'bg-gray-800 text-white' : 'bg-white text-gray-600 border'}`}
           >
             {s || 'すべて'}

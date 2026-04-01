@@ -4,6 +4,7 @@ import { getAllSpots } from '@/lib/spots';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { REGION_META } from '@/lib/regions';
+import { UUID_RE } from '@/lib/validation';
 import type { Region } from '@/types';
 
 export const maxDuration = 60;
@@ -69,7 +70,6 @@ export async function POST(req: NextRequest) {
   const VALID_PACES     = ['relaxed', 'moderate', 'packed'];
   const VALID_GROUPS    = ['solo', 'couple', 'family', 'friends'];
   const VALID_REGIONS   = ['all', 'hokkaido', 'tohoku', 'kanto', 'hokuriku', 'chubu', 'kinki', 'chugoku', 'shikoku', 'kyushu', 'okinawa'];
-  const UUID_RE         = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   const days      = Number(body.days);
   const interests = Array.isArray(body.interests) ? body.interests : [];

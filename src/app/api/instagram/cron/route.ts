@@ -6,9 +6,16 @@ import type { SlideData } from '@/types/instagram'
 // Vercel Cron が呼び出す GET エンドポイント。
 // Authorization: Bearer {CRON_SECRET} で保護。
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: 'CRON_SECRET not configured. Set it in environment variables.' },
+      { status: 500 }
+    )
+  }
+
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

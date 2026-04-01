@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkInstagramSecret } from '@/lib/instagram/auth'
+import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { DraftStatus } from '@/types/instagram'
 
 const VALID_STATUSES: DraftStatus[] = ['draft', 'approved', 'published', 'failed']
 
 export async function GET(req: NextRequest) {
-  const authError = checkInstagramSecret(req)
+  const authError = await checkInstagramAdmin(req)
   if (authError) return authError
 
   const status = req.nextUrl.searchParams.get('status') as DraftStatus | null

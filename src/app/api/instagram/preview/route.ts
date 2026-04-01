@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkInstagramSecret } from '@/lib/instagram/auth'
+import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { getAllSpots } from '@/lib/spots'
 import { selectSpotsForTheme } from '@/lib/instagram/selectSpots'
 import { getThemeByKey } from '@/lib/instagram/themes'
 
 export async function POST(req: NextRequest) {
-  const authError = checkInstagramSecret(req)
+  const authError = await checkInstagramAdmin(req)
   if (authError) return authError
 
   const body = await req.json().catch(() => null) as { theme_key?: string } | null

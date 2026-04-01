@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isValidUUID } from '@/lib/validation';
 
 // GET /api/user/favorites — returns string[] of favorited spot_ids
 export async function GET() {
@@ -36,6 +37,11 @@ export async function POST(req: NextRequest) {
   const { spotId } = await req.json();
   if (!spotId) {
     return NextResponse.json({ error: 'Missing spotId.' }, { status: 400 });
+  }
+
+  // Validate spotId is a valid UUID
+  if (!isValidUUID(spotId)) {
+    return NextResponse.json({ error: 'Invalid spotId format.' }, { status: 400 });
   }
 
   const adminClient = createAdminClient();

@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminUserIds } from '@/lib/admin-utils'
 import type { InstagramDraft } from '@/types/instagram'
 import type { Metadata } from 'next'
 import InstagramAdminClient from './InstagramAdminClient'
@@ -9,18 +11,28 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  searchParams: Promise<{ secret?: string; status?: string }>
+  searchParams: Promise<{ status?: string }>
 }
 
 export default async function InstagramAdminPage({ searchParams }: Props) {
-  const { secret, status } = await searchParams
+  const { status } = await searchParams
 
-  if (!secret || secret !== process.env.INSTAGRAM_ADMIN_SECRET) {
+  // Check Supabase auth
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    redirect('/auth/login')
+  }
+
+  // Verify user is an admin
+  const adminIds = getAdminUserIds()
+  if (!adminIds.includes(user.id)) {
     redirect('/')
   }
 
-  const supabase = createAdminClient()
-  let query = supabase
+  const adminClient = createAdminClient()
+  let query = adminClient
     .from('instagram_drafts')
     .select('*')
     .order('created_at', { ascending: false })
@@ -35,7 +47,6 @@ export default async function InstagramAdminPage({ searchParams }: Props) {
     <div className="min-h-screen bg-gray-50 p-6">
       <InstagramAdminClient
         drafts={(drafts ?? []) as InstagramDraft[]}
-        secret={secret}
         currentStatus={status}
       />
     </div>

@@ -92,6 +92,7 @@ BRIEF には以下を含めると出力が安定する:
 | Akita: Snow Country, Rice Country, and Monsters on New Year's Eve | akita-travel-guide | Akita City, Kakunodate/Tazawa/Inaniwa, Nyuto/Dakigaeri, Towada/Hachimantai, Moriyoshi, Shirakami, Oga, Yokote |
 | Fukushima: Three Regions, One Prefecture, No Simple Story | fukushima-travel-guide | Fukushima City/Iizaka, Bandai/Goshikinuma, Aizu-Wakamatsu, Ouchi-juku, Kitakata, Iwaki, Abukuma Cave, Miharu |
 | Ehime: Islands, Castles, and the Road That Goes Between | ehime-travel-guide | Matsuyama/Dogo, Shimanami Kaido, Uchiko, Ozu, Uwajima, Besshi/Niihama, Shikoku Karst, Cape Sada/Omishima |
+| Kochi: The Wild Coast That Japan Forgot to Tame | kochi-travel-guide | Kochi City, Godaisan, Niyodo River, Ryugado/Anpanman, Nakatosa, Shimanto, Cape Ashizuri/Muroto, Noichi Zoo |
 
 ---
 

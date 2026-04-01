@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkInstagramSecret } from '@/lib/instagram/auth'
+import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authError = checkInstagramSecret(req)
+  const authError = await checkInstagramAdmin(req)
   if (authError) return authError
 
   const { id } = await params
@@ -25,7 +25,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authError = checkInstagramSecret(req)
+  const authError = await checkInstagramAdmin(req)
   if (authError) return authError
 
   const { id } = await params

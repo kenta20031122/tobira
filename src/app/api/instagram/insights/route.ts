@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkInstagramSecret } from '@/lib/instagram/auth'
+import { checkInstagramAdmin } from '@/lib/instagram/auth'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { fetchInsights } from '@/lib/instagram/instagramClient'
 
 export async function POST(req: NextRequest) {
-  const authError = checkInstagramSecret(req)
+  const authError = await checkInstagramAdmin(req)
   if (authError) return authError
 
   const body = await req.json().catch(() => null) as { id?: string } | null

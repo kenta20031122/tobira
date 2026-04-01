@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { UUID_RE } from '@/lib/validation';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,7 +27,6 @@ function getPersonalitySummary(answers: Record<string, string>): string {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const UUID_RE  = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function escapeHtml(str: string): string {
   return str
