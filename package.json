@@ -22,6 +22,7 @@
     "seed-kanto": "node scripts/seed-kanto.mjs",
     "seed-remaining": "node scripts/seed-remaining.mjs",
     "run-sql": "node scripts/run-sql.mjs",
+    "instagram:export-insights": "node scripts/export-instagram-insights.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"

@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og'
 import type { NextRequest } from 'next/server'
+import { validateImageUrl } from '@/lib/instagram/validateImageUrl'
 
 export const runtime = 'edge'
 
@@ -10,7 +11,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const title = searchParams.get('title') ?? 'Japan Beyond Tokyo'
   const tagline = searchParams.get('tagline') ?? ''
-  const bg = searchParams.get('bg') ?? ''
+  const bgParam = searchParams.get('bg') ?? ''
+  const bg = bgParam && validateImageUrl(bgParam) ? bgParam : ''
 
   return new ImageResponse(
     (

@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og'
 import type { NextRequest } from 'next/server'
+import { validateImageUrl } from '@/lib/instagram/validateImageUrl'
 
 export const runtime = 'edge'
 
@@ -12,7 +13,8 @@ function truncate(text: string, maxLen: number): string {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const img = searchParams.get('img') ?? ''
+  const imgParam = searchParams.get('img') ?? ''
+  const img = imgParam && validateImageUrl(imgParam) ? imgParam : ''
   const name = truncate(searchParams.get('name') ?? '', 42)
   const prefecture = truncate(searchParams.get('prefecture') ?? '', 30)
   const highlight = truncate(searchParams.get('highlight') ?? '', 120)

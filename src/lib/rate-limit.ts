@@ -20,9 +20,12 @@ export async function checkRateLimit(
   limit: number = 5,
   window: number = 60,
 ): Promise<NextResponse | null> {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    // If Upstash is not configured, allow all requests (development mode)
-    console.warn('Upstash Redis not configured for rate limiting');
+  // Check if Upstash is configured
+  const hasUpstash = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+
+  // If Upstash is not configured, allow all requests (development mode)
+  if (!hasUpstash) {
+    console.warn('Upstash Redis not configured for rate limiting (development mode)');
     return null;
   }
 
@@ -44,8 +47,11 @@ export async function checkRateLimit(
     return null;
   } catch (error) {
     console.error('Rate limit check error:', error);
-    // On error, allow the request (fail open)
-    return null;
+    // Fail closed: on error, deny the request (production safety)
+    return NextResponse.json(
+      { error: 'Rate limit service unavailable. Please try again later.' },
+      { status: 503 },
+    );
   }
 }
 

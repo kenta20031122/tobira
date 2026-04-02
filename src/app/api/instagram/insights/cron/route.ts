@@ -42,9 +42,12 @@ export async function GET(req: NextRequest) {
           `https://graph.instagram.com/v19.0/${draft.ig_media_id}/insights`
         )
         insightsUrl.searchParams.append('metric', 'engagement,impressions,reach,saved')
-        insightsUrl.searchParams.append('access_token', accessToken)
 
-        const insightsRes = await fetch(insightsUrl.toString())
+        const insightsRes = await fetch(insightsUrl.toString(), {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
 
         if (!insightsRes.ok) {
           console.warn(`Failed to fetch insights for ${draft.ig_media_id}: ${insightsRes.status}`)
