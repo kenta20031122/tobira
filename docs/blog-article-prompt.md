@@ -93,6 +93,7 @@ BRIEF には以下を含めると出力が安定する:
 | Fukushima: Three Regions, One Prefecture, No Simple Story | fukushima-travel-guide | Fukushima City/Iizaka, Bandai/Goshikinuma, Aizu-Wakamatsu, Ouchi-juku, Kitakata, Iwaki, Abukuma Cave, Miharu |
 | Ehime: Islands, Castles, and the Road That Goes Between | ehime-travel-guide | Matsuyama/Dogo, Shimanami Kaido, Uchiko, Ozu, Uwajima, Besshi/Niihama, Shikoku Karst, Cape Sada/Omishima |
 | Kochi: The Wild Coast That Japan Forgot to Tame | kochi-travel-guide | Kochi City, Godaisan, Niyodo River, Ryugado/Anpanman, Nakatosa, Shimanto, Cape Ashizuri/Muroto, Noichi Zoo |
+| Tokushima: Whirlpools, the Valley That Time Missed, and Japan's Loudest Dance | tokushima-travel-guide | Tokushima City, Naruto, Iya Valley, Oboke, Ochiai, Udatsu, Tairyuji, Ryozenji |
 
 ---
 
