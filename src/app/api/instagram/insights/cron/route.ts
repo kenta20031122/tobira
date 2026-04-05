@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     // Fetch all published drafts with ig_media_id
     const { data: drafts, error: fetchError } = await supabase
       .from('instagram_drafts')
-      .select('id, ig_media_id, theme_key')
+      .select('id, ig_media_id')
       .eq('status', 'published')
       .not('ig_media_id', 'is', null)
 
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
         const insightsUrl = new URL(
           `https://graph.instagram.com/v19.0/${draft.ig_media_id}/insights`
         )
-        insightsUrl.searchParams.append('metric', 'engagement,impressions,reach,saved')
+        insightsUrl.searchParams.append('metric', 'likes,comments,saved,total_interactions,reach')
 
         const insightsRes = await fetch(insightsUrl.toString(), {
           headers: {
